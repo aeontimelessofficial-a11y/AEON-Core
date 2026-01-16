@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ÆON | Generator</title>
+    <title>ÆON | Editor</title>
     <style>
         body { background: #050505; color: white; font-family: 'Courier New', monospace; display: flex; justify-content: center; padding: 40px; }
         .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 15px; }
@@ -12,21 +12,24 @@
         label { color: #888; font-size: 12px; margin-bottom: -10px; text-transform: uppercase; }
         input, textarea { background: #111; border: 1px solid #333; color: white; padding: 15px; border-radius: 5px; font-family: inherit; }
         input:focus, textarea:focus { outline: none; border-color: #00d2ff; }
-        
+        input:disabled { color: #555; border-color: #222; cursor: not-allowed; }
+
         button { background: #00d2ff; color: black; border: none; padding: 15px; font-weight: bold; cursor: pointer; margin-top: 20px; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
         button:hover { box-shadow: 0 0 20px #00d2ff; }
 
         .preview-img { width: 100px; height: 100px; border-radius: 50%; border: 2px solid #333; margin: 0 auto; object-fit: cover; display: block; background: #111; }
         .status { text-align: center; margin-top: 20px; height: 20px; color: yellow; }
+        .loader { text-align: center; color: #00d2ff; display: none; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Artifact Generator</h1>
+        <h1 id="pageTitle">Generator</h1>
+        <div id="loading" class="loader">NAČÍTÁM DATA Z MATRIXU...</div>
 
         <label>URL Adresa (Slug)</label>
-        <input type="text" id="slug" placeholder="např. petr-novak (bez mezer)" required>
+        <input type="text" id="slug" placeholder="např. ondra" required>
 
         <label>Jméno na kartě</label>
         <input type="text" id="name" placeholder="Jan Novák">
@@ -37,51 +40,85 @@
         <label>Profilová fotka</label>
         <input type="file" id="photoInput" accept="image/*">
         <img id="preview" class="preview-img">
-        <input type="hidden" id="base64String"> <label>Tlačítko 1 (Text | Odkaz)</label>
+        <input type="hidden" id="base64String">
+
+        <label>Tlačítko 1</label>
         <div style="display: flex; gap: 10px;">
-            <input type="text" id="btn1_label" placeholder="Instagram" style="width: 40%">
-            <input type="text" id="btn1_url" placeholder="https://..." style="width: 60%">
+            <input type="text" id="btn1_label" placeholder="Label" style="width: 40%">
+            <input type="text" id="btn1_url" placeholder="URL" style="width: 60%">
         </div>
 
-        <label>Tlačítko 2 (Text | Odkaz)</label>
+        <label>Tlačítko 2</label>
         <div style="display: flex; gap: 10px;">
-            <input type="text" id="btn2_label" placeholder="Web" style="width: 40%">
-            <input type="text" id="btn2_url" placeholder="https://..." style="width: 60%">
+            <input type="text" id="btn2_label" placeholder="Label" style="width: 40%">
+            <input type="text" id="btn2_url" placeholder="URL" style="width: 60%">
         </div>
 
-        <button onclick="saveCard()">Vypálit do sítě</button>
+        <button onclick="saveCard()" id="saveBtn">Vypálit do sítě</button>
         <div id="status" class="status"></div>
     </div>
 
     <script>
-        // --- 1. LOGIKA PRO OBRÁZEK (Zmenšení a převod na text) ---
+        // --- 1. NAČTENÍ DAT PŘI STARTU ---
+        window.onload = async function() {
+            const params = new URLSearchParams(window.location.search);
+            const slug = params.get('slug');
+
+            if (slug) {
+                // Jsme v režimu EDITOR
+                document.getElementById('slug').value = slug;
+                // document.getElementById('slug').disabled = true; // Zamkneme slug, aby se neměnil
+                document.getElementById('pageTitle').innerText = "Editor";
+                document.getElementById('saveBtn').innerText = "AKTUALIZOVAT PROFIL";
+                document.getElementById('loading').style.display = 'block';
+
+                try {
+                    const response = await fetch(`/.netlify/functions/aeon-api?slug=${slug}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Vyplnění formuláře
+                        document.getElementById('name').value = data.name || "";
+                        document.getElementById('bio').value = data.bio || "";
+                        
+                        if (data.avatar) {
+                            document.getElementById('preview').src = data.avatar;
+                            document.getElementById('base64String').value = data.avatar;
+                        }
+
+                        if (data.links && data.links[0]) {
+                            document.getElementById('btn1_label').value = data.links[0].label;
+                            document.getElementById('btn1_url').value = data.links[0].url;
+                        }
+                        if (data.links && data.links[1]) {
+                            document.getElementById('btn2_label').value = data.links[1].label;
+                            document.getElementById('btn2_url').value = data.links[1].url;
+                        }
+                    }
+                } catch (e) {
+                    console.log("Profil nenalezen, vytváříme nový.");
+                }
+                document.getElementById('loading').style.display = 'none';
+            }
+        };
+
+        // --- 2. ZPRACOVÁNÍ FOTKY ---
         document.getElementById('photoInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
-                    // Vytvoříme virtuální plátno a zmenšíme fotku na 500x500
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     const maxSize = 500;
-                    
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > height) { if (width > maxSize) { height *= maxSize / width; width = maxSize; } } 
-                    else { if (height > maxSize) { width *= maxSize / height; height = maxSize; } }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    // Převedeme na text (JPG, 70% kvalita)
+                    let w = img.width, h = img.height;
+                    if (w > h) { if (w > maxSize) { h *= maxSize / w; w = maxSize; } } 
+                    else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } }
+                    canvas.width = w; canvas.height = h;
+                    ctx.drawImage(img, 0, 0, w, h);
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                    
-                    // Zobrazíme a uložíme
                     document.getElementById('preview').src = dataUrl;
                     document.getElementById('base64String').value = dataUrl;
                 }
@@ -90,53 +127,45 @@
             reader.readAsDataURL(file);
         });
 
-        // --- 2. ODESLÁNÍ NA SERVER ---
+        // --- 3. ODESLÁNÍ ---
         async function saveCard() {
             const status = document.getElementById('status');
-            status.innerText = "Nahrávám do Matrixu...";
-            status.style.color = "yellow";
+            status.innerText = "Ukládám...";
+            
+            const slugRaw = document.getElementById('slug').value;
+            // Oprava slugu (malá písmena, pomlčky místo mezer)
+            const slug = slugRaw.toLowerCase().replace(/\s+/g, '-'); 
 
-            const slug = document.getElementById('slug').value.toLowerCase().replace(/\s+/g, '-');
-            if(!slug) { status.innerText = "CHYBA: Musíš vyplnit URL Adresu!"; status.style.color = "red"; return; }
-
-            // Posbíráme data z formuláře
             const payload = {
                 slug: slug,
                 name: document.getElementById('name').value,
                 bio: document.getElementById('bio').value,
-                avatar: document.getElementById('base64String').value || "https://api.dicebear.com/7.x/avataaars/svg?seed=Aeon",
-                links: [],
-                instagram: document.getElementById('btn1_url').value // Pro QR kód
+                avatar: document.getElementById('base64String').value,
+                links: []
             };
 
-            // Přidáme tlačítka jen pokud jsou vyplněná
-            if(document.getElementById('btn1_url').value) {
-                payload.links.push({ label: document.getElementById('btn1_label').value, url: document.getElementById('btn1_url').value });
-            }
-            if(document.getElementById('btn2_url').value) {
-                payload.links.push({ label: document.getElementById('btn2_label').value, url: document.getElementById('btn2_url').value });
-            }
+            const l1 = document.getElementById('btn1_label').value;
+            const u1 = document.getElementById('btn1_url').value;
+            if (l1 && u1) payload.links.push({ label: l1, url: u1 });
+
+            const l2 = document.getElementById('btn2_label').value;
+            const u2 = document.getElementById('btn2_url').value;
+            if (l2 && u2) payload.links.push({ label: l2, url: u2 });
 
             try {
-                // Pošleme to na tvůj backend
-                const response = await fetch('/.netlify/functions/aeon-api', {
+                const res = await fetch('/.netlify/functions/aeon-api', {
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
-
-                if(response.ok) {
-                    status.innerText = "ÚSPĚCH! Karta vytvořena.";
-                    status.style.color = "#00ff00";
-                    // Po 2 vteřinách přesměrujeme na novou kartu
-                    setTimeout(() => {
-                        window.location.href = `/?slug=${slug}`;
-                    }, 2000);
+                if (res.ok) {
+                    status.innerText = "HOTOVO!";
+                    status.style.color = "#0f0";
+                    setTimeout(() => window.location.href = `/?slug=${slug}`, 1500);
                 } else {
-                    throw new Error("Server odmítl data.");
+                    status.innerText = "Chyba serveru";
                 }
             } catch (err) {
-                status.innerText = "CHYBA: " + err.message;
-                status.style.color = "red";
+                status.innerText = "Chyba: " + err.message;
             }
         }
     </script>

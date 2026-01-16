@@ -26,34 +26,36 @@ async function loadProfile() {
         // --- A. DATA KARTY ---
         document.querySelector('h1').innerText = data.name;
         document.querySelector('.bio').innerText = data.bio;
-        document.querySelector('.avatar').src = data.avatar;
-
-        // --- B. MINT NUMBER (Vygenerujeme náhodné číslo podle jména) ---
-        // Tohle zajistí, že Ondra bude mít vždy stejné číslo, ale jiné než Petr
-        let hash = 0;
-        for (let i = 0; i < data.name.length; i++) {
-            hash = data.name.charCodeAt(i) + ((hash << 5) - hash);
+        
+        // Nastavení avataru (pokud chybí, necháme výchozí)
+        if (data.avatar) {
+            document.querySelector('.avatar').src = data.avatar;
         }
-        const number = Math.abs(hash % 9000) + 1000; // Číslo mezi 1000 a 9999
-        document.querySelector('.mint-number').innerText = `NO. #${number}`;
+
+        // --- B. MINT NUMBER (OPRAVENO: Čteme ze serveru) ---
+        // Zobrazíme číslo uložené v databázi. Pokud chybí, ukážeme pomlčky.
+        const mintNum = data.mint_number || "---";
+        document.querySelector('.mint-number').innerText = `NO. #${mintNum}`;
 
         // --- C. TLAČÍTKA (S opravou https) ---
         const linksContainer = document.querySelector('.links');
         linksContainer.innerHTML = ''; 
 
-        data.links.forEach(link => {
-            const btn = document.createElement('a');
-            // Tady použijeme opravnou funkci fixUrl()
-            btn.href = fixUrl(link.url);
-            btn.className = 'link-btn';
-            btn.innerText = link.label;
-            btn.target = "_blank"; 
-            linksContainer.appendChild(btn);
-        });
+        if (data.links) {
+            data.links.forEach(link => {
+                const btn = document.createElement('a');
+                // Tady použijeme opravnou funkci fixUrl()
+                btn.href = fixUrl(link.url);
+                btn.className = 'link-btn';
+                btn.innerText = link.label;
+                btn.target = "_blank"; 
+                linksContainer.appendChild(btn);
+            });
+        }
 
         // --- D. QR KÓD (S opravou https) ---
         // Priority: 1. Instagram z DB, 2. První odkaz, 3. Adresa karty
-        let rawQrUrl = data.instagram || data.links[0]?.url || window.location.href;
+        let rawQrUrl = data.instagram || (data.links && data.links[0] ? data.links[0].url : window.location.href);
         let finalQrUrl = fixUrl(rawQrUrl);
         
         generateQR(finalQrUrl);
