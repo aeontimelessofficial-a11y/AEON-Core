@@ -1,0 +1,122 @@
+:root {
+    --primary: #ffffff;
+    --accent: #00d2ff; /* Chronos Blue */
+    --gold: #ffd700;
+    --dark-bg: #050505;
+    --glass: rgba(255, 255, 255, 0.05);
+    --border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--primary);
+    font-family: 'Courier New', Courier, monospace; /* Tech font */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    perspective: 1000px; /* Klíčové pro 3D efekt */
+}
+
+/* --- 3D SCÉNA --- */
+.scene {
+    width: 320px;
+    height: 500px;
+    position: relative;
+}
+
+.card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.1s; /* Plynulost pohybu */
+    border-radius: 20px;
+}
+
+/* --- STRANY KARTY --- */
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden; /* Skryje záda při otáčení */
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    box-sizing: border-box;
+    /* Skleněný efekt */
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.1);
+}
+
+/* ZADNÍ STRANA (pro QR kód) */
+.card-face.back {
+    transform: rotateY(180deg);
+    background: rgba(0,0,0,0.9);
+    justify-content: center;
+}
+
+/* --- OBSAH KARTY --- */
+.mint-number {
+    font-size: 10px;
+    color: var(--border);
+    letter-spacing: 2px;
+    align-self: flex-end;
+}
+
+.avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #333; /* Zatím šedá, než nahrajeme fotku */
+    border: 2px solid var(--accent);
+    margin-top: 20px;
+    box-shadow: 0 0 20px var(--accent);
+}
+
+h1 {
+    font-size: 24px;
+    margin: 10px 0 5px 0;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.bio {
+    font-size: 12px;
+    color: #888;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.links {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.link-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: white;
+    padding: 12px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.3s;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.link-btn:hover {
+    background: var(--accent);
+    color: black;
+    box-shadow: 0 0 15px var(--accent);
+}

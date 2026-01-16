@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AEON Data Injector</title>
+    <style>body { font-family: sans-serif; padding: 50px; background: #111; color: white; text-align: center; }</style>
+</head>
+<body>
+    <h1>💉 Data Injector</h1>
+    <p>Kliknutím vytvoříš v databázi testovací profil "jan-novak".</p>
+    <button onclick="injectData()" style="padding: 20px; font-size: 20px; cursor: pointer;">VYTVOŘIT PROFIL</button>
+    <div id="status" style="margin-top: 20px; color: yellow;"></div>
+
+    <script>
+        async function injectData() {
+            const status = document.getElementById('status');
+            status.innerText = "Pracuji...";
+
+            // Data pro testovacího uživatele
+            const testUser = {
+                slug: "jan-novak",
+                name: "Jan Novák",
+                bio: "CEO of ÆON | Future Architect",
+                mint_number: 42,
+                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix", // Jiný avatar
+                links: [
+                    { label: "My Project", url: "https://google.com" },
+                    { label: "Contact Me", url: "mailto:jan@aeon.vip" }
+                ],
+                instagram: "https://instagram.com/jan.novak"
+            };
+
+            try {
+                // Pošleme data na náš backend
+                const response = await fetch('/.netlify/functions/aeon-api', {
+                    method: 'POST',
+                    body: JSON.stringify(testUser)
+                });
+                
+                const result = await response.json();
+                status.innerText = "HOTOVO! Odpověď serveru: " + JSON.stringify(result);
+                status.style.color = "#0f0";
+            } catch (err) {
+                status.innerText = "CHYBA: " + err.message;
+                status.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
