@@ -1,70 +1,104 @@
 const card = document.getElementById('artifact');
 const scene = document.querySelector('.scene');
-
 let isFlipped = false;
 
-// --- 1. FUNKCE PRO NÁKLON (TILT EFFECT) ---
+// --- 1. KOMUNIKACE S DATABÁZÍ (NOVÉ!) ---
+async function loadProfile() {
+    // Zkusíme najít jméno v adrese (např. ?slug=pepa), jinak bereme "jan-novak"
+    const params = new URLSearchParams(window.location.search);
+    const userSlug = params.get('slug') || 'jan-novak';
+
+    console.log("Načítám profil:", userSlug);
+
+    try {
+        // Zeptáme se našeho backendu na data
+        const response = await fetch(`/.netlify/functions/aeon-api?slug=${userSlug}`);
+        
+        if (!response.ok) throw new Error("Profil nenalezen");
+        
+        const data = await response.json();
+        console.log("Data přijata:", data);
+
+        // --- AKTUALIZACE KARTY ---
+        // 1. Jméno a Bio
+        document.querySelector('h1').innerText = data.name;
+        document.querySelector('.bio').innerText = data.bio;
+        
+        // 2. Avatar (Profilovka)
+        document.querySelector('.avatar').src = data.avatar;
+
+        // 3. Tlačítka (Links) - Vymažeme staré a vyrobíme nové podle databáze
+        const linksContainer = document.querySelector('.links');
+        linksContainer.innerHTML = ''; // Vyčistit
+
+        data.links.forEach(link => {
+            const btn = document.createElement('a');
+            btn.href = link.url;
+            btn.className = 'link-btn';
+            btn.innerText = link.label;
+            btn.target = "_blank"; // Otevřít v novém okně
+            linksContainer.appendChild(btn);
+        });
+
+        // 4. QR Kód (vygenerujeme ho z Instagramu nebo prvního linku)
+        const qrTarget = data.instagram || data.links[0]?.url || window.location.href;
+        generateQR(qrTarget);
+
+    } catch (error) {
+        console.error("Chyba:", error);
+        document.querySelector('h1').innerText = "CHYBA NAČÍTÁNÍ";
+    }
+}
+
+// --- 2. GENERÁTOR QR (Upravený) ---
+function generateQR(url) {
+    const qrContainer = document.getElementById('qrcode');
+    qrContainer.innerHTML = "";
+    
+    new QRCode(qrContainer, {
+        text: url,
+        width: 130,
+        height: 130,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+    });
+}
+
+// --- 3. 3D EFEKT & OTOČENÍ (Staré dobré funkce) ---
 function handleMove(e) {
-    // Pokud je karta otočená (QR kód), náklon vypneme pro lepší čitelnost
     if(isFlipped) return;
 
-    // Zjistíme, kde je myš/prst
     const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
     const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-
-    // Zjistíme střed obrazovky
+    
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
 
-    // Spočítáme vzdálenost myši od středu (-1 až 1)
     const xDist = (clientX - centerX) / centerX;
     const yDist = (clientY - centerY) / centerY; 
 
-    // Nastavíme úhly náklonu
     const rotateY = xDist * 20; 
     const rotateX = -yDist * 20;
 
-    // Aplikujeme rotaci
     card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
 }
 
-// --- 2. FUNKCE PRO RESET (KDYŽ MYŠ ODEJDE) ---
 function resetCard() {
-    if(!isFlipped) {
-        card.style.transform = `rotateX(0deg) rotateY(0deg)`;
-    }
+    if(!isFlipped) card.style.transform = `rotateX(0deg) rotateY(0deg)`;
 }
 
-// --- 3. FUNKCE PRO OTOČENÍ (FLIP PROTOCOL) ---
 function flipCard() {
-    isFlipped = !isFlipped; // Přepne stav
-
-    if (isFlipped) {
-        // Otočíme kartu o 180 stupňů
-        card.style.transform = `rotateY(180deg)`;
-    } else {
-        // Vrátíme ji zpět
-        card.style.transform = `rotateY(0deg)`;
-    }
+    isFlipped = !isFlipped;
+    if (isFlipped) card.style.transform = `rotateY(180deg)`;
+    else card.style.transform = `rotateY(0deg)`;
 }
 
-// --- 4. GENEROVÁNÍ QR KÓDU ---
-const qrContainer = document.getElementById('qrcode');
+// --- SPUŠTĚNÍ ---
+// Jakmile se stránka načte, stáhni data
+loadProfile();
 
-// Vyčistíme kontejner (pro jistotu)
-qrContainer.innerHTML = "";
-
-// Vygenerujeme kód
-new QRCode(qrContainer, {
-    text: "https://www.instagram.com", // Zde bude později dynamický odkaz
-    width: 130,
-    height: 130,
-    colorDark : "#000000",
-    colorLight : "#ffffff",
-    correctLevel : QRCode.CorrectLevel.H
-});
-
-// --- PŘIPOJENÍ POSLUCHAČŮ UDÁLOSTÍ ---
+// Posluchače
 document.addEventListener('mousemove', handleMove);
 document.addEventListener('touchmove', handleMove);
 document.addEventListener('mouseleave', resetCard);
