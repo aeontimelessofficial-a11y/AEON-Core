@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ÆON | Editor</title>
+    <title>ÆON | Secured Forge</title>
     <style>
         body { background: #050505; color: white; font-family: 'Courier New', monospace; display: flex; justify-content: center; padding: 40px; }
         .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 15px; }
@@ -12,21 +12,23 @@
         label { color: #888; font-size: 12px; margin-bottom: -10px; text-transform: uppercase; }
         input, textarea { background: #111; border: 1px solid #333; color: white; padding: 15px; border-radius: 5px; font-family: inherit; }
         input:focus, textarea:focus { outline: none; border-color: #00d2ff; }
-        input:disabled { color: #555; border-color: #222; cursor: not-allowed; }
-
-        button { background: #00d2ff; color: black; border: none; padding: 15px; font-weight: bold; cursor: pointer; margin-top: 20px; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
+        
+        /* Červený rámeček pro heslo */
+        .security-section { border: 1px solid #333; padding: 15px; border-radius: 8px; background: #0a0a0a; margin-top: 20px; }
+        
+        button { background: #00d2ff; color: black; border: none; padding: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
         button:hover { box-shadow: 0 0 20px #00d2ff; }
 
         .preview-img { width: 100px; height: 100px; border-radius: 50%; border: 2px solid #333; margin: 0 auto; object-fit: cover; display: block; background: #111; }
-        .status { text-align: center; margin-top: 20px; height: 20px; color: yellow; }
+        .status { text-align: center; margin-top: 20px; color: yellow; min-height: 20px;}
         .loader { text-align: center; color: #00d2ff; display: none; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1 id="pageTitle">Generator</h1>
-        <div id="loading" class="loader">NAČÍTÁM DATA Z MATRIXU...</div>
+        <h1 id="pageTitle">The Forge</h1>
+        <div id="loading" class="loader">NAČÍTÁM DATA...</div>
 
         <label>URL Adresa (Slug)</label>
         <input type="text" id="slug" placeholder="např. ondra" required>
@@ -54,22 +56,28 @@
             <input type="text" id="btn2_url" placeholder="URL" style="width: 60%">
         </div>
 
+        <div class="security-section">
+            <label style="color: #ff4444;">🔐 SECURITY CHECK</label>
+            <input type="password" id="masterKey" placeholder="Enter Master Key to Save">
+        </div>
+
         <button onclick="saveCard()" id="saveBtn">Vypálit do sítě</button>
         <div id="status" class="status"></div>
     </div>
 
     <script>
-        // --- 1. NAČTENÍ DAT PŘI STARTU ---
+        // Automatické načtení hesla, pokud je v paměti z Dashboardu
         window.onload = async function() {
+            const savedKey = localStorage.getItem('aeon_master_key');
+            if(savedKey) document.getElementById('masterKey').value = savedKey;
+
             const params = new URLSearchParams(window.location.search);
             const slug = params.get('slug');
 
             if (slug) {
-                // Jsme v režimu EDITOR
                 document.getElementById('slug').value = slug;
-                // document.getElementById('slug').disabled = true; // Zamkneme slug, aby se neměnil
                 document.getElementById('pageTitle').innerText = "Editor";
-                document.getElementById('saveBtn').innerText = "AKTUALIZOVAT PROFIL";
+                document.getElementById('saveBtn').innerText = "AKTUALIZOVAT";
                 document.getElementById('loading').style.display = 'block';
 
                 try {
@@ -77,7 +85,6 @@
                     if (response.ok) {
                         const data = await response.json();
                         
-                        // Vyplnění formuláře
                         document.getElementById('name').value = data.name || "";
                         document.getElementById('bio').value = data.bio || "";
                         
@@ -95,14 +102,12 @@
                             document.getElementById('btn2_url').value = data.links[1].url;
                         }
                     }
-                } catch (e) {
-                    console.log("Profil nenalezen, vytváříme nový.");
-                }
+                } catch (e) { console.log("Profil nenalezen."); }
                 document.getElementById('loading').style.display = 'none';
             }
         };
 
-        // --- 2. ZPRACOVÁNÍ FOTKY ---
+        // Zmenšení fotky
         document.getElementById('photoInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -127,45 +132,61 @@
             reader.readAsDataURL(file);
         });
 
-        // --- 3. ODESLÁNÍ ---
+        // Odeslání
         async function saveCard() {
             const status = document.getElementById('status');
+            const key = document.getElementById('masterKey').value;
+
+            if(!key) {
+                status.innerText = "CHYBA: Musíš zadat Master Key!";
+                status.style.color = "red";
+                return;
+            }
+
             status.innerText = "Ukládám...";
             
             const slugRaw = document.getElementById('slug').value;
-            // Oprava slugu (malá písmena, pomlčky místo mezer)
             const slug = slugRaw.toLowerCase().replace(/\s+/g, '-'); 
 
             const payload = {
-                slug: slug,
-                name: document.getElementById('name').value,
-                bio: document.getElementById('bio').value,
-                avatar: document.getElementById('base64String').value,
-                links: []
+                masterKey: key, // Posíláme heslo k ověření
+                data: {
+                    slug: slug,
+                    name: document.getElementById('name').value,
+                    bio: document.getElementById('bio').value,
+                    avatar: document.getElementById('base64String').value,
+                    links: []
+                }
             };
 
             const l1 = document.getElementById('btn1_label').value;
             const u1 = document.getElementById('btn1_url').value;
-            if (l1 && u1) payload.links.push({ label: l1, url: u1 });
+            if (l1 && u1) payload.data.links.push({ label: l1, url: u1 });
 
             const l2 = document.getElementById('btn2_label').value;
             const u2 = document.getElementById('btn2_url').value;
-            if (l2 && u2) payload.links.push({ label: l2, url: u2 });
+            if (l2 && u2) payload.data.links.push({ label: l2, url: u2 });
 
             try {
                 const res = await fetch('/.netlify/functions/aeon-api', {
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
+                
+                const result = await res.json();
+
                 if (res.ok) {
                     status.innerText = "HOTOVO!";
                     status.style.color = "#0f0";
+                    localStorage.setItem('aeon_master_key', key); // Uložíme heslo pro příště
                     setTimeout(() => window.location.href = `/?slug=${slug}`, 1500);
                 } else {
-                    status.innerText = "Chyba serveru";
+                    status.innerText = "CHYBA: " + (result.error || "Server error");
+                    status.style.color = "red";
                 }
             } catch (err) {
-                status.innerText = "Chyba: " + err.message;
+                status.innerText = "Chyba spojení: " + err.message;
+                status.style.color = "red";
             }
         }
     </script>

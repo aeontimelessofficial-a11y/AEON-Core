@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ÆON | God Mode</title>
+    <style>
+        body { background: #050505; color: white; font-family: 'Courier New', monospace; padding: 20px; }
+        h1 { color: #00d2ff; text-transform: uppercase; letter-spacing: 3px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .stats { display: flex; gap: 20px; margin-bottom: 30px; }
+        .stat-box { background: #111; padding: 20px; border: 1px solid #333; border-radius: 8px; min-width: 150px; text-align: center; }
+        .stat-val { font-size: 32px; color: #ffd700; font-weight: bold; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; color: #888; border-bottom: 1px solid #333; padding: 10px; }
+        td { padding: 15px 10px; border-bottom: 1px solid #111; }
+        tr:hover { background: #0a0a0a; }
+        
+        a { color: #00d2ff; text-decoration: none; margin-right: 15px; }
+        a:hover { text-decoration: underline; }
+        
+        .login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 999; }
+        input { background: #111; border: 1px solid #333; color: white; padding: 15px; font-family: inherit; margin-bottom: 10px; width: 250px; text-align: center; }
+        button { background: #00d2ff; color: black; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .error { color: red; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="loginOverlay" class="login-screen">
+        <h2 style="color: #00d2ff;">ÆON ACCESS</h2>
+        <input type="password" id="masterKey" placeholder="Enter Master Key">
+        <button onclick="loadDashboard()">Unlock Database</button>
+        <div id="loginError" class="error"></div>
+    </div>
+
+    <div id="content" style="display: none;">
+        <h1>System Overview</h1>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div style="color: #888; font-size: 12px;">TOTAL ARTIFACTS</div>
+                <div class="stat-val" id="totalCount">0</div>
+            </div>
+            <div class="stat-box">
+                <div style="color: #888; font-size: 12px;">SYSTEM STATUS</div>
+                <div class="stat-val" style="color: #0f0; font-size: 18px; line-height: 38px;">ONLINE</div>
+            </div>
+            <div class="stat-box">
+                <a href="/admin.html" target="_blank" style="display: block; line-height: 60px; color: white;">+ CREATE NEW</a>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>NO.</th>
+                    <th>NAME</th>
+                    <th>SLUG (ID)</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody id="userTable">
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function loadDashboard() {
+            const key = document.getElementById('masterKey').value;
+            const errorMsg = document.getElementById('loginError');
+            
+            errorMsg.innerText = "Authenticating...";
+
+            try {
+                // Voláme API s požadavkem na dashboard a posíláme klíč v hlavičce
+                const response = await fetch(`/.netlify/functions/aeon-api?mode=dashboard`, {
+                    method: 'GET',
+                    headers: {
+                        'x-master-key': key
+                    }
+                });
+
+                if (response.status === 401) {
+                    errorMsg.innerText = "ACCESS DENIED: Wrong Key.";
+                    return;
+                }
+
+                const data = await response.json();
+                
+                // Pokud úspěch, schováme login a ukážeme data
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+                
+                // Vyplníme data
+                document.getElementById('totalCount').innerText = data.count;
+                
+                const tbody = document.getElementById('userTable');
+                tbody.innerHTML = '';
+
+                data.users.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="color: #ffd700;">#${user.mint_number}</td>
+                        <td style="font-weight: bold;">${user.name}</td>
+                        <td style="color: #666;">${user.slug}</td>
+                        <td>
+                            <a href="/?slug=${user.slug}" target="_blank">VIEW</a>
+                            <a href="/admin.html?slug=${user.slug}" target="_blank">EDIT</a>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Uložíme klíč do paměti prohlížeče, abychom ho v adminu nemuseli psát znova (volitelné)
+                localStorage.setItem('aeon_master_key', key);
+
+            } catch (err) {
+                errorMsg.innerText = "SYSTEM ERROR: " + err.message;
+            }
+        }
+
+        // Zkusit načíst klíč z paměti při startu (pro pohodlí)
+        window.onload = function() {
+            const savedKey = localStorage.getItem('aeon_master_key');
+            if(savedKey) {
+                document.getElementById('masterKey').value = savedKey;
+            }
+        }
+    </script>
+</body>
+</html>
