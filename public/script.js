@@ -1,10 +1,30 @@
 const card = document.getElementById('artifact');
 const scene = document.querySelector('.scene');
 const loader = document.getElementById('loader');
-const mottoBg = document.getElementById('backgroundMotto');
 let isFlipped = false;
 
-// --- 1. CLOCK (iPhone Style) ---
+// --- 1. THEME APPLICATOR ---
+// Funkce, která vezme string "spring-night" a udělá z něj třídy <body class="spring night">
+function applyTheme(themeString) {
+    // Reset classes
+    document.body.className = '';
+    
+    if (!themeString) themeString = 'winter-night'; // Default
+    
+    // Očekáváme formát "season-time", např. "spring-morning"
+    // Ale CSS používá ".spring.morning". Takže rozdělíme string.
+    const parts = themeString.split('-');
+    if (parts.length === 2) {
+        document.body.classList.add(parts[0]); // season
+        document.body.classList.add(parts[1]); // time
+    } else {
+        // Fallback
+        document.body.classList.add('winter');
+        document.body.classList.add('night');
+    }
+}
+
+// --- 2. CLOCK ---
 function updateClock() {
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
@@ -15,7 +35,7 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-// --- 2. URL FIXER ---
+// --- 3. URL FIX ---
 function fixUrl(url) {
     if (!url) return "#";
     url = url.trim();
@@ -23,9 +43,10 @@ function fixUrl(url) {
     return url;
 }
 
-// --- 3. QR CODE ---
+// --- 4. QR ---
 function generateQR(url) {
     const qrContainer = document.getElementById('qrcode');
+    if(!qrContainer) return;
     qrContainer.innerHTML = "";
     new QRCode(qrContainer, {
         text: url, width: 140, height: 140,
@@ -34,7 +55,7 @@ function generateQR(url) {
     });
 }
 
-// --- 4. LOAD DATA ---
+// --- 5. LOAD ---
 async function loadProfile() {
     const params = new URLSearchParams(window.location.search);
     const userSlug = params.get('slug') || 'jan-novak';
@@ -45,30 +66,28 @@ async function loadProfile() {
         
         const data = await response.json();
 
-        // 1. Téma pozadí (Aplikujeme CSS třídu na body)
-        // Pokud není nastaveno, dáme default (např. winter-night)
-        document.body.className = data.theme || 'winter-night';
+        // Aplikace pozadí
+        applyTheme(data.theme);
 
-        // 2. Data
+        // Data
         document.querySelector('h1').innerText = data.name;
         document.querySelector('.bio').innerText = data.bio;
         
-        // 3. Avatar
         if (data.avatar) {
             document.querySelector('.avatar').src = data.avatar;
             document.querySelector('.avatar').style.display = 'block';
         }
 
-        // 4. Motto na POZADÍ
-        if (mottoBg) {
-            mottoBg.innerText = data.motto || "FUTURE IS NOW";
+        // Motto (vložíme do plovoucího kontejneru na pozadí)
+        const mottoEl = document.getElementById('floatingMotto');
+        if (mottoEl) {
+            mottoEl.innerText = data.motto || "";
         }
 
-        // 5. Číslo
         const mintNum = data.mint_number || "---";
         document.querySelector('.mint-number').innerText = `NO. ${mintNum}`;
 
-        // 6. Odkazy
+        // Odkazy
         const linksContainer = document.querySelector('.links');
         linksContainer.innerHTML = ''; 
         if (data.links && Array.isArray(data.links)) {
@@ -84,53 +103,33 @@ async function loadProfile() {
             });
         }
 
-        // QR
         generateQR(window.location.href);
 
-        // Show
-        loader.style.opacity = '0';
-        setTimeout(() => { loader.style.display = 'none'; scene.style.opacity = '1'; }, 500);
+        if(loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => { loader.style.display = 'none'; scene.style.opacity = '1'; }, 500);
+        }
 
     } catch (error) {
         console.error(error);
-        loader.innerHTML = "<div style='color:white'>SYSTEM ERROR</div>";
+        if(loader) loader.innerHTML = "<div style='color:white'>SYSTEM ERROR</div>";
     }
 }
 
-// --- 5. 3D EFEKT & MOTTO REVEAL ---
+// --- 6. 3D GYRO (Jen karta, motto ignoruje) ---
 function handleMove(e) {
     if(isFlipped) return;
-    
     const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
     const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-    
     const cx = window.innerWidth / 2;
     const cy = window.innerHeight / 2;
-    
-    // -1 až 1
     const dx = (clientX - cx) / cx;
     const dy = (clientY - cy) / cy;
-    
-    // 1. Rotace karty
     card.style.transform = `rotateX(${-dy * 15}deg) rotateY(${dx * 15}deg)`;
-
-    // 2. Motto Reveal (Na pozadí)
-    // Motto se odhalí, když se hýbe myší/mobilem
-    // Čím dál od středu, tím víc je vidět
-    const intensity = Math.min(Math.abs(dx) + Math.abs(dy), 1);
-    
-    if (mottoBg) {
-        mottoBg.style.opacity = intensity * 0.4; // Max 40% viditelnost (velmi jemné)
-        // Parallax efekt proti pohybu
-        mottoBg.style.transform = `translate(${dx * -40}px, ${dy * -40}px) rotate(-5deg)`;
-    }
 }
 
 function resetCard() { 
-    if(!isFlipped) {
-        card.style.transform = `rotateX(0deg) rotateY(0deg)`;
-        if(mottoBg) mottoBg.style.opacity = 0;
-    }
+    if(!isFlipped) card.style.transform = `rotateX(0deg) rotateY(0deg)`;
 }
 
 function flipCard(e) {
@@ -139,7 +138,7 @@ function flipCard(e) {
     card.style.transform = isFlipped ? `rotateY(180deg)` : `rotateY(0deg)`;
 }
 
-// Spuštění
+// Start
 loadProfile();
 document.addEventListener('mousemove', handleMove);
 document.addEventListener('touchmove', handleMove);
