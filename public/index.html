@@ -9,36 +9,37 @@
 </head>
 <body>
 
-    <div class="ambient-background">
-        <div class="orb orb-1"></div><div class="orb orb-2"></div>
-        <div class="orb orb-3"></div><div class="orb orb-4"></div>
+    <div class="fixed-background">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
     </div>
 
     <div id="loader" class="loader-container">
-        <div class="spinner" style="width:40px;height:40px;border:4px solid #333;border-top-color:#fff;border-radius:50%;animation:spin 1s infinite linear;"></div>
-        <style>@keyframes spin {to{transform: rotate(360deg);}}</style>
+        <div class="spinner"></div>
     </div>
 
-    <div class="scene">
-        <div class="card" id="artifact">
-            
-            <div class="card-face front">
+    <div class="card-wrapper">
+        <div class="scene">
+            <div class="card" id="artifact">
                 
-                <div class="avatar-wrapper">
-                    <img src="" class="avatar" style="display: none;">
+                <div class="card-face front">
+                    <div class="avatar-wrapper">
+                        <img src="" class="avatar" style="display: none;">
+                    </div>
+
+                    <h1 id="name"></h1>
+                    <p class="bio"></p>
+                    <div class="motto"></div> <div class="links"></div>
+
+                    <div class="mint-number">NO. ----</div>
                 </div>
 
-                <h1 id="name"></h1>
-                <p class="bio"></p>
-                
-                <div class="card-motto"></div>
-
-                <div class="links"></div>
-            </div>
-
-            <div class="card-face back">
-                <div id="qrcode"></div>
-                <div class="scan-text">Scan to Connect</div>
+                <div class="card-face back">
+                    <div id="qrcode"></div>
+                    <div style="margin-top: 20px; font-weight: bold; letter-spacing: 1px; font-size: 12px; text-transform: uppercase;">Scan to Connect</div>
+                </div>
             </div>
         </div>
     </div>
