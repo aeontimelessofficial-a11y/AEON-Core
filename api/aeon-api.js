@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDoc, getDocs, collection, runTransaction } from "firebase/firestore";
+import { getFirestore, doc, getDocs, collection, runTransaction } from "firebase/firestore";
 
-// --- KONFIGURACE ---
+// --- KONFIGURACE FIREBASE ---
 const firebaseConfig = {
   apiKey: "AIzaSyA1tCkwzheR8Bt1ajn7zaYXHHXJj7rBBP8",
   authDomain: "aeon-platform.firebaseapp.com",
@@ -11,27 +11,34 @@ const firebaseConfig = {
   appId: "1:1050631630348:web:148e7e25136b260d6ac829"
 };
 
+// Inicializace mimo handler (cache)
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const MASTER_KEY = "20071";
 
-// 🔒 HESLO PRO DASHBOARD
-const MASTER_KEY = "20071"; 
+// --- VERCEL HANDLER ---
+export default async function handler(req, res) {
+  // 1. CORS HEADERS (Aby to fungovalo odkudkoliv)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, x-master-key'
+  );
 
-export const handler = async (event, context) => {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, x-master-key',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
-  };
-
-  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
+  // Rychlá odpověď pro OPTIONS (Pre-flight check prohlížeče)
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
 
   try {
-    // 1. DASHBOARD (Vyžaduje heslo)
-    if (event.httpMethod === 'GET' && event.queryStringParameters.mode === 'dashboard') {
-        const clientKey = event.headers['x-master-key'] || event.headers['X-Master-Key'];
+    // 2. DASHBOARD (GET s parametrem mode=dashboard)
+    if (req.method === 'GET' && req.query.mode === 'dashboard') {
+        const clientKey = req.headers['x-master-key'];
         if (clientKey !== MASTER_KEY) {
-            return { statusCode: 401, headers, body: JSON.stringify({ error: "Nesprávné heslo." }) };
+            return res.status(401).json({ error: "Nesprávné heslo." });
         }
 
         const querySnapshot = await getDocs(collection(db, "cards"));
@@ -47,13 +54,13 @@ export const handler = async (event, context) => {
         });
 
         users.sort((a, b) => b.mint_number - a.mint_number);
-        return { statusCode: 200, headers, body: JSON.stringify({ count: users.length, users: users }) };
+        return res.status(200).json({ count: users.length, users: users });
     }
 
-    // 2. ČTENÍ KARTY (Veřejné)
-    if (event.httpMethod === 'GET') {
-        const slug = event.queryStringParameters.slug;
-        if (!slug) return { statusCode: 400, headers, body: "Chybí slug" };
+    // 3. ČTENÍ KARTY (GET s parametrem slug)
+    if (req.method === 'GET') {
+        const slug = req.query.slug;
+        if (!slug) return res.status(400).send("Chybí slug");
 
         let data;
         await runTransaction(db, async (t) => {
@@ -62,17 +69,18 @@ export const handler = async (event, context) => {
             if(docSnap.exists()) data = docSnap.data();
         });
 
-        if (data) return { statusCode: 200, headers, body: JSON.stringify(data) };
-        else return { statusCode: 404, headers, body: "Nenalezeno" };
+        if (data) return res.status(200).json(data);
+        else return res.status(404).send("Nenalezeno");
     }
 
-    // 3. ULOŽENÍ KARTY (Veřejné - Open Beta)
-    if (event.httpMethod === 'POST') {
-        const payload = JSON.parse(event.body);
+    // 4. ULOŽENÍ KARTY (POST)
+    if (req.method === 'POST') {
+        // Vercel automaticky parsuje body, pokud je to JSON
+        const payload = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
         const data = payload.data || payload; 
         const slug = data.slug;
         
-        // Sanitizace
+        // Sanitizace (proti HTML injection)
         if(data.name) data.name = data.name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         if(data.bio) data.bio = data.bio.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -85,9 +93,11 @@ export const handler = async (event, context) => {
             
             if (userDoc.exists()) {
                 const existing = userDoc.data();
+                // Zachováme číslo mintu
                 finalData = { ...data, mint_number: existing.mint_number || 1000 };
                 transaction.set(userRef, finalData);
             } else {
+                // Nový uživatel -> nové číslo
                 const counterDoc = await transaction.get(counterRef);
                 let newCount = 1001;
                 if (counterDoc.exists()) newCount = counterDoc.data().value + 1;
@@ -98,10 +108,14 @@ export const handler = async (event, context) => {
             }
         });
 
-        return { statusCode: 200, headers, body: JSON.stringify({ message: "Uloženo", data: finalData }) };
+        return res.status(200).json({ message: "Uloženo", data: finalData });
     }
 
+    // Pokud metoda neodpovídá
+    return res.status(405).send("Method Not Allowed");
+
   } catch (error) {
-    return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
+    console.error("API Error:", error);
+    return res.status(500).json({ error: error.message });
   }
-};
+}
