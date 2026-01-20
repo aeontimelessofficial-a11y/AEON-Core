@@ -116,7 +116,8 @@
                 document.getElementById('slug').value = slug;
                 document.getElementById('saveBtn').innerText = "AKTUALIZOVAT";
                 try {
-                    const res = await fetch(`/.netlify/functions/aeon-api?slug=${slug}`);
+                    // --- ZMĚNA ADRESY PRO VERCEL (LOAD) ---
+                    const res = await fetch(`/api/aeon-api?slug=${slug}`);
                     if(res.ok) {
                         const d = await res.json();
                         document.getElementById('name').value = d.name || "";
@@ -157,7 +158,8 @@
             };
 
             try {
-                await fetch('/.netlify/functions/aeon-api', { method: 'POST', body: JSON.stringify(payload) });
+                // --- ZMĚNA ADRESY PRO VERCEL (SAVE) ---
+                await fetch('/api/aeon-api', { method: 'POST', body: JSON.stringify(payload) });
                 stat.innerText = "HOTOVO!"; stat.style.color = "#0f0";
                 setTimeout(() => window.location.href = `/?slug=${slug}`, 1500);
             } catch(e) { stat.innerText = "CHYBA"; }
