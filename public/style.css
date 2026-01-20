@@ -1,17 +1,22 @@
 :root {
     --primary: #ffffff;
     --border: rgba(255, 255, 255, 0.2);
-    /* Defaultní hodnoty */
-    --text-main: #ffffff; 
-    --card-glass: rgba(20, 20, 20, 0.7);
+    
+    /* Výchozí barvy (Fallback - Midnight) */
+    --bg-gradient-start: #0f0c29;
+    --bg-gradient-end: #302b63;
+    --orb-1-color: #24243e; --orb-2-color: #0f0c29; --orb-3-color: #7b4397; --orb-4-color: #dc2430;
+    --accent: #ffffff;
+    --text-main: #ffffff;
+    --card-bg: rgba(20, 20, 20, 0.65);
     --input-bg: rgba(0, 0, 0, 0.5);
     --orb-blend: screen;
 }
 
 /* =========================================
-   1. DEFINICE TÉMAT (S KONTRASTEM)
+   1. DEFINICE TÉMAT (STEJNÉ JAKO PŘEDTÍM)
    ========================================= */
-/* SVĚTLÁ TÉMATA (Černý text) */
+/* SVĚTLÁ TÉMATA */
 body.spring.morning { --bg-start: #f3ffe3; --bg-end: #fff0f5; --o1: #e2f0cb; --o2: #ff9ff3; --o3: #c7ecee; --o4: #f7d794; --accent: #6ab04c; --text-main: #1a1a1a; --card-glass: rgba(255,255,255,0.65); --input-bg: rgba(255,255,255,0.5); --orb-blend: multiply; }
 body.spring.noon    { --bg-start: #badc58; --bg-end: #dff9fb; --o1: #f6e58d; --o2: #6ab04c; --o3: #ffbe76; --o4: #7ed6df; --accent: #badc58; --text-main: #1a1a1a; --card-glass: rgba(255,255,255,0.65); --input-bg: rgba(255,255,255,0.5); --orb-blend: multiply; }
 body.summer.morning { --bg-start: #fff3e0; --bg-end: #81ecec; --o1: #fab1a0; --o2: #74b9ff; --o3: #ffeaa7; --o4: #81ecec; --accent: #00cec9; --text-main: #1a1a1a; --card-glass: rgba(255,255,255,0.65); --input-bg: rgba(255,255,255,0.5); --orb-blend: multiply; }
@@ -21,7 +26,7 @@ body.autumn.noon    { --bg-start: #fff5e6; --bg-end: #ffdbcc; --o1: #ff9f43; --o
 body.winter.morning { --bg-start: #f1f2f6; --bg-end: #dfe4ea; --o1: #74b9ff; --o2: #a29bfe; --o3: #ffffff; --o4: #81ecec; --accent: #74b9ff; --text-main: #1a1a1a; --card-glass: rgba(255,255,255,0.65); --input-bg: rgba(255,255,255,0.5); --orb-blend: multiply; }
 body.winter.noon    { --bg-start: #e3f2fd; --bg-end: #bbdefb; --o1: #0984e3; --o2: #00cec9; --o3: #fab1a0; --o4: #ffffff; --accent: #0984e3; --text-main: #1a1a1a; --card-glass: rgba(255,255,255,0.65); --input-bg: rgba(255,255,255,0.5); --orb-blend: multiply; }
 
-/* TMAVÁ TÉMATA (Bílý text) */
+/* TMAVÁ TÉMATA */
 body.spring.evening { --bg-start: #e056fd; --bg-end: #f0932b; --o1: #ffbe76; --o2: #be2edd; --o3: #ff7979; --o4: #badc58; --accent: #be2edd; --text-main: #ffffff; --card-glass: rgba(20,20,40,0.7); --input-bg: rgba(0,0,0,0.5); --orb-blend: overlay; }
 body.spring.night   { --bg-start: #2c3a47; --bg-end: #58b19f; --o1: #55efc4; --o2: #a29bfe; --o3: #00b894; --o4: #fdcb6e; --accent: #55efc4; --text-main: #ffffff; --card-glass: rgba(20,40,50,0.75); --input-bg: rgba(0,0,0,0.5); --orb-blend: screen; }
 body.summer.evening { --bg-start: #eb4d4b; --bg-end: #686de0; --o1: #f0932b; --o2: #be2edd; --o3: #ff7979; --o4: #ffbe76; --accent: #ff4757; --text-main: #ffffff; --card-glass: rgba(60,20,40,0.7); --input-bg: rgba(0,0,0,0.5); --orb-blend: overlay; }
@@ -32,7 +37,7 @@ body.winter.evening { --bg-start: #6c5ce7; --bg-end: #a29bfe; --o1: #fd79a8; --o
 body.winter.night   { --bg-start: #0c2461; --bg-end: #1e3799; --o1: #00d2d3; --o2: #5f27cd; --o3: #ff9ff3; --o4: #48dbfb; --accent: #48dbfb; --text-main: #ffffff; --card-glass: rgba(10,20,50,0.75); --input-bg: rgba(0,0,0,0.5); --orb-blend: screen; }
 
 /* =========================================
-   2. FIXNUTÉ POZADÍ (ŘEŠENÍ SCROLLOVÁNÍ)
+   2. FIXNUTÉ & ANIMOVANÉ POZADÍ
    ========================================= */
 body {
     background-color: #000;
@@ -41,11 +46,13 @@ body {
     margin: 0;
     min-height: 100vh;
     overflow-x: hidden;
-    /* Důležité: Odstranit centering, aby fungoval scroll */
     display: block; 
+    /* Zákaz označování globálně */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
-/* Toto pozadí zůstává na místě, i když scroluješ */
 .fixed-background {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100vh;
@@ -58,20 +65,25 @@ body {
 .orb {
     position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.7;
     mix-blend-mode: var(--orb-blend);
+    /* Zde je ta animace */
     animation: float 25s ease-in-out infinite alternate;
     transition: background-color 0.5s ease;
+    /* Optimalizace výkonu animace */
+    will-change: transform;
 }
 .orb-1 { width: 70vw; height: 70vw; background: var(--o1); top: -10%; left: -10%; animation-duration: 20s; }
 .orb-2 { width: 60vw; height: 60vw; background: var(--o2); bottom: -10%; right: -10%; animation-delay: -5s; }
 .orb-3 { width: 50vw; height: 50vw; background: var(--o3); top: 20%; left: 30%; animation-delay: -8s; }
 .orb-4 { width: 40vw; height: 40vw; background: var(--o4); bottom: 10%; left: 10%; opacity: 0.5; }
 
-@keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(20px, 40px); } }
+@keyframes float { 
+    0% { transform: translate(0, 0); } 
+    100% { transform: translate(30px, 60px); } 
+}
 
 /* =========================================
-   3. KARTA & 3D FLIP
+   3. KARTA & 3D FLIP (BEZ MODRÉHO OZNAČENÍ)
    ========================================= */
-/* Centrovací wrapper pro kartu */
 .card-wrapper {
     display: flex; justify-content: center; align-items: center;
     min-height: 100vh; width: 100%;
@@ -91,36 +103,37 @@ body {
     transform-style: preserve-3d;
     transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
+    border-radius: 36px;
+    
+    /* ZÁKAZ MODRÉHO OZNAČENÍ NA MOBILU */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    outline: none;
 }
 
-/* OTOČENÍ */
 .card.is-flipped { transform: rotateY(180deg); }
 
 .card-face {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    backface-visibility: hidden; /* Skryje záda */
-    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
     border-radius: 36px;
     display: flex; flex-direction: column; align-items: center;
     padding: 40px 25px; box-sizing: border-box;
     
-    /* Vzhled skla */
     background: var(--card-glass);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255,255,255,0.2);
     box-shadow: 0 25px 50px rgba(0,0,0,0.3);
 }
 
-/* ZADNÍ STRANA */
 .card-face.back {
     transform: rotateY(180deg);
-    background: #000000; /* Vždy černé pozadí pro QR */
+    background: #000000;
     color: white;
     justify-content: center;
     z-index: 1;
 }
 
-/* Avatar */
 .avatar-wrapper { margin-top: 20px; width: 110px; height: 110px; position: relative; }
 .avatar {
     width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
@@ -128,7 +141,6 @@ body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-/* Texty */
 h1 { 
     font-size: 24px; font-weight: 800; margin: 20px 0 5px 0; 
     text-align: center; color: var(--text-main); letter-spacing: -0.5px;
@@ -142,17 +154,18 @@ h1 {
     color: var(--accent); margin-bottom: 25px; font-weight: 700;
 }
 
-/* Links */
 .links { width: 100%; display: flex; flex-direction: column; gap: 10px; flex-grow: 1; overflow-y: auto; }
 .link-btn {
     background: var(--input-bg); color: var(--text-main);
     padding: 14px; text-align: center; text-decoration: none;
     border-radius: 12px; font-weight: 600; font-size: 13px;
     transition: 0.2s; border: 1px solid rgba(255,255,255,0.1);
+    
+    /* Zákaz označení i na tlačítkách */
+    -webkit-tap-highlight-color: transparent;
 }
 .link-btn:hover { background: var(--accent); color: #fff; transform: translateY(-2px); border-color: transparent; }
 
-/* QR */
 #qrcode { background: white; padding: 15px; border-radius: 15px; }
 
 /* Loader */
@@ -160,9 +173,7 @@ h1 {
 .spinner { width: 40px; height: 40px; border: 4px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* =========================================
-   4. ADMIN UI (S KONTRASTEM)
-   ========================================= */
+/* Admin UI */
 .admin-container {
     background: var(--card-glass); backdrop-filter: blur(20px);
     padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
@@ -177,18 +188,15 @@ h1 {
 }
 .admin-input:focus { border-color: var(--accent); outline: none; }
 
-/* Theme Grid */
 .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 5px; background: rgba(0,0,0,0.1); border-radius: 10px; max-height: 200px; overflow-y: auto; }
 .theme-btn {
     padding: 10px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; text-align: center;
-    font-size: 11px; font-weight: bold; color: #333; /* Text na tlačítkách vždy tmavý pro čitelnost pozadí */
-    text-shadow: none; transition: transform 0.1s;
+    font-size: 11px; font-weight: bold; color: #333; transition: transform 0.1s;
 }
 .theme-btn.dark-text { color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
 .theme-btn:hover { transform: scale(1.02); }
 .theme-btn.selected { border-color: var(--accent); box-shadow: 0 0 10px var(--accent); }
 
-/* Avatar Grid */
 .avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; background: rgba(0,0,0,0.1); padding: 10px; border-radius: 10px; }
 .avatar-option { width: 100%; border-radius: 50%; cursor: pointer; border: 2px solid transparent; background: #fff; transition: 0.2s; }
 .avatar-option:hover { transform: scale(1.1); }

@@ -48,16 +48,13 @@ async function loadProfile() {
         
         const data = await response.json();
 
-        // Téma
         applyTheme(data.theme);
 
-        // Texty
         document.querySelector('h1').innerText = data.name;
         document.querySelector('.bio').innerText = data.bio;
         const mottoEl = document.querySelector('.motto');
         if(mottoEl) mottoEl.innerText = data.motto || "";
 
-        // Avatar
         if (data.avatar) {
             document.querySelector('.avatar').src = data.avatar;
             document.querySelector('.avatar').style.display = 'block';
@@ -66,7 +63,6 @@ async function loadProfile() {
         const mintNum = data.mint_number || "---";
         document.querySelector('.mint-number').innerText = `NO. ${mintNum}`;
 
-        // Odkazy
         const linksContainer = document.querySelector('.links');
         linksContainer.innerHTML = ''; 
         if (data.links && Array.isArray(data.links)) {
@@ -77,17 +73,14 @@ async function loadProfile() {
                     btn.className = 'link-btn';
                     btn.innerText = link.label;
                     btn.target = "_blank"; 
-                    // Stop flip on click
                     btn.addEventListener('click', (e) => e.stopPropagation());
                     linksContainer.appendChild(btn);
                 }
             });
         }
 
-        // QR
         generateQR(window.location.href);
 
-        // Zobrazit
         if(loader) {
             loader.style.opacity = '0';
             setTimeout(() => { loader.style.display = 'none'; scene.style.opacity = '1'; }, 500);
@@ -101,10 +94,7 @@ async function loadProfile() {
 
 // --- 5. FLIP LOGIC ---
 function flipCard(e) {
-    // Pokud klikneme na odkaz, neotáčet
     if (e.target.closest('a')) return;
-    
-    // Toggle class
     card.classList.toggle('is-flipped');
 }
 
