@@ -10,14 +10,8 @@
 <body>
 
     <div class="ambient-background">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="orb orb-4"></div>
-    </div>
-
-    <div class="motto-container">
-        <div class="motto-text" id="mottoText"></div>
+        <div class="orb orb-1"></div><div class="orb orb-2"></div>
+        <div class="orb orb-3"></div><div class="orb orb-4"></div>
     </div>
 
     <div id="loader" class="loader-container">
@@ -28,16 +22,24 @@
         <div class="card" id="artifact">
             
             <div class="card-face front">
-                <img src="" class="avatar" style="display: none;">
+                
+                <div class="avatar-wrapper">
+                    <img src="" class="avatar" style="display: none;">
+                </div>
+
                 <h1 id="name"></h1>
                 <p class="bio"></p>
+                
+                <div class="card-motto"></div>
+
                 <div class="links"></div>
+
                 <div class="mint-number">NO. ----</div>
             </div>
 
             <div class="card-face back">
                 <div id="qrcode"></div>
-                <div style="margin-top: 25px; font-weight: bold; color: #fff; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">Scan to Connect</div>
+                <div style="margin-top: 20px; font-weight: bold; color: #fff; letter-spacing: 1px; font-size: 12px; text-transform: uppercase;">Scan to Connect</div>
             </div>
         </div>
     </div>
