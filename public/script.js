@@ -1,37 +1,89 @@
 const card = document.getElementById('artifact');
 const scene = document.querySelector('.scene');
+const loader = document.getElementById('loader');
 let isFlipped = false;
 
-// --- 0. SECURITY PROTOCOL (The Fortress) ---
-function securityProtocol() {
-    // A. DOMAIN LOCK (Kill Switch)
-    // Karta funguje jen na localhostu (pro tebe) a na Netlify doménách.
-    // Pokud to někdo ukradne a dá na "moje-kradena-stranka.com", obsah se smaže.
-    const hostname = window.location.hostname;
-    const allowed = hostname.includes('netlify.app') || hostname.includes('localhost') || hostname.includes('aeon.vip');
+// --- 1. LOGIKA POZADÍ (Portováno z "Můj Start") ---
+const seasonMap = ['spring', 'summer', 'autumn', 'winter'];
+const timeMap = ['morning', 'noon', 'evening', 'night'];
+let userLat = 50.0755; // Default Praha
+let userLng = 14.4378;
 
-    if (!allowed) {
-        document.body.innerHTML = '<div style="color:red; text-align:center; margin-top:20%; font-family:monospace;">⚠️ PIRATED ARTIFACT DETECTED ⚠️<br>TERMINATING CONNECTION...</div>';
-        throw new Error("Security Violation: Invalid Domain");
-    }
-
-    // B. CONSOLE WARNING (Pro zvědavce)
-    console.log("%c STOP! ", "color: red; font-size: 50px; font-weight: bold; text-shadow: 2px 2px 0px black;");
-    console.log("%c This is a protected artifact forged by ÆON. Accessing the source code without authorization is a violation of the protocol.", "color: white; background: black; font-size: 16px; padding: 10px;");
-
-    // C. ANTI-THEFT (Zákaz pravého tlačítka a stahování obrázků)
-    document.addEventListener('contextmenu', event => event.preventDefault());
-    document.addEventListener('dragstart', event => event.preventDefault());
+function getSunTimes(date) {
+    const PI = Math.PI, sin = Math.sin, cos = Math.cos, tan = Math.tan, acos = Math.acos;
+    const rad = deg => deg * PI / 180;
+    const deg = rad => rad * 180 / PI;
+    const start = new Date(date.getFullYear(), 0, 0);
+    const diff = date - start;
+    const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const declination = 0.409 * sin(2 * PI * (dayOfYear - 81) / 365);
+    const equationOfTime = 9.87 * sin(2 * (2 * PI * (dayOfYear - 81) / 365)) - 7.53 * cos(2 * PI * (dayOfYear - 81) / 365) - 1.5 * sin(2 * PI * (dayOfYear - 81) / 365);
+    let hourAngleVal = (-tan(rad(userLat)) * tan(declination));
+    if (hourAngleVal < -1) hourAngleVal = -1; if (hourAngleVal > 1) hourAngleVal = 1;
+    const hourAngle = acos(hourAngleVal);
+    let sunriseUTC = 720 - 4 * userLng - deg(hourAngle) * 4 - equationOfTime;
+    let sunsetUTC = 720 - 4 * userLng + deg(hourAngle) * 4 - equationOfTime;
+    const offset = -date.getTimezoneOffset();
+    return { sunrise: (sunriseUTC + offset) / 60, sunset: (sunsetUTC + offset) / 60 };
 }
 
-// --- POMOCNÁ FUNKCE: Oprava odkazu ---
+function updateTheme() {
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const currentHour = now.getHours() + now.getMinutes() / 60;
+    
+    let sIndex = 3; 
+    if (month >= 3 && month <= 5) sIndex = 0; 
+    else if (month >= 6 && month <= 8) sIndex = 1; 
+    else if (month >= 9 && month <= 11) sIndex = 2; 
+
+    const sun = getSunTimes(now);
+    const morningStart = sun.sunrise - 2;
+    const morningEnd = sun.sunrise + 4;
+    const eveningStart = sun.sunset - 1;
+    const eveningEnd = 22.0; 
+    
+    let tIndex = 3; 
+    if (currentHour >= morningStart && currentHour < morningEnd) tIndex = 0;
+    else if (currentHour >= morningEnd && currentHour < eveningStart) tIndex = 1;
+    else if (currentHour >= eveningStart && currentHour < eveningEnd) tIndex = 2;
+    
+    document.body.className = ''; 
+    document.body.classList.add(seasonMap[sIndex]);
+    document.body.classList.add(timeMap[tIndex]);
+}
+
+// --- 2. LOGIKA KARTY ---
+
+// Inteligentní oprava odkazů (přidá https:// pokud chybí)
 function fixUrl(url) {
     if (!url) return "#";
-    if (!url.startsWith('http')) return 'https://' + url;
+    url = url.trim();
+    if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('mailto:') && !url.startsWith('tel:')) {
+        return 'https://' + url;
+    }
     return url;
 }
 
-// --- 1. KOMUNIKACE S DATABÁZÍ ---
+function generateQR(url) {
+    const qrContainer = document.getElementById('qrcode');
+    qrContainer.innerHTML = "";
+    new QRCode(qrContainer, {
+        text: url, width: 140, height: 140,
+        colorDark : "#000000", colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.M
+    });
+}
+
+// Bezpečnostní funkce
+function securityProtocol() {
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    const h = window.location.hostname;
+    if (!h.includes('netlify.app') && !h.includes('localhost') && !h.includes('aeon')) {
+        document.body.innerHTML = "SECURITY VIOLATION."; throw new Error("Piracy");
+    }
+}
+
 async function loadProfile() {
     const params = new URLSearchParams(window.location.search);
     const userSlug = params.get('slug') || 'jan-novak';
@@ -42,50 +94,56 @@ async function loadProfile() {
         
         const data = await response.json();
 
-        // Data karty
+        // Základní data
         document.querySelector('h1').innerText = data.name;
         document.querySelector('.bio').innerText = data.bio;
         
-        if (data.avatar) document.querySelector('.avatar').src = data.avatar;
+        // Avatar
+        if (data.avatar) {
+            document.querySelector('.avatar').src = data.avatar;
+            document.querySelector('.avatar').style.display = 'block';
+        }
 
+        // Číslo
         const mintNum = data.mint_number || "---";
         document.querySelector('.mint-number').innerText = `NO. #${mintNum}`;
 
-        // Tlačítka
+        // MOTTO (Bezpečnostní proužek)
+        const mottoText = data.motto ? `${data.motto}  ✦  ` : "FORGED BY ÆON  ✦  ";
+        // Zopakujeme text, aby běhal plynule
+        document.querySelector('.motto-text').innerText = mottoText.repeat(10);
+
+        // ODKAZY (Až 10)
         const linksContainer = document.querySelector('.links');
         linksContainer.innerHTML = ''; 
-        if (data.links) {
+        if (data.links && Array.isArray(data.links)) {
             data.links.forEach(link => {
-                const btn = document.createElement('a');
-                btn.href = fixUrl(link.url);
-                btn.className = 'link-btn';
-                btn.innerText = link.label;
-                btn.target = "_blank"; 
-                linksContainer.appendChild(btn);
+                if(link.label && link.url) {
+                    const btn = document.createElement('a');
+                    btn.href = fixUrl(link.url);
+                    btn.className = 'link-btn';
+                    btn.innerText = link.label;
+                    btn.target = "_blank"; 
+                    linksContainer.appendChild(btn);
+                }
             });
         }
 
-        // QR Kód
-        let rawQrUrl = data.instagram || (data.links && data.links[0] ? data.links[0].url : window.location.href);
-        generateQR(fixUrl(rawQrUrl));
+        // QR Kód (Vždy směřuje na TUTO kartu)
+        const currentUrl = window.location.href;
+        generateQR(currentUrl);
+
+        // Zobrazení
+        loader.style.opacity = '0';
+        setTimeout(() => { loader.style.display = 'none'; scene.style.opacity = '1'; }, 500);
 
     } catch (error) {
         console.error("Chyba:", error);
+        loader.innerHTML = "<div style='color:red'>SYSTEM ERROR</div>";
     }
 }
 
-// --- 2. GENERÁTOR QR ---
-function generateQR(url) {
-    const qrContainer = document.getElementById('qrcode');
-    qrContainer.innerHTML = "";
-    new QRCode(qrContainer, {
-        text: url, width: 130, height: 130,
-        colorDark : "#000000", colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
-    });
-}
-
-// --- 3. 3D EFEKT ---
+// 3D Efekt
 function handleMove(e) {
     if(isFlipped) return;
     const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
@@ -94,24 +152,33 @@ function handleMove(e) {
     const centerY = window.innerHeight / 2;
     const xDist = (clientX - centerX) / centerX;
     const yDist = (clientY - centerY) / centerY; 
-    const rotateY = xDist * 20; 
-    const rotateX = -yDist * 20;
-    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    card.style.transform = `rotateX(${-yDist * 15}deg) rotateY(${xDist * 15}deg)`;
 }
 
 function resetCard() { if(!isFlipped) card.style.transform = `rotateX(0deg) rotateY(0deg)`; }
-
 function flipCard() {
     isFlipped = !isFlipped;
-    if (isFlipped) card.style.transform = `rotateY(180deg)`;
-    else card.style.transform = `rotateY(0deg)`;
+    card.style.transform = isFlipped ? `rotateY(180deg)` : `rotateY(0deg)`;
 }
 
-// --- SPUŠTĚNÍ ---
-securityProtocol(); // Aktivace ochrany
-loadProfile();
+// Spuštění
+securityProtocol();
+updateTheme(); // Nastaví pozadí
+loadProfile(); // Načte data
 
+// Eventy
 document.addEventListener('mousemove', handleMove);
 document.addEventListener('touchmove', handleMove);
 document.addEventListener('mouseleave', resetCard);
 card.addEventListener('click', flipCard);
+
+// Aktualizace pozadí každou minutu
+setInterval(updateTheme, 60000);
+
+// Zkusit získat přesnější polohu pro pozadí (nepovinné)
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(p => {
+        userLat = p.coords.latitude; userLng = p.coords.longitude;
+        updateTheme();
+    }, () => {});
+}

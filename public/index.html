@@ -9,150 +9,45 @@
 </head>
 <body>
 
+    <div class="ambient-background">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+    </div>
+
     <div id="loader" class="loader-container">
         <div class="spinner"></div>
         <div style="font-size: 12px; color: #00d2ff; letter-spacing: 2px;">INITIALIZING...</div>
     </div>
 
-    <div class="noise-overlay"></div>
-
     <div class="scene">
         <div class="card" id="artifact">
+            
             <div class="card-face front">
-                <div class="mint-number">NO. ----</div>
-                <img src="" class="avatar" style="display: none;"> <h1></h1> <p class="bio"></p> <div class="links">
+                
+                <div class="security-strip-container">
+                    <div class="security-strip">
+                        <div class="motto-text">FORGED BY ÆON ✦ FORGED BY ÆON ✦</div>
                     </div>
+                </div>
 
-                <div style="margin-top: auto; font-size: 10px; color: #333; letter-spacing: 1px;">FORGED BY ÆON</div>
+                <div class="mint-number">NO. ----</div>
+                <img src="" class="avatar" style="display: none;">
+                <h1></h1>
+                <p class="bio"></p>
+                
+                <div class="links">
+                    </div>
             </div>
 
             <div class="card-face back">
                 <div id="qrcode"></div>
-                <div style="margin-top: 20px; font-size: 10px; color: #555;">SCAN TO CONNECT</div>
+                <div style="margin-top: 20px; font-size: 12px; color: #fff; font-weight: bold; letter-spacing: 1px;">SCAN TO CONNECT</div>
             </div>
         </div>
     </div>
 
-    <script>
-        // --- SCRIPT.JS LOGIKA (Přímo zde pro stabilitu) ---
-        const card = document.getElementById('artifact');
-        const scene = document.querySelector('.scene');
-        const loader = document.getElementById('loader');
-        let isFlipped = false;
-
-        // --- SECURITY PROTOCOL (Ochrana proti kopírování) ---
-        function activateSecurity() {
-            // Zákaz pravého tlačítka
-            document.addEventListener('contextmenu', e => e.preventDefault());
-            // Zákaz klávesových zkratek (F12, Ctrl+U, Ctrl+S)
-            document.onkeydown = function(e) {
-                if (e.keyCode == 123 || (e.ctrlKey && e.keyCode == 85) || (e.ctrlKey && e.keyCode == 83)) {
-                    return false;
-                }
-            };
-            // Kill Switch (Pokud to neběží na localhostu nebo netlify)
-            const h = window.location.hostname;
-            if (!h.includes('netlify.app') && !h.includes('localhost') && !h.includes('aeon')) {
-                document.body.innerHTML = "SECURITY VIOLATION.";
-                throw new Error("Piracy Detected");
-            }
-        }
-
-        function fixUrl(url) {
-            if (!url) return "#";
-            if (!url.startsWith('http')) return 'https://' + url;
-            return url;
-        }
-
-        async function loadProfile() {
-            const params = new URLSearchParams(window.location.search);
-            const userSlug = params.get('slug') || 'jan-novak';
-
-            try {
-                const response = await fetch(`/.netlify/functions/aeon-api?slug=${userSlug}`);
-                if (!response.ok) throw new Error("Profil nenalezen");
-                
-                const data = await response.json();
-
-                // Vyplnění dat
-                document.querySelector('h1').innerText = data.name;
-                document.querySelector('.bio').innerText = data.bio;
-                
-                const avatarEl = document.querySelector('.avatar');
-                if (data.avatar) {
-                    avatarEl.src = data.avatar;
-                    avatarEl.style.display = 'block';
-                }
-
-                const mintNum = data.mint_number || "---";
-                document.querySelector('.mint-number').innerText = `NO. #${mintNum}`;
-
-                const linksContainer = document.querySelector('.links');
-                linksContainer.innerHTML = ''; 
-                if (data.links) {
-                    data.links.forEach(link => {
-                        const btn = document.createElement('a');
-                        btn.href = fixUrl(link.url);
-                        btn.className = 'link-btn';
-                        btn.innerText = link.label;
-                        btn.target = "_blank"; 
-                        linksContainer.appendChild(btn);
-                    });
-                }
-
-                // QR
-                let rawQrUrl = data.instagram || (data.links && data.links[0] ? data.links[0].url : window.location.href);
-                generateQR(fixUrl(rawQrUrl));
-
-                // --- VŠE NAČTENO -> ZOBRAZIT KARTU ---
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    scene.style.opacity = '1'; // Fade In efekt
-                }, 500);
-
-            } catch (error) {
-                console.error("Chyba:", error);
-                // I při chybě schováme loader, ať to nezamrzne
-                loader.innerHTML = "<div style='color:red'>SYSTEM ERROR</div>";
-            }
-        }
-
-        function generateQR(url) {
-            const qrContainer = document.getElementById('qrcode');
-            qrContainer.innerHTML = "";
-            new QRCode(qrContainer, {
-                text: url, width: 130, height: 130,
-                colorDark : "#000000", colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
-        }
-
-        // 3D Logika
-        function handleMove(e) {
-            if(isFlipped) return;
-            const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-            const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-            const xDist = (clientX - centerX) / centerX;
-            const yDist = (clientY - centerY) / centerY; 
-            card.style.transform = `rotateX(${-yDist * 20}deg) rotateY(${xDist * 20}deg)`;
-        }
-
-        function resetCard() { if(!isFlipped) card.style.transform = `rotateX(0deg) rotateY(0deg)`; }
-        function flipCard() {
-            isFlipped = !isFlipped;
-            card.style.transform = isFlipped ? `rotateY(180deg)` : `rotateY(0deg)`;
-        }
-
-        // Spuštění
-        activateSecurity();
-        loadProfile();
-        document.addEventListener('mousemove', handleMove);
-        document.addEventListener('touchmove', handleMove);
-        document.addEventListener('mouseleave', resetCard);
-        card.addEventListener('click', flipCard);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

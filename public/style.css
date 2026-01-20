@@ -1,16 +1,47 @@
 :root {
+    /* --- ZÁKLADNÍ BARVY KARTY --- */
     --primary: #ffffff;
     --accent: #00d2ff;
     --gold: #ffd700;
     --dark-bg: #050505;
     --glass: rgba(255, 255, 255, 0.05);
     --border: rgba(255, 255, 255, 0.1);
+
+    /* --- DYNAMICKÉ POZADÍ (Z tvého kódu) --- */
+    --bg-gradient-start: #2c3a47;
+    --bg-gradient-end: #000000;
+    --orb-1-color: #00d2ff;
+    --orb-2-color: #5f27cd;
+    --orb-3-color: #ff9ff3;
+    --orb-4-color: #48dbfb;
+    --orb-blend: screen;
 }
 
+/* --- LOGIKA POZADÍ (SEZÓNY A ČAS) --- */
+body.spring.morning { --bg-gradient-start: #f3ffe3; --bg-gradient-end: #fff0f5; --orb-1-color: #e2f0cb; --orb-2-color: #ff9ff3; --orb-3-color: #c7ecee; --orb-4-color: #f7d794; }
+body.spring.noon { --bg-gradient-start: #badc58; --bg-gradient-end: #dff9fb; --orb-1-color: #f6e58d; --orb-2-color: #6ab04c; --orb-3-color: #ffbe76; --orb-4-color: #7ed6df; }
+body.spring.evening { --bg-gradient-start: #e056fd; --bg-gradient-end: #f0932b; --orb-1-color: #ffbe76; --orb-2-color: #be2edd; --orb-3-color: #ff7979; --orb-4-color: #badc58; }
+body.spring.night { --bg-gradient-start: #2c3a47; --bg-gradient-end: #58b19f; --orb-1-color: #55efc4; --orb-2-color: #a29bfe; --orb-3-color: #00b894; --orb-4-color: #fdcb6e; }
+
+body.summer.morning { --bg-gradient-start: #fff3e0; --bg-gradient-end: #81ecec; --orb-1-color: #fab1a0; --orb-2-color: #74b9ff; --orb-3-color: #ffeaa7; --orb-4-color: #81ecec; }
+body.summer.noon { --bg-gradient-start: #f9ca24; --bg-gradient-end: #f0932b; --orb-1-color: #ff7979; --orb-2-color: #badc58; --orb-3-color: #22a6b3; --orb-4-color: #f6e58d; }
+body.summer.evening { --bg-gradient-start: #eb4d4b; --bg-gradient-end: #686de0; --orb-1-color: #f0932b; --orb-2-color: #be2edd; --orb-3-color: #ff7979; --orb-4-color: #ffbe76; }
+body.summer.night { --bg-gradient-start: #130f40; --bg-gradient-end: #30336b; --orb-1-color: #e056fd; --orb-2-color: #f9ca24; --orb-3-color: #ff7979; --orb-4-color: #686de0; }
+
+body.autumn.morning { --bg-gradient-start: #f7f1e3; --bg-gradient-end: #d1ccc0; --orb-1-color: #ffb142; --orb-2-color: #ffda79; --orb-3-color: #d1d8e0; --orb-4-color: #ff5252; }
+body.autumn.noon { --bg-gradient-start: #fff5e6; --bg-gradient-end: #ffdbcc; --orb-1-color: #ff9f43; --orb-2-color: #ee5253; --orb-3-color: #ffbe76; --orb-4-color: #fab1a0; }
+body.autumn.evening { --bg-gradient-start: #ffda79; --bg-gradient-end: #ffb142; --orb-1-color: #cc8e35; --orb-2-color: #e17055; --orb-3-color: #b33939; --orb-4-color: #f7f1e3; }
+body.autumn.night { --bg-gradient-start: #2d3436; --bg-gradient-end: #0f0c29; --orb-1-color: #cd6133; --orb-2-color: #f7f1e3; --orb-3-color: #30336b; --orb-4-color: #ffda79; }
+
+body.winter.morning { --bg-gradient-start: #f1f2f6; --bg-gradient-end: #dfe4ea; --orb-1-color: #74b9ff; --orb-2-color: #a29bfe; --orb-3-color: #ffffff; --orb-4-color: #81ecec; }
+body.winter.noon { --bg-gradient-start: #e3f2fd; --bg-gradient-end: #bbdefb; --orb-1-color: #0984e3; --orb-2-color: #00cec9; --orb-3-color: #fab1a0; --orb-4-color: #ffffff; }
+body.winter.evening { --bg-gradient-start: #6c5ce7; --bg-gradient-end: #a29bfe; --orb-1-color: #fd79a8; --orb-2-color: #74b9ff; --orb-3-color: #e056fd; --orb-4-color: #0984e3; }
+body.winter.night { --bg-gradient-start: #0c2461; --bg-gradient-end: #1e3799; --orb-1-color: #00d2d3; --orb-2-color: #5f27cd; --orb-3-color: #ff9ff3; --orb-4-color: #48dbfb; }
+
 body {
-    background-color: var(--dark-bg);
+    background-color: #000; /* Fallback */
     color: var(--primary);
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -18,81 +49,144 @@ body {
     margin: 0;
     overflow: hidden;
     perspective: 1000px;
-    user-select: none; /* Zákaz označování textu */
+    user-select: none;
     -webkit-user-select: none;
 }
 
-/* --- LOADER (Točící kolečko) --- */
+/* --- AMBIENTNÍ POZADÍ (ORBS) --- */
+.ambient-background {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -100;
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    transition: background 3s ease;
+}
+.orb {
+    position: absolute; border-radius: 50%; filter: blur(50px); opacity: 0.7;
+    mix-blend-mode: var(--orb-blend);
+    animation: float 25s ease-in-out infinite alternate;
+    transition: background-color 3s ease;
+}
+.orb-1 { width: 70vw; height: 70vw; background: var(--orb-1-color); top: -10%; left: -10%; animation-duration: 20s; }
+.orb-2 { width: 60vw; height: 60vw; background: var(--orb-2-color); bottom: -10%; right: -10%; animation-duration: 28s; animation-delay: -5s; }
+.orb-3 { width: 50vw; height: 50vw; background: var(--orb-3-color); top: 20%; left: 30%; animation-duration: 24s; animation-delay: -8s; }
+.orb-4 { width: 40vw; height: 40vw; background: var(--orb-4-color); bottom: 10%; left: 10%; opacity: 0.5; animation: floatReverse 30s ease-in-out infinite alternate; }
+
+@keyframes float {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(15vw, 10vh) rotate(40deg); }
+    66% { transform: translate(-10vw, 20vh) rotate(-20deg); }
+    100% { transform: translate(5vw, -10vh) rotate(10deg); }
+}
+@keyframes floatReverse {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-20vw, -15vh) scale(1.2); }
+    100% { transform: translate(15vw, 10vh) scale(0.9); }
+}
+
+/* --- LOADER --- */
 .loader-container {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: #000;
-    display: flex; flex-direction: column;
-    justify-content: center; align-items: center;
-    z-index: 9999;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #000; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; z-index: 9999;
     transition: opacity 0.5s ease-out;
 }
 .spinner {
     width: 50px; height: 50px;
-    border: 3px solid rgba(0, 210, 255, 0.3);
-    border-radius: 50%;
-    border-top-color: var(--accent);
-    animation: spin 1s ease-in-out infinite;
-    margin-bottom: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%; border-top-color: var(--accent);
+    animation: spin 1s ease-in-out infinite; margin-bottom: 20px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* --- SECURITY OVERLAY (Šum) --- */
-.noise-overlay {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    pointer-events: none; z-index: 9000;
-    opacity: 0.05;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-}
-
-/* --- 3D SCÉNA (Skrytá při načítání) --- */
-.scene {
-    width: 320px; height: 500px;
-    position: relative;
-    opacity: 0; /* Skryté, dokud se nenačte */
-    transition: opacity 0.8s ease-in;
-}
-
+/* --- KARTA --- */
+.scene { width: 320px; height: 500px; position: relative; opacity: 0; transition: opacity 0.8s ease-in; }
 .card {
     width: 100%; height: 100%; position: relative;
     transform-style: preserve-3d; transition: transform 0.1s;
     border-radius: 20px;
+    /* Sklo na kartě */
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
 }
 
+/* --- SECURITY STRIP (MOTTO) --- */
+.security-strip-container {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    overflow: hidden; border-radius: 20px; pointer-events: none; z-index: 1;
+}
+.security-strip {
+    position: absolute;
+    top: 15%; left: -50%; width: 200%; height: 40px;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+    transform: rotate(-15deg);
+    display: flex; align-items: center;
+    opacity: 0.6;
+    mix-blend-mode: overlay; /* Klíčové pro "bankovkový" efekt */
+}
+.motto-text {
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: bold;
+    color: rgba(255, 215, 0, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    animation: marquee 10s linear infinite;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.2);
+}
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* --- OBSAH KARTY --- */
 .card-face {
     position: absolute; width: 100%; height: 100%;
     backface-visibility: hidden; border-radius: 20px;
     display: flex; flex-direction: column;
     align-items: center; justify-content: space-between;
     padding: 20px; box-sizing: border-box;
-    background: var(--glass); backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    box-shadow: 0 0 30px rgba(0, 210, 255, 0.1);
+    z-index: 2; /* Musí být nad proužkem */
 }
+.card-face.back { transform: rotateY(180deg); background: rgba(0,0,0,0.8); justify-content: center; z-index: 3;}
 
-.card-face.back {
-    transform: rotateY(180deg); background: rgba(0,0,0,0.9);
-    justify-content: center;
-}
-
-.mint-number { font-size: 10px; color: var(--border); letter-spacing: 2px; align-self: flex-end; }
+.mint-number { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 2px; align-self: flex-end; }
 .avatar {
     width: 100px; height: 100px; border-radius: 50%;
     background: #111; border: 2px solid var(--accent);
-    margin-top: 20px; box-shadow: 0 0 20px var(--accent);
+    margin-top: 10px; box-shadow: 0 0 20px var(--accent);
     object-fit: cover; object-position: center;
 }
-h1 { font-size: 24px; margin: 10px 0 5px 0; text-transform: uppercase; letter-spacing: 3px; text-align: center; }
-.bio { font-size: 12px; color: #888; text-align: center; margin-bottom: 20px; }
-.links { width: 100%; display: flex; flex-direction: column; gap: 10px; }
-.link-btn {
-    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-    color: white; padding: 12px; text-align: center; text-decoration: none;
-    border-radius: 8px; transition: 0.3s; font-size: 14px; text-transform: uppercase;
+
+h1 { font-size: 22px; margin: 10px 0 5px 0; text-transform: uppercase; letter-spacing: 2px; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+.bio { font-size: 11px; color: #ccc; text-align: center; margin-bottom: 15px; padding: 0 10px; line-height: 1.4; }
+
+/* ODKAZY - SCROLLOVATELNÉ */
+.links {
+    width: 100%; display: flex; flex-direction: column; gap: 8px;
+    overflow-y: auto; flex-grow: 1; padding-right: 5px;
+    max-height: 180px;
 }
-.link-btn:hover { background: var(--accent); color: black; box-shadow: 0 0 15px var(--accent); }
+/* Scrollbar pro odkazy */
+.links::-webkit-scrollbar { width: 4px; }
+.links::-webkit-scrollbar-track { background: transparent; }
+.links::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+.link-btn {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+    color: white; padding: 10px; text-align: center; text-decoration: none;
+    border-radius: 8px; transition: 0.2s; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
+    display: block; width: 100%; box-sizing: border-box;
+}
+.link-btn:hover { background: var(--accent); color: black; box-shadow: 0 0 10px var(--accent); border-color: var(--accent); }
+
+/* --- ADMIN: AVATAR STUDIO --- */
+.avatar-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    margin-top: 10px; max-height: 200px; overflow-y: auto;
+    background: #111; padding: 10px; border-radius: 8px; border: 1px solid #333;
+}
+.avatar-option {
+    width: 100%; border-radius: 50%; cursor: pointer;
+    border: 2px solid transparent; transition: 0.2s;
+}
+.avatar-option:hover { transform: scale(1.1); }
+.avatar-option.selected { border-color: var(--accent); box-shadow: 0 0 10px var(--accent); }

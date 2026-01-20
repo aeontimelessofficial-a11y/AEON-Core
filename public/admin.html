@@ -4,70 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ÆON | The Forge</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        body { background: #050505; color: white; font-family: 'Courier New', monospace; display: flex; justify-content: center; padding: 40px; }
-        .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 15px; }
-        h1 { color: #00d2ff; text-align: center; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 30px; }
-        
-        label { color: #888; font-size: 12px; margin-bottom: -10px; text-transform: uppercase; }
-        input, textarea { background: #111; border: 1px solid #333; color: white; padding: 15px; border-radius: 5px; font-family: inherit; }
-        input:focus, textarea:focus { outline: none; border-color: #00d2ff; }
-        
-        button { background: #00d2ff; color: black; border: none; padding: 15px; font-weight: bold; cursor: pointer; margin-top: 20px; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
-        button:hover { box-shadow: 0 0 20px #00d2ff; }
-
-        .preview-img { width: 100px; height: 100px; border-radius: 50%; border: 2px solid #333; margin: 0 auto; object-fit: cover; display: block; background: #111; }
-        .status { text-align: center; margin-top: 20px; color: yellow; min-height: 20px;}
-        .loader { text-align: center; color: #00d2ff; display: none; }
+        body { overflow: auto; height: auto; padding: 40px 0; }
+        .container { background: rgba(0,0,0,0.8); padding: 30px; border-radius: 20px; border: 1px solid #333; width: 90%; max-width: 500px; display: flex; flex-direction: column; gap: 15px; }
+        h1 { color: #00d2ff; margin-bottom: 20px; }
+        label { color: #888; font-size: 12px; text-transform: uppercase; margin-bottom: -10px; display: block; }
+        input, textarea { background: #111; border: 1px solid #333; color: white; padding: 15px; border-radius: 5px; width: 100%; box-sizing: border-box; font-family: inherit; margin-top: 5px;}
+        button { width: 100%; margin-top: 20px; }
+        .link-row { display: flex; gap: 10px; margin-bottom: 5px; }
+        .status { margin-top: 10px; text-align: center; }
     </style>
 </head>
 <body>
 
+    <div class="ambient-background">
+        <div class="orb orb-1"></div><div class="orb orb-2"></div>
+    </div>
+
     <div class="container">
-        <h1 id="pageTitle">The Forge</h1>
-        <div id="loading" class="loader">NAČÍTÁM DATA...</div>
+        <h1>The Forge</h1>
+        <div id="loading" style="text-align:center; color:#00d2ff;">NAČÍTÁM DATA...</div>
 
         <label>URL Adresa (Slug)</label>
         <input type="text" id="slug" placeholder="např. ondra" required>
 
-        <label>Jméno na kartě</label>
+        <label>Jméno</label>
         <input type="text" id="name" placeholder="Jan Novák">
 
-        <label>Podtitul (Bio)</label>
+        <label>Bio (Podtitul)</label>
         <input type="text" id="bio" placeholder="Digital Creator">
 
-        <label>Profilová fotka</label>
+        <label>Motto (Bezpečnostní proužek)</label>
+        <input type="text" id="motto" placeholder="Např. FUTURE IS NOW (Max 30 znaků)" maxlength="30">
+
+        <label>Avatar Studio (Vyber nebo nahraj vlastní)</label>
+        <div class="avatar-grid" id="avatarStudio">
+            </div>
+        <div style="text-align: center; margin: 10px 0; font-size: 12px; color: #666;">- NEBO NAHRAJ VLASTNÍ -</div>
         <input type="file" id="photoInput" accept="image/*">
-        <img id="preview" class="preview-img">
         <input type="hidden" id="base64String">
+        <img id="preview" style="width: 60px; height: 60px; border-radius: 50%; display: block; margin: 10px auto; object-fit: cover;">
 
-        <label>Tlačítko 1</label>
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="btn1_label" placeholder="Label" style="width: 40%">
-            <input type="text" id="btn1_url" placeholder="URL" style="width: 60%">
-        </div>
+        <label>Odkazy (Max 10)</label>
+        <div id="linksContainer"></div>
+        <button onclick="addLinkField()" style="background: #333; margin-top: 5px;">+ Přidat odkaz</button>
 
-        <label>Tlačítko 2</label>
-        <div style="display: flex; gap: 10px;">
-            <input type="text" id="btn2_label" placeholder="Label" style="width: 40%">
-            <input type="text" id="btn2_url" placeholder="URL" style="width: 60%">
-        </div>
-
-        <button onclick="saveCard()" id="saveBtn">Vypálit do sítě</button>
+        <button onclick="saveCard()" id="saveBtn" style="background: #00d2ff; color: black; font-weight: bold;">VYPÁLIT DO SÍTĚ</button>
         <div id="status" class="status"></div>
     </div>
 
     <script>
+        // --- 1. AVATAR STUDIO SETUP ---
+        const avatarSeeds = ["Felix", "Aneka", "Jack", "Mimi", "Spooky", "Bear", "Eyes", "Cale", "Buster", "Leo", "Missy", "Bandit"];
+        const avatarContainer = document.getElementById('avatarStudio');
+        
+        avatarSeeds.forEach(seed => {
+            const img = document.createElement('img');
+            // Používáme DiceBear API pro profi avatary
+            const url = `https://api.dicebear.com/7.x/notionists/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9`;
+            img.src = url;
+            img.className = 'avatar-option';
+            img.onclick = () => selectAvatar(url, img);
+            avatarContainer.appendChild(img);
+        });
+
+        function selectAvatar(url, element) {
+            document.getElementById('base64String').value = url;
+            document.getElementById('preview').src = url;
+            // Zvýraznění
+            document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        // --- 2. ODKAZY LOGIKA ---
+        const linksWrapper = document.getElementById('linksContainer');
+        let linkCount = 0;
+
+        function addLinkField(label = "", url = "") {
+            if (linkCount >= 10) return;
+            linkCount++;
+            const div = document.createElement('div');
+            div.className = 'link-row';
+            div.innerHTML = `
+                <input type="text" class="link-label" placeholder="Název" value="${label}" style="width: 40%">
+                <input type="text" class="link-url" placeholder="URL (např. instagram.com/ja)" value="${url}" style="width: 60%">
+            `;
+            linksWrapper.appendChild(div);
+        }
+
+        // --- 3. LOAD & SAVE ---
         window.onload = async function() {
+            // Přidáme základní 2 linky
+            // addLinkField(); addLinkField();
+
             const params = new URLSearchParams(window.location.search);
             const slug = params.get('slug');
 
             if (slug) {
                 document.getElementById('slug').value = slug;
-                document.getElementById('pageTitle').innerText = "Editor";
                 document.getElementById('saveBtn').innerText = "AKTUALIZOVAT";
-                document.getElementById('loading').style.display = 'block';
-
+                
                 try {
                     const response = await fetch(`/.netlify/functions/aeon-api?slug=${slug}`);
                     if (response.ok) {
@@ -75,27 +112,31 @@
                         
                         document.getElementById('name').value = data.name || "";
                         document.getElementById('bio').value = data.bio || "";
+                        document.getElementById('motto').value = data.motto || "";
                         
                         if (data.avatar) {
-                            document.getElementById('preview').src = data.avatar;
                             document.getElementById('base64String').value = data.avatar;
+                            document.getElementById('preview').src = data.avatar;
                         }
 
-                        if (data.links && data.links[0]) {
-                            document.getElementById('btn1_label').value = data.links[0].label;
-                            document.getElementById('btn1_url').value = data.links[0].url;
+                        // Načíst linky
+                        linksWrapper.innerHTML = '';
+                        linkCount = 0;
+                        if (data.links && Array.isArray(data.links)) {
+                            data.links.forEach(l => addLinkField(l.label, l.url));
                         }
-                        if (data.links && data.links[1]) {
-                            document.getElementById('btn2_label').value = data.links[1].label;
-                            document.getElementById('btn2_url').value = data.links[1].url;
-                        }
+                        // Pokud nemá linky, přidáme prázdné
+                        if (linkCount === 0) { addLinkField(); addLinkField(); }
                     }
-                } catch (e) { console.log("Profil nenalezen."); }
+                } catch (e) { console.log("Profil nenalezen."); addLinkField(); addLinkField(); }
                 document.getElementById('loading').style.display = 'none';
+            } else {
+                document.getElementById('loading').style.display = 'none';
+                addLinkField(); addLinkField();
             }
         };
 
-        // Zmenšení fotky
+        // Zpracování nahrané fotky
         document.getElementById('photoInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -111,9 +152,11 @@
                     else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } }
                     canvas.width = w; canvas.height = h;
                     ctx.drawImage(img, 0, 0, w, h);
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
                     document.getElementById('preview').src = dataUrl;
                     document.getElementById('base64String').value = dataUrl;
+                    // Odznačit studio
+                    document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
                 }
                 img.src = event.target.result;
             }
@@ -123,45 +166,47 @@
         async function saveCard() {
             const status = document.getElementById('status');
             status.innerText = "Ukládám...";
+            status.style.color = "yellow";
             
             const slugRaw = document.getElementById('slug').value;
             const slug = slugRaw.toLowerCase().replace(/\s+/g, '-'); 
 
+            // Sbírání linků
+            const links = [];
+            const rows = document.querySelectorAll('.link-row');
+            rows.forEach(row => {
+                const l = row.querySelector('.link-label').value;
+                const u = row.querySelector('.link-url').value;
+                if(l && u) links.push({ label: l, url: u });
+            });
+
             const payload = {
-                slug: slug,
-                name: document.getElementById('name').value,
-                bio: document.getElementById('bio').value,
-                avatar: document.getElementById('base64String').value,
-                links: []
+                data: {
+                    slug: slug,
+                    name: document.getElementById('name').value,
+                    bio: document.getElementById('bio').value,
+                    motto: document.getElementById('motto').value,
+                    avatar: document.getElementById('base64String').value,
+                    links: links
+                }
             };
 
-            const l1 = document.getElementById('btn1_label').value;
-            const u1 = document.getElementById('btn1_url').value;
-            if (l1 && u1) payload.links.push({ label: l1, url: u1 });
-
-            const l2 = document.getElementById('btn2_label').value;
-            const u2 = document.getElementById('btn2_url').value;
-            if (l2 && u2) payload.links.push({ label: l2, url: u2 });
-
             try {
-                // Neposíláme žádné heslo, jen data
                 const res = await fetch('/.netlify/functions/aeon-api', {
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
                 
-                const result = await res.json();
-
                 if (res.ok) {
                     status.innerText = "HOTOVO!";
                     status.style.color = "#0f0";
                     setTimeout(() => window.location.href = `/?slug=${slug}`, 1500);
                 } else {
-                    status.innerText = "CHYBA: " + (result.error || "Server error");
+                    status.innerText = "CHYBA SERVERU";
                     status.style.color = "red";
                 }
             } catch (err) {
-                status.innerText = "Chyba spojení: " + err.message;
+                status.innerText = "Chyba spojení.";
             }
         }
     </script>
