@@ -116,7 +116,7 @@
                 document.getElementById('slug').value = slug;
                 document.getElementById('saveBtn').innerText = "AKTUALIZOVAT";
                 try {
-                    // --- ZMĚNA ADRESY PRO VERCEL (LOAD) ---
+                    // ZMĚNA: /.netlify/functions/ -> /api/
                     const res = await fetch(`/api/aeon-api?slug=${slug}`);
                     if(res.ok) {
                         const d = await res.json();
@@ -158,7 +158,7 @@
             };
 
             try {
-                // --- ZMĚNA ADRESY PRO VERCEL (SAVE) ---
+                // ZMĚNA: /.netlify/functions/ -> /api/
                 await fetch('/api/aeon-api', { method: 'POST', body: JSON.stringify(payload) });
                 stat.innerText = "HOTOVO!"; stat.style.color = "#0f0";
                 setTimeout(() => window.location.href = `/?slug=${slug}`, 1500);

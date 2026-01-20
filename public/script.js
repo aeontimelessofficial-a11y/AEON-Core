@@ -43,7 +43,7 @@ async function loadProfile() {
     const userSlug = params.get('slug') || 'jan-novak';
 
     try {
-        // --- ZMĚNA ADRESY PRO VERCEL ---
+        // ZMĚNA: /.netlify/functions/ -> /api/
         const response = await fetch(`/api/aeon-api?slug=${userSlug}`);
         if (!response.ok) throw new Error("Profil nenalezen");
         
