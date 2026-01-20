@@ -8,7 +8,7 @@
     --orb-1-color: #24243e; --orb-2-color: #0f0c29; --orb-3-color: #7b4397; --orb-4-color: #dc2430;
     --accent: #ffffff;
     --text-main: #ffffff;
-    --card-bg: rgba(20, 20, 20, 0.65);
+    --card-glass: rgba(20, 20, 20, 0.65);
     --input-bg: rgba(0, 0, 0, 0.5);
     --orb-blend: screen;
 }
@@ -37,7 +37,7 @@ body.winter.evening { --bg-start: #6c5ce7; --bg-end: #a29bfe; --o1: #fd79a8; --o
 body.winter.night   { --bg-start: #0c2461; --bg-end: #1e3799; --o1: #00d2d3; --o2: #5f27cd; --o3: #ff9ff3; --o4: #48dbfb; --accent: #48dbfb; --text-main: #ffffff; --card-glass: rgba(10,20,50,0.75); --input-bg: rgba(0,0,0,0.5); --orb-blend: screen; }
 
 /* =========================================
-   2. FIXNUTÉ & ANIMOVANÉ POZADÍ
+   2. POZADÍ (FIXNUTÉ A ROZHÝBANÉ)
    ========================================= */
 body {
     background-color: #000;
@@ -47,7 +47,8 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     display: block; 
-    /* Zákaz označování globálně */
+    
+    /* ⚡ FIX: ZÁKAZ OZNAČOVÁNÍ NA MOBILU */
     -webkit-tap-highlight-color: transparent;
     -webkit-user-select: none;
     user-select: none;
@@ -65,24 +66,31 @@ body {
 .orb {
     position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.7;
     mix-blend-mode: var(--orb-blend);
-    /* Zde je ta animace */
-    animation: float 25s ease-in-out infinite alternate;
     transition: background-color 0.5s ease;
-    /* Optimalizace výkonu animace */
-    will-change: transform;
+    will-change: transform; /* Optimalizace pro plynulý pohyb */
 }
-.orb-1 { width: 70vw; height: 70vw; background: var(--o1); top: -10%; left: -10%; animation-duration: 20s; }
-.orb-2 { width: 60vw; height: 60vw; background: var(--o2); bottom: -10%; right: -10%; animation-delay: -5s; }
-.orb-3 { width: 50vw; height: 50vw; background: var(--o3); top: 20%; left: 30%; animation-delay: -8s; }
-.orb-4 { width: 40vw; height: 40vw; background: var(--o4); bottom: 10%; left: 10%; opacity: 0.5; }
 
-@keyframes float { 
-    0% { transform: translate(0, 0); } 
-    100% { transform: translate(30px, 60px); } 
+/* ⚡ PŮVODNÍ ANIMACE (ROZHÝBÁNÍ) */
+.orb-1 { width: 70vw; height: 70vw; background: var(--o1); top: -10%; left: -10%; animation: float 20s ease-in-out infinite alternate; }
+.orb-2 { width: 60vw; height: 60vw; background: var(--o2); bottom: -10%; right: -10%; animation: float 28s ease-in-out infinite alternate; animation-delay: -5s; }
+.orb-3 { width: 50vw; height: 50vw; background: var(--o3); top: 20%; left: 30%; animation: float 24s ease-in-out infinite alternate; animation-delay: -8s; }
+.orb-4 { width: 40vw; height: 40vw; background: var(--o4); bottom: 10%; left: 10%; opacity: 0.5; animation: floatReverse 30s ease-in-out infinite alternate; }
+
+@keyframes float {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(15vw, 10vh) rotate(40deg); }
+    66% { transform: translate(-10vw, 20vh) rotate(-20deg); }
+    100% { transform: translate(5vw, -10vh) rotate(10deg); }
+}
+
+@keyframes floatReverse {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-20vw, -15vh) scale(1.2); }
+    100% { transform: translate(15vw, 10vh) scale(0.9); }
 }
 
 /* =========================================
-   3. KARTA & 3D FLIP (BEZ MODRÉHO OZNAČENÍ)
+   3. KARTA & 3D FLIP (BEZ MODRÉHO BLIKNUTÍ)
    ========================================= */
 .card-wrapper {
     display: flex; justify-content: center; align-items: center;
@@ -105,7 +113,7 @@ body {
     cursor: pointer;
     border-radius: 36px;
     
-    /* ZÁKAZ MODRÉHO OZNAČENÍ NA MOBILU */
+    /* ⚡ FIX: ZÁKAZ MODRÉHO OZNAČENÍ */
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     outline: none;
@@ -161,7 +169,7 @@ h1 {
     border-radius: 12px; font-weight: 600; font-size: 13px;
     transition: 0.2s; border: 1px solid rgba(255,255,255,0.1);
     
-    /* Zákaz označení i na tlačítkách */
+    /* ⚡ FIX: ZÁKAZ OZNAČENÍ I ZDE */
     -webkit-tap-highlight-color: transparent;
 }
 .link-btn:hover { background: var(--accent); color: #fff; transform: translateY(-2px); border-color: transparent; }
