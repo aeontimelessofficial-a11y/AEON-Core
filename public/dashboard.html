@@ -17,7 +17,6 @@
         a { color: #00d2ff; text-decoration: none; margin-right: 15px; }
         a:hover { text-decoration: underline; }
         .login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 999; }
-        /* Oprava inputu */
         input { background: #111; border: 1px solid #333; color: white; padding: 15px; font-family: inherit; margin-bottom: 10px; width: 250px; text-align: center; outline: none; }
         input:focus { border-color: #00d2ff; }
         button { background: #00d2ff; color: black; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
@@ -58,7 +57,8 @@
             errorMsg.innerText = "Authenticating...";
 
             try {
-                const response = await fetch(`/.netlify/functions/aeon-api?mode=dashboard`, {
+                // ZMĚNA: /.netlify/functions/ -> /api/
+                const response = await fetch(`/api/aeon-api?mode=dashboard`, {
                     method: 'GET',
                     headers: { 'x-master-key': key }
                 });
