@@ -2,58 +2,82 @@
     --primary: #ffffff;
     --border: rgba(255, 255, 255, 0.2);
     
-    /* Výchozí barvy (Fallback - Midnight) */
+    /* Výchozí (Fallback) */
     --bg-gradient-start: #0f0c29;
     --bg-gradient-end: #302b63;
     --orb-1-color: #24243e; --orb-2-color: #0f0c29; --orb-3-color: #7b4397; --orb-4-color: #dc2430;
     --accent: #ffffff;
-    --text: #ffffff;
-    --card-bg: rgba(20, 20, 20, 0.65); /* Tmavší pro lepší čitelnost */
+    
+    /* DYNAMICKÉ PROMĚNNÉ (Mění se podle tématu) */
+    --text-main: #ffffff; /* Barva textu */
+    --card-glass: rgba(0, 0, 0, 0.6); /* Barva karty */
+    --btn-bg: rgba(255, 255, 255, 0.15); /* Barva tlačítek */
     --orb-blend: screen;
 }
 
 /* =========================================
-   1. DEFINICE TÉMAT (KOMPLETNÍ SEZNAM)
+   1. DEFINICE TÉMAT (S KONTRASTEM)
    ========================================= */
-/* JARO */
-body.spring.morning { --bg-gradient-start: #f3ffe3; --bg-gradient-end: #fff0f5; --orb-1-color: #e2f0cb; --orb-2-color: #ff9ff3; --orb-3-color: #c7ecee; --orb-4-color: #f7d794; --accent: #6ab04c; --text: #2d3436; --card-bg: rgba(255,255,255,0.5); --orb-blend: multiply; }
-body.spring.noon    { --bg-gradient-start: #badc58; --bg-gradient-end: #dff9fb; --orb-1-color: #f6e58d; --orb-2-color: #6ab04c; --orb-3-color: #ffbe76; --orb-4-color: #7ed6df; --accent: #badc58; --text: #2d3436; --card-bg: rgba(255,255,255,0.5); --orb-blend: multiply; }
-body.spring.evening { --bg-gradient-start: #e056fd; --bg-gradient-end: #f0932b; --orb-1-color: #ffbe76; --orb-2-color: #be2edd; --orb-3-color: #ff7979; --orb-4-color: #badc58; --accent: #be2edd; --text: #2d3436; --card-bg: rgba(255,255,255,0.5); --orb-blend: multiply; }
-body.spring.night   { --bg-gradient-start: #2c3a47; --bg-gradient-end: #58b19f; --orb-1-color: #55efc4; --orb-2-color: #a29bfe; --orb-3-color: #00b894; --orb-4-color: #fdcb6e; --accent: #55efc4; --text: #dfe6e9; --card-bg: rgba(20,40,50,0.7); --orb-blend: screen; }
 
-/* LÉTO */
-body.summer.morning { --bg-gradient-start: #fff3e0; --bg-gradient-end: #81ecec; --orb-1-color: #fab1a0; --orb-2-color: #74b9ff; --orb-3-color: #ffeaa7; --orb-4-color: #81ecec; --accent: #00cec9; --text: #2d3436; --card-bg: rgba(255,255,255,0.5); --orb-blend: multiply; }
-body.summer.noon    { --bg-gradient-start: #f9ca24; --bg-gradient-end: #f0932b; --orb-1-color: #ff7979; --orb-2-color: #badc58; --orb-3-color: #22a6b3; --orb-4-color: #f6e58d; --accent: #f0932b; --text: #2d3436; --card-bg: rgba(255,255,255,0.5); --orb-blend: multiply; }
-body.summer.evening { --bg-gradient-start: #eb4d4b; --bg-gradient-end: #686de0; --orb-1-color: #f0932b; --orb-2-color: #be2edd; --orb-3-color: #ff7979; --orb-4-color: #ffbe76; --accent: #ff4757; --text: #dfe6e9; --card-bg: rgba(60,20,40,0.6); --orb-blend: multiply; }
-body.summer.night   { --bg-gradient-start: #130f40; --bg-gradient-end: #30336b; --orb-1-color: #e056fd; --orb-2-color: #f9ca24; --orb-3-color: #ff7979; --orb-4-color: #686de0; --accent: #f9ca24; --text: #dfe6e9; --card-bg: rgba(20,10,50,0.7); --orb-blend: screen; }
+/* --- SVĚTLÁ TÉMATA (Černý text) --- */
+body.spring-morning, body.spring-noon, body.spring-evening,
+body.summer-morning, body.summer-noon, body.summer-evening,
+body.autumn-morning, body.autumn-noon, body.autumn-evening,
+body.winter-morning, body.winter-noon, body.winter-evening {
+    --text-main: #1a1a1a;
+    --card-glass: rgba(255, 255, 255, 0.45); /* Mléčné sklo */
+    --btn-bg: rgba(255, 255, 255, 0.6);
+    --border: rgba(255, 255, 255, 0.6);
+    --orb-blend: multiply;
+}
 
-/* PODZIM */
-body.autumn.morning { --bg-gradient-start: #f7f1e3; --bg-gradient-end: #d1ccc0; --orb-1-color: #ffb142; --orb-2-color: #ffda79; --orb-3-color: #d1d8e0; --orb-4-color: #ff5252; --accent: #d35400; --text: #2d3436; --card-bg: rgba(255,255,255,0.6); --orb-blend: multiply; }
-body.autumn.noon    { --bg-gradient-start: #fff5e6; --bg-gradient-end: #ffdbcc; --orb-1-color: #ff9f43; --orb-2-color: #ee5253; --orb-3-color: #ffbe76; --orb-4-color: #fab1a0; --accent: #d35400; --text: #2d3436; --card-bg: rgba(255,255,255,0.6); --orb-blend: multiply; }
-body.autumn.evening { --bg-gradient-start: #ffda79; --bg-gradient-end: #ffb142; --orb-1-color: #cc8e35; --orb-2-color: #e17055; --orb-3-color: #b33939; --orb-4-color: #f7f1e3; --accent: #e17055; --text: #2d3436; --card-bg: rgba(255,255,255,0.5); --orb-blend: multiply; }
-body.autumn.night   { --bg-gradient-start: #2d3436; --bg-gradient-end: #0f0c29; --orb-1-color: #cd6133; --orb-2-color: #f7f1e3; --orb-3-color: #30336b; --orb-4-color: #ffda79; --accent: #ffda79; --text: #dfe6e9; --card-bg: rgba(40,30,30,0.7); --orb-blend: screen; }
+/* --- TMAVÁ TÉMATA (Bílý text) --- */
+body.spring-night, body.summer-night, body.autumn-night, body.winter-night {
+    --text-main: #ffffff;
+    --card-glass: rgba(20, 20, 20, 0.75); /* Tmavé sklo */
+    --btn-bg: rgba(255, 255, 255, 0.1);
+    --border: rgba(255, 255, 255, 0.15);
+    --orb-blend: screen;
+}
 
-/* ZIMA */
-body.winter.morning { --bg-gradient-start: #f1f2f6; --bg-gradient-end: #dfe4ea; --orb-1-color: #74b9ff; --orb-2-color: #a29bfe; --orb-3-color: #ffffff; --orb-4-color: #81ecec; --accent: #74b9ff; --text: #2d3436; --card-bg: rgba(255,255,255,0.5); --orb-blend: multiply; }
-body.winter.noon    { --bg-gradient-start: #e3f2fd; --bg-gradient-end: #bbdefb; --orb-1-color: #0984e3; --orb-2-color: #00cec9; --orb-3-color: #fab1a0; --orb-4-color: #ffffff; --accent: #0984e3; --text: #2d3436; --card-bg: rgba(255,255,255,0.5); --orb-blend: multiply; }
-body.winter.evening { --bg-gradient-start: #6c5ce7; --bg-gradient-end: #a29bfe; --orb-1-color: #fd79a8; --orb-2-color: #74b9ff; --orb-3-color: #e056fd; --orb-4-color: #0984e3; --accent: #e056fd; --text: #dfe6e9; --card-bg: rgba(40,20,80,0.6); --orb-blend: multiply; }
-body.winter.night   { --bg-gradient-start: #0c2461; --bg-gradient-end: #1e3799; --orb-1-color: #00d2d3; --orb-2-color: #5f27cd; --orb-3-color: #ff9ff3; --orb-4-color: #48dbfb; --accent: #48dbfb; --text: #dfe6e9; --card-bg: rgba(10,20,50,0.7); --orb-blend: screen; }
+/* --- BARVY POZADÍ (Z Můj Start) --- */
+/* Jaro */
+body.spring-morning { --bg-gradient-start: #f3ffe3; --bg-gradient-end: #fff0f5; --orb-1-color: #e2f0cb; --orb-2-color: #ff9ff3; --orb-3-color: #c7ecee; --orb-4-color: #f7d794; --accent: #6ab04c; }
+body.spring-noon    { --bg-gradient-start: #badc58; --bg-gradient-end: #dff9fb; --orb-1-color: #f6e58d; --orb-2-color: #6ab04c; --orb-3-color: #ffbe76; --orb-4-color: #7ed6df; --accent: #badc58; }
+body.spring-evening { --bg-gradient-start: #e056fd; --bg-gradient-end: #f0932b; --orb-1-color: #ffbe76; --orb-2-color: #be2edd; --orb-3-color: #ff7979; --orb-4-color: #badc58; --accent: #be2edd; }
+body.spring-night   { --bg-gradient-start: #2c3a47; --bg-gradient-end: #58b19f; --orb-1-color: #55efc4; --orb-2-color: #a29bfe; --orb-3-color: #00b894; --orb-4-color: #fdcb6e; --accent: #55efc4; }
+/* Léto */
+body.summer-morning { --bg-gradient-start: #fff3e0; --bg-gradient-end: #81ecec; --orb-1-color: #fab1a0; --orb-2-color: #74b9ff; --orb-3-color: #ffeaa7; --orb-4-color: #81ecec; --accent: #00cec9; }
+body.summer-noon    { --bg-gradient-start: #f9ca24; --bg-gradient-end: #f0932b; --orb-1-color: #ff7979; --orb-2-color: #badc58; --orb-3-color: #22a6b3; --orb-4-color: #f6e58d; --accent: #f0932b; }
+body.summer-evening { --bg-gradient-start: #eb4d4b; --bg-gradient-end: #686de0; --orb-1-color: #f0932b; --orb-2-color: #be2edd; --orb-3-color: #ff7979; --orb-4-color: #ffbe76; --accent: #ff4757; }
+body.summer-night   { --bg-gradient-start: #130f40; --bg-gradient-end: #30336b; --orb-1-color: #e056fd; --orb-2-color: #f9ca24; --orb-3-color: #ff7979; --orb-4-color: #686de0; --accent: #f9ca24; }
+/* Podzim */
+body.autumn-morning { --bg-gradient-start: #f7f1e3; --bg-gradient-end: #d1ccc0; --orb-1-color: #ffb142; --orb-2-color: #ffda79; --orb-3-color: #d1d8e0; --orb-4-color: #ff5252; --accent: #d35400; }
+body.autumn-noon    { --bg-gradient-start: #fff5e6; --bg-gradient-end: #ffdbcc; --orb-1-color: #ff9f43; --orb-2-color: #ee5253; --orb-3-color: #ffbe76; --orb-4-color: #fab1a0; --accent: #d35400; }
+body.autumn-evening { --bg-gradient-start: #ffda79; --bg-gradient-end: #ffb142; --orb-1-color: #cc8e35; --orb-2-color: #e17055; --orb-3-color: #b33939; --orb-4-color: #f7f1e3; --accent: #e17055; }
+body.autumn-night   { --bg-gradient-start: #2d3436; --bg-gradient-end: #0f0c29; --orb-1-color: #cd6133; --orb-2-color: #f7f1e3; --orb-3-color: #30336b; --orb-4-color: #ffda79; --accent: #ffda79; }
+/* Zima */
+body.winter-morning { --bg-gradient-start: #f1f2f6; --bg-gradient-end: #dfe4ea; --orb-1-color: #74b9ff; --orb-2-color: #a29bfe; --orb-3-color: #ffffff; --orb-4-color: #81ecec; --accent: #74b9ff; }
+body.winter-noon    { --bg-gradient-start: #e3f2fd; --bg-gradient-end: #bbdefb; --orb-1-color: #0984e3; --orb-2-color: #00cec9; --orb-3-color: #fab1a0; --orb-4-color: #ffffff; --accent: #0984e3; }
+body.winter-evening { --bg-gradient-start: #6c5ce7; --bg-gradient-end: #a29bfe; --orb-1-color: #fd79a8; --orb-2-color: #74b9ff; --orb-3-color: #e056fd; --orb-4-color: #0984e3; --accent: #e056fd; }
+body.winter-night   { --bg-gradient-start: #0c2461; --bg-gradient-end: #1e3799; --orb-1-color: #00d2d3; --orb-2-color: #5f27cd; --orb-3-color: #ff9ff3; --orb-4-color: #48dbfb; --accent: #48dbfb; }
+
 
 /* =========================================
-   2. LAYOUT & POZADÍ (FIXED)
+   2. FIXNUTÉ POZADÍ (Už žádné ořezávání)
    ========================================= */
 body {
     background-color: #000;
-    color: var(--text);
+    color: var(--text-main);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
     display: flex; justify-content: center; align-items: center;
-    min-height: 100vh; margin: 0; overflow-x: hidden;
-    perspective: 1200px;
+    min-height: 100vh; margin: 0; 
+    /* Důležité pro 3D efekt */
+    perspective: 1000px;
     -webkit-font-smoothing: antialiased;
-    transition: color 0.5s ease;
 }
 
-/* Fixnuté pozadí, aby se nescrollovalo v editoru */
+/* Toto je ten trik: FIXED, INSET 0 */
 .ambient-background {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -100;
     background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
@@ -74,102 +98,94 @@ body {
 @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(20px, 40px); } }
 
 /* =========================================
-   3. KARTA & EFEKTY
+   3. KARTA (OBOUSTRANNÁ)
    ========================================= */
-.scene { width: 340px; height: 580px; position: relative; opacity: 0; transition: opacity 1s ease; margin: 20px 0; }
+.scene { width: 340px; height: 580px; position: relative; margin: 40px 0; }
 
 .card {
     width: 100%; height: 100%; position: relative;
-    transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d; 
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Hezké plynulé otočení */
     border-radius: 36px;
-    background: var(--card-bg); /* Tmavší sklo pro lepší kontrast */
-    backdrop-filter: blur(20px) saturate(120%);
-    -webkit-backdrop-filter: blur(20px) saturate(120%);
-    border: 1px solid var(--border);
-    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
     cursor: pointer;
 }
 
-/* OBSAH KARTY */
+/* Třída pro otočení */
+.card.is-flipped { transform: rotateY(180deg); }
+
+/* PŘEDNÍ I ZADNÍ STRANA */
 .card-face {
     position: absolute; width: 100%; height: 100%;
-    backface-visibility: hidden; display: flex; flex-direction: column;
-    align-items: center; padding: 40px 25px; box-sizing: border-box;
-    z-index: 2; border-radius: 36px;
+    backface-visibility: hidden; /* Skryje záda */
+    border-radius: 36px;
+    display: flex; flex-direction: column; align-items: center; 
+    padding: 40px 25px; box-sizing: border-box;
+    
+    /* Vzhled skla (bere se z proměnné nahoře) */
+    background: var(--card-glass);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
 }
 
-/* ZADNÍ STRANA (QR) */
+/* ZADNÍ STRANA */
 .card-face.back {
     transform: rotateY(180deg);
-    background: #000; /* Vždy černé pro maximální kontrast QR */
+    background: #000000; /* Vždy černé pro QR kontrast */
     justify-content: center;
     border: 1px solid rgba(255,255,255,0.2);
 }
 
 /* AVATAR */
 .avatar-wrapper {
-    position: relative; margin-top: 10px; width: 120px; height: 120px;
+    width: 130px; height: 130px; margin-top: 20px;
+    border-radius: 50%; padding: 4px;
+    border: 2px solid var(--border);
 }
 .avatar {
     width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
-    border: 3px solid rgba(255,255,255,0.2);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.2);
 }
 
 /* TEXTY */
 h1 { 
-    font-size: 24px; font-weight: 700; margin: 20px 0 5px 0; 
-    letter-spacing: 0.5px; text-align: center; color: var(--text);
+    font-size: 26px; font-weight: 800; margin: 20px 0 5px 0; 
+    letter-spacing: -0.5px; text-align: center; color: var(--text-main);
 }
 .bio { 
-    font-size: 13px; opacity: 0.85; text-align: center; 
-    margin-bottom: 10px; line-height: 1.4; max-width: 90%; color: var(--text);
+    font-size: 14px; opacity: 0.9; text-align: center; 
+    margin-bottom: 10px; line-height: 1.4; max-width: 90%; color: var(--text-main);
 }
 
-/* MOTTO (Na kartě) */
+/* MOTTO (Jednoduché) */
 .card-motto {
-    font-size: 10px; text-transform: uppercase; letter-spacing: 3px;
-    color: var(--accent); margin-bottom: 20px; opacity: 0.8; font-weight: 600;
-    position: relative; display: inline-block;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+    color: var(--accent); margin-bottom: 25px; font-weight: 700;
 }
-/* Efekt odlesku pro motto */
-.card-motto::after {
-    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
-    transform: translateX(-100%);
-    animation: shimmer 4s infinite;
-}
-@keyframes shimmer { 100% { transform: translateX(100%); } }
 
 /* ODKAZY */
-.links { width: 100%; display: flex; flex-direction: column; gap: 10px; flex-grow: 1; overflow-y: auto; }
+.links { width: 100%; display: flex; flex-direction: column; gap: 12px; flex-grow: 1; overflow-y: auto; }
 .links::-webkit-scrollbar { width: 0; }
 
 .link-btn {
-    background: rgba(255,255,255,0.1); color: var(--text);
-    padding: 14px; text-align: center; text-decoration: none;
-    border-radius: 12px; font-weight: 600; font-size: 13px;
-    backdrop-filter: blur(5px); transition: 0.2s; border: 1px solid var(--border);
+    background: var(--btn-bg); color: var(--text-main);
+    padding: 16px; text-align: center; text-decoration: none;
+    border-radius: 14px; font-weight: 700; font-size: 13px;
+    backdrop-filter: blur(5px); transition: 0.2s; 
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
-/* Pro světlá témata tmavé písmo na tlačítkách */
-body[class*="morning"] .link-btn, body[class*="noon"] .link-btn { color: #222; background: rgba(255,255,255,0.6); }
+.link-btn:hover { transform: scale(1.02); background: var(--accent); color: #fff; border-color: transparent; }
 
-.link-btn:hover { transform: translateY(-2px); background: var(--accent); color: #fff; border-color: transparent; }
+/* ZADNÍ STRANA PRVKY */
+#qrcode { background: white; padding: 15px; border-radius: 15px; }
+.scan-text { margin-top: 20px; color: white; font-weight: bold; letter-spacing: 1px; font-size: 12px; text-transform: uppercase; }
 
-.mint-number { margin-top: auto; font-size: 10px; opacity: 0.5; letter-spacing: 2px; color: var(--text); }
-
-/* QR CODE BACK */
-#qrcode { background: white; padding: 10px; border-radius: 10px; }
-
-/* Loader */
-.loader-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s; }
-.spinner { width: 40px; height: 40px; border: 4px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Admin UI */
+/* Admin Panel */
 .admin-container {
-    background: rgba(0,0,0,0.7); backdrop-filter: blur(20px);
-    padding: 30px; border-radius: 20px; border: 1px solid #333;
+    background: var(--card-glass); backdrop-filter: blur(20px);
+    padding: 30px; border-radius: 20px; border: 1px solid var(--border);
     width: 90%; max-width: 550px; margin: 40px auto; display: flex; flex-direction: column; gap: 15px;
     z-index: 10; position: relative;
+    color: var(--text-main); /* Automatický kontrast i v adminu */
 }

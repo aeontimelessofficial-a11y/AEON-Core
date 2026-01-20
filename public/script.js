@@ -1,21 +1,17 @@
 const card = document.getElementById('artifact');
 const scene = document.querySelector('.scene');
 const loader = document.getElementById('loader');
-let isFlipped = false;
 
 // --- 1. THEME APPLICATOR ---
 function applyTheme(themeString) {
     document.body.className = ''; 
-    if (!themeString) themeString = 'winter-night'; // Default
-    
-    // Formát "season-time" -> class="season time"
+    if (!themeString) themeString = 'winter-night';
     const parts = themeString.split('-');
     if (parts.length === 2) {
         document.body.classList.add(parts[0]);
         document.body.classList.add(parts[1]);
     } else {
-        document.body.classList.add('winter');
-        document.body.classList.add('night');
+        document.body.classList.add('winter'); document.body.classList.add('night');
     }
 }
 
@@ -33,7 +29,7 @@ function generateQR(url) {
     if(!qrContainer) return;
     qrContainer.innerHTML = "";
     new QRCode(qrContainer, {
-        text: url, width: 150, height: 150,
+        text: url, width: 160, height: 160,
         colorDark : "#000000", colorLight : "#ffffff",
         correctLevel : QRCode.CorrectLevel.M
     });
@@ -50,27 +46,19 @@ async function loadProfile() {
         
         const data = await response.json();
 
-        // Theme
         applyTheme(data.theme);
 
-        // Content
         document.querySelector('h1').innerText = data.name;
         document.querySelector('.bio').innerText = data.bio;
         
-        // Motto (inside card)
         const mottoEl = document.querySelector('.card-motto');
-        if (mottoEl) mottoEl.innerText = data.motto || "AUTHENTIC";
+        if (mottoEl) mottoEl.innerText = data.motto || "";
 
-        // Avatar
         if (data.avatar) {
             document.querySelector('.avatar').src = data.avatar;
             document.querySelector('.avatar').style.display = 'block';
         }
 
-        const mintNum = data.mint_number || "---";
-        document.querySelector('.mint-number').innerText = `NO. ${mintNum}`;
-
-        // Links
         const linksContainer = document.querySelector('.links');
         linksContainer.innerHTML = ''; 
         if (data.links && Array.isArray(data.links)) {
@@ -81,17 +69,15 @@ async function loadProfile() {
                     btn.className = 'link-btn';
                     btn.innerText = link.label;
                     btn.target = "_blank"; 
-                    // Zabrání otočení karty při kliknutí na odkaz
+                    // Stop propagation, aby kliknutí na odkaz neotočilo kartu
                     btn.addEventListener('click', (e) => e.stopPropagation());
                     linksContainer.appendChild(btn);
                 }
             });
         }
 
-        // QR
         generateQR(window.location.href);
 
-        // Show
         if(loader) {
             loader.style.opacity = '0';
             setTimeout(() => { loader.style.display = 'none'; scene.style.opacity = '1'; }, 500);
@@ -103,43 +89,39 @@ async function loadProfile() {
     }
 }
 
-// --- 5. INTERACTION (Touch/Move) ---
-function handleMove(e) {
-    if(isFlipped) return;
+// --- 5. OTOČENÍ KARTY ---
+// Používáme CSS třídu .is-flipped pro spolehlivější otáčení
+if(card) {
+    card.addEventListener('click', function(e) {
+        // Pokud klikneme na odkaz, neotáčet
+        if(e.target.closest('a')) return;
+        
+        this.classList.toggle('is-flipped');
+    });
+
+    // 6. PARALAXA (Jemný pohyb myší/prstem)
+    document.addEventListener('mousemove', (e) => handleParallax(e.clientX, e.clientY));
+    document.addEventListener('touchmove', (e) => handleParallax(e.touches[0].clientX, e.touches[0].clientY));
     
-    // Podpora pro myš i dotyk
-    const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-    const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+    function handleParallax(x, y) {
+        // Pokud je otočená, paralaxu vypneme, ať se to nemlátí
+        if(card.classList.contains('is-flipped')) return;
+
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        const dx = (x - cx) / cx;
+        const dy = (y - cy) / cy;
+
+        // Velmi jemný náklon (5 stupňů)
+        card.style.transform = `rotateX(${-dy * 5}deg) rotateY(${dx * 5}deg)`;
+    }
     
-    const cx = window.innerWidth / 2;
-    const cy = window.innerHeight / 2;
-    
-    const dx = (clientX - cx) / cx; // -1 až 1
-    const dy = (clientY - cy) / cy;
-    
-    // Jemná rotace (paralaxa)
-    // Omezíme úhel na max 15 stupňů
-    card.style.transform = `rotateX(${-dy * 15}deg) rotateY(${dx * 15}deg)`;
+    // Reset po odjetí myši
+    document.addEventListener('mouseleave', () => {
+        if(!card.classList.contains('is-flipped')) {
+            card.style.transform = `rotateX(0deg) rotateY(0deg)`;
+        }
+    });
 }
 
-function resetCard() { 
-    if(!isFlipped) card.style.transform = `rotateX(0deg) rotateY(0deg)`;
-}
-
-function flipCard(e) {
-    // Pokud klikneme na odkaz, nic nedělat (ošetřeno výše u tlačítka, ale pro jistotu)
-    if (e.target.closest('a')) return;
-    
-    isFlipped = !isFlipped;
-    card.style.transform = isFlipped ? `rotateY(180deg)` : `rotateY(0deg)`;
-}
-
-// Spuštění
 loadProfile();
-
-// Listeners
-document.addEventListener('mousemove', handleMove);
-document.addEventListener('touchmove', handleMove); // Pro mobilní "gyro"
-document.addEventListener('mouseleave', resetCard);
-document.addEventListener('touchend', resetCard);
-card.addEventListener('click', flipCard);

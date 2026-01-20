@@ -6,42 +6,47 @@
     <title>ÆON | Studio</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Úprava pro admin, aby byl formulář vidět */
+        /* Admin specifika */
         body { 
             overflow-y: auto; height: auto; min-height: 100vh; display: block; 
-            padding-bottom: 50px;
+            padding-bottom: 80px;
         }
         
-        .admin-label { color: var(--text); opacity: 0.9; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px; display: block; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        .admin-label { color: var(--text-main); opacity: 0.8; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px; display: block; font-weight: 800; }
+        
         .admin-input { 
-            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.3); color: var(--text); padding: 14px; border-radius: 12px; width: 100%; box-sizing: border-box; 
-            font-family: inherit; font-size: 14px; outline: none; transition: 0.2s; backdrop-filter: blur(5px);
+            background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: var(--text-main); 
+            padding: 14px; border-radius: 12px; width: 100%; box-sizing: border-box; 
+            font-family: inherit; font-size: 14px; outline: none; transition: 0.2s;
         }
-        .admin-input:focus { border-color: var(--accent); background: rgba(0,0,0,0.6); }
+        /* Pokud je světlé téma, ztmavíme pozadí inputu */
+        body[class*="morning"] .admin-input, body[class*="noon"] .admin-input { background: rgba(255,255,255,0.5); color: black; border-color: #999; }
+
+        .admin-input:focus { border-color: var(--accent); }
         
-        /* Grid pro témata */
-        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; max-height: 300px; overflow-y: auto; padding: 5px; background: rgba(0,0,0,0.2); border-radius: 12px; }
+        /* Grid */
+        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; max-height: 300px; overflow-y: auto; padding: 5px; background: rgba(0,0,0,0.1); border-radius: 12px; }
         .theme-btn {
             padding: 12px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; text-align: center;
-            font-size: 11px; font-weight: bold; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-            transition: transform 0.2s;
+            font-size: 11px; font-weight: bold;
         }
         .theme-btn:hover { transform: scale(1.02); }
-        .theme-btn.selected { border-color: white; box-shadow: 0 0 10px rgba(255,255,255,0.5); transform: scale(0.98); }
+        .theme-btn.selected { border-color: var(--accent); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-        /* Avataři */
-        .avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; }
+        /* Avatars */
+        .avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; background: rgba(0,0,0,0.1); padding: 15px; border-radius: 12px; }
         .avatar-option { width: 100%; border-radius: 50%; cursor: pointer; transition: 0.2s; border: 2px solid transparent; background: #fff; }
-        .avatar-option:hover { transform: scale(1.1); }
         .avatar-option.selected { border-color: var(--accent); box-shadow: 0 0 10px var(--accent); }
 
         .link-row { display: flex; gap: 10px; margin-bottom: 8px; }
         
         button#saveBtn {
-            background: var(--accent); border: none; padding: 16px; color: #000; font-weight: bold;
+            background: var(--accent); border: none; padding: 16px; color: #fff; font-weight: bold;
             border-radius: 12px; margin-top: 20px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; width: 100%;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2); text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
+        /* Černé písmo na tlačítku pro světlé téma */
+        body[class*="morning"] button#saveBtn, body[class*="noon"] button#saveBtn { color: #000; text-shadow: none; }
     </style>
 </head>
 <body>
@@ -52,13 +57,12 @@
     </div>
 
     <div class="admin-container">
-        <h1 style="color: var(--text); text-align: center; text-shadow: 0 2px 5px rgba(0,0,0,0.5);">ÆON Studio</h1>
-        <div id="loading" style="text-align:center; color:var(--accent); font-size: 12px;">NAČÍTÁM DATA...</div>
-
+        <h1 style="color: var(--text-main); text-align: center;">ÆON Studio</h1>
+        
         <label class="admin-label">URL (Slug)</label>
         <input type="text" class="admin-input" id="slug" placeholder="např. ondra" required>
 
-        <label class="admin-label">Vyber Atmosféru (Klikni pro náhled)</label>
+        <label class="admin-label">Atmosféra (Klikni pro změnu)</label>
         <div class="theme-grid" id="themeGrid"></div>
         <input type="hidden" id="selectedTheme" value="winter-night">
 
@@ -68,46 +72,47 @@
         <label class="admin-label">Bio</label>
         <input type="text" class="admin-input" id="bio" placeholder="Digital Creator">
         
-        <label class="admin-label">Motto (Pod Bio)</label>
-        <input type="text" class="admin-input" id="motto" placeholder="Např. FUTURE IS NOW">
+        <label class="admin-label">Motto</label>
+        <input type="text" class="admin-input" id="motto" placeholder="FUTURE IS NOW">
 
         <label class="admin-label">Avatar</label>
         <div class="avatar-grid" id="avatarStudio"></div>
-        <div style="text-align:center; font-size:10px; color:var(--text); opacity:0.7; margin: 5px 0;">NEBO NAHRAJ VLASTNÍ</div>
-        <input type="file" id="photoInput" accept="image/*" style="color: var(--text);">
+        
+        <label class="admin-label">Vlastní fotka</label>
+        <input type="file" id="photoInput" accept="image/*" style="color: var(--text-main);">
         <input type="hidden" id="base64String">
         <img id="preview" style="width:50px; height:50px; border-radius:50%; margin: 10px auto; display:block; object-fit:cover; border: 2px solid var(--accent);">
 
         <label class="admin-label">Odkazy</label>
         <div id="linksContainer"></div>
-        <button onclick="addLinkField()" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; color: var(--text); cursor: pointer; margin-top:10px; width:100%;">+ Přidat Odkaz</button>
+        <button onclick="addLinkField()" style="background:rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; color: var(--text-main); border: 1px solid var(--border); cursor: pointer; margin-top:10px; width:100%;">+ Přidat Odkaz</button>
 
         <button onclick="saveCard()" id="saveBtn">ULOŽIT KARTU</button>
-        <div id="status" style="text-align:center; margin-top:10px; color: yellow; text-shadow: 0 1px 2px black; font-weight:bold;"></div>
+        <div id="status" style="text-align:center; margin-top:10px; font-weight:bold;"></div>
     </div>
 
     <script>
-        // 1. KOMPLETNÍ SEZNAM TÉMAT (16 kombinací)
+        // 1. TÉMATA
         const themes = [
-            { id: "spring-morning", name: "Jaro - Ráno", bg: "#e2f0cb" },
-            { id: "spring-noon", name: "Jaro - Poledne", bg: "#badc58" },
-            { id: "spring-evening", name: "Jaro - Večer", bg: "#e056fd" },
-            { id: "spring-night", name: "Jaro - Noc", bg: "#2c3a47", dark: true },
+            { id: "spring-morning", name: "Jaro Ráno", bg: "#e2f0cb", darkText: true },
+            { id: "spring-noon", name: "Jaro Poledne", bg: "#badc58", darkText: true },
+            { id: "spring-evening", name: "Jaro Večer", bg: "#e056fd", darkText: true },
+            { id: "spring-night", name: "Jaro Noc", bg: "#2c3a47" },
             
-            { id: "summer-morning", name: "Léto - Ráno", bg: "#81ecec" },
-            { id: "summer-noon", name: "Léto - Poledne", bg: "#f9ca24" },
-            { id: "summer-evening", name: "Léto - Večer", bg: "#eb4d4b" },
-            { id: "summer-night", name: "Léto - Noc", bg: "#130f40", dark: true },
+            { id: "summer-morning", name: "Léto Ráno", bg: "#81ecec", darkText: true },
+            { id: "summer-noon", name: "Léto Poledne", bg: "#f9ca24", darkText: true },
+            { id: "summer-evening", name: "Léto Večer", bg: "#eb4d4b", darkText: true },
+            { id: "summer-night", name: "Léto Noc", bg: "#130f40" },
 
-            { id: "autumn-morning", name: "Podzim - Ráno", bg: "#d1ccc0" },
-            { id: "autumn-noon", name: "Podzim - Poledne", bg: "#ffdbcc" },
-            { id: "autumn-evening", name: "Podzim - Večer", bg: "#e17055" },
-            { id: "autumn-night", name: "Podzim - Noc", bg: "#2d3436", dark: true },
+            { id: "autumn-morning", name: "Podzim Ráno", bg: "#d1ccc0", darkText: true },
+            { id: "autumn-noon", name: "Podzim Poledne", bg: "#ffdbcc", darkText: true },
+            { id: "autumn-evening", name: "Podzim Večer", bg: "#e17055", darkText: true },
+            { id: "autumn-night", name: "Podzim Noc", bg: "#2d3436" },
 
-            { id: "winter-morning", name: "Zima - Ráno", bg: "#dfe4ea" },
-            { id: "winter-noon", name: "Zima - Poledne", bg: "#bbdefb" },
-            { id: "winter-evening", name: "Zima - Večer", bg: "#a29bfe" },
-            { id: "winter-night", name: "Zima - Noc", bg: "#0c2461", dark: true }
+            { id: "winter-morning", name: "Zima Ráno", bg: "#dfe4ea", darkText: true },
+            { id: "winter-noon", name: "Zima Poledne", bg: "#bbdefb", darkText: true },
+            { id: "winter-evening", name: "Zima Večer", bg: "#a29bfe", darkText: true },
+            { id: "winter-night", name: "Zima Noc", bg: "#0c2461" }
         ];
 
         const themeContainer = document.getElementById('themeGrid');
@@ -116,25 +121,25 @@
             div.className = 'theme-btn';
             div.innerText = t.name;
             div.style.background = t.bg;
-            div.style.color = t.dark ? 'white' : '#333';
+            div.style.color = t.darkText ? '#000' : '#fff';
             div.onclick = () => selectTheme(t.id, div);
             themeContainer.appendChild(div);
         });
 
-        // FUNKCE PRO NÁHLED (Aplikuje třídy přímo na body editoru)
+        // LIVE PREVIEW LOGIKA
         function selectTheme(id, el) {
             document.getElementById('selectedTheme').value = id;
             document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('selected'));
             el.classList.add('selected');
             
-            // Okamžitá změna pozadí editoru
+            // Okamžitá změna tříd na body editoru
             document.body.className = ''; 
             const parts = id.split('-');
             document.body.classList.add(parts[0]);
             document.body.classList.add(parts[1]);
         }
 
-        // 2. AVATARS (Notionists)
+        // 2. AVATARS
         const seeds = ["Leo", "Mila", "Caleb", "Eliza", "Chase", "Jade", "Nora", "Jack", "Felix", "Ruby"];
         const avContainer = document.getElementById('avatarStudio');
         seeds.forEach(s => {
@@ -150,7 +155,7 @@
             avContainer.appendChild(img);
         });
 
-        // 3. LINKS & LOAD
+        // 3. LOAD DATA
         const linksWrapper = document.getElementById('linksContainer');
         function addLinkField(l="", u="") {
             const d = document.createElement('div'); d.className = 'link-row';
@@ -161,6 +166,10 @@
         window.onload = async function() {
             const params = new URLSearchParams(window.location.search);
             const slug = params.get('slug');
+            
+            // Defaultní téma pro editor, pokud není nic načteno
+            selectTheme('winter-night', document.createElement('div'));
+
             if(slug) {
                 document.getElementById('slug').value = slug;
                 document.getElementById('saveBtn').innerText = "AKTUALIZOVAT";
@@ -172,16 +181,18 @@
                         document.getElementById('bio').value = d.bio || "";
                         document.getElementById('motto').value = d.motto || "";
                         
-                        // Načíst téma a spustit náhled
                         if(d.theme) {
-                            // Najít tlačítko v gridu a kliknout na něj (simulace)
-                            // Nebo jen zavolat funkci
-                            const matchingBtn = Array.from(document.querySelectorAll('.theme-btn')).find(b => b.innerText.includes(d.theme.replace('-',' '))); // Zjednodušené hledání
-                            selectTheme(d.theme, matchingBtn || document.createElement('div'));
-                        } else {
-                            selectTheme('winter-night', document.createElement('div'));
+                            // Najdeme tlačítko v gridu a simulujeme klik pro nastavení pozadí
+                            const parts = d.theme.split('-'); // "spring-morning" -> ["spring", "morning"]
+                            // Zkusíme najít téma v poli
+                            const themeObj = themes.find(t => t.id === d.theme);
+                            if(themeObj) {
+                                // Vytvoříme dummy element, abychom nezávisle na DOM zavolali funkci
+                                const dummy = document.createElement('div'); 
+                                selectTheme(d.theme, dummy);
+                            }
                         }
-
+                        
                         if(d.avatar) {
                             document.getElementById('base64String').value = d.avatar;
                             document.getElementById('preview').src = d.avatar;
@@ -191,10 +202,7 @@
                         if(!d.links || d.links.length === 0) { addLinkField(); addLinkField(); }
                     }
                 } catch(e){}
-            } else { 
-                addLinkField(); addLinkField(); 
-                selectTheme('winter-night', document.createElement('div')); // Default
-            }
+            } else { addLinkField(); addLinkField(); }
             document.getElementById('loading').style.display = 'none';
         }
 
@@ -202,7 +210,9 @@
         async function saveCard() {
             const stat = document.getElementById('status'); stat.innerText = "Ukládám...";
             const slugRaw = document.getElementById('slug').value;
+            if(!slugRaw) { stat.innerText = "Vyplň URL!"; return; }
             const slug = slugRaw.toLowerCase().replace(/\s+/g, '-');
+            
             const links = [];
             document.querySelectorAll('.link-row').forEach(r => {
                 const l = r.querySelector('.l-lbl').value; const u = r.querySelector('.l-url').value;
@@ -222,10 +232,12 @@
             };
 
             try {
-                await fetch('/.netlify/functions/aeon-api', { method: 'POST', body: JSON.stringify(payload) });
-                stat.innerText = "HOTOVO!"; stat.style.color = "#0f0";
-                setTimeout(() => window.location.href = `/?slug=${slug}`, 1500);
-            } catch(e) { stat.innerText = "CHYBA"; }
+                const res = await fetch('/.netlify/functions/aeon-api', { method: 'POST', body: JSON.stringify(payload) });
+                if(res.ok) {
+                    stat.innerText = "HOTOVO!"; stat.style.color = "lime";
+                    setTimeout(() => window.location.href = `/?slug=${slug}`, 1500);
+                } else { stat.innerText = "CHYBA"; stat.style.color = "red"; }
+            } catch(e) { stat.innerText = "Chyba spojení"; }
         }
 
         document.getElementById('photoInput').addEventListener('change', function(e) {
