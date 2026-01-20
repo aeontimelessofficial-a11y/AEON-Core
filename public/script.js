@@ -3,39 +3,23 @@ const scene = document.querySelector('.scene');
 const loader = document.getElementById('loader');
 let isFlipped = false;
 
-// --- 1. THEME APPLICATOR ---
-// Funkce, která vezme string "spring-night" a udělá z něj třídy <body class="spring night">
+// --- 1. APLIKACE TÉMATU ---
 function applyTheme(themeString) {
-    // Reset classes
-    document.body.className = '';
+    document.body.className = ''; // Vyčistit staré třídy
+    if (!themeString) themeString = 'winter-night';
     
-    if (!themeString) themeString = 'winter-night'; // Default
-    
-    // Očekáváme formát "season-time", např. "spring-morning"
-    // Ale CSS používá ".spring.morning". Takže rozdělíme string.
+    // Rozdělit "spring-morning" na "spring" a "morning"
     const parts = themeString.split('-');
     if (parts.length === 2) {
-        document.body.classList.add(parts[0]); // season
-        document.body.classList.add(parts[1]); // time
+        document.body.classList.add(parts[0]);
+        document.body.classList.add(parts[1]);
     } else {
-        // Fallback
         document.body.classList.add('winter');
         document.body.classList.add('night');
     }
 }
 
-// --- 2. CLOCK ---
-function updateClock() {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const clockEl = document.getElementById('iphoneClock');
-    if(clockEl) clockEl.innerText = `${hours}:${minutes}`;
-}
-setInterval(updateClock, 1000);
-updateClock();
-
-// --- 3. URL FIX ---
+// --- 2. OPRAVA URL ---
 function fixUrl(url) {
     if (!url) return "#";
     url = url.trim();
@@ -43,19 +27,19 @@ function fixUrl(url) {
     return url;
 }
 
-// --- 4. QR ---
+// --- 3. QR KÓD ---
 function generateQR(url) {
     const qrContainer = document.getElementById('qrcode');
     if(!qrContainer) return;
     qrContainer.innerHTML = "";
     new QRCode(qrContainer, {
         text: url, width: 140, height: 140,
-        colorDark : "#000000", colorLight : "#ffffff",
+        colorDark : "#ffffff", colorLight : "#000000", // Inverzní pro černou zadní stranu
         correctLevel : QRCode.CorrectLevel.M
     });
 }
 
-// --- 5. LOAD ---
+// --- 4. NAČTENÍ DAT ---
 async function loadProfile() {
     const params = new URLSearchParams(window.location.search);
     const userSlug = params.get('slug') || 'jan-novak';
@@ -66,7 +50,7 @@ async function loadProfile() {
         
         const data = await response.json();
 
-        // Aplikace pozadí
+        // Téma
         applyTheme(data.theme);
 
         // Data
@@ -78,12 +62,11 @@ async function loadProfile() {
             document.querySelector('.avatar').style.display = 'block';
         }
 
-        // Motto (vložíme do plovoucího kontejneru na pozadí)
-        const mottoEl = document.getElementById('floatingMotto');
-        if (mottoEl) {
-            mottoEl.innerText = data.motto || "";
-        }
+        // Motto na pozadí
+        const mottoEl = document.getElementById('mottoText');
+        if (mottoEl) mottoEl.innerText = data.motto || "";
 
+        // Číslo
         const mintNum = data.mint_number || "---";
         document.querySelector('.mint-number').innerText = `NO. ${mintNum}`;
 
@@ -103,8 +86,10 @@ async function loadProfile() {
             });
         }
 
+        // QR
         generateQR(window.location.href);
 
+        // Zobrazit
         if(loader) {
             loader.style.opacity = '0';
             setTimeout(() => { loader.style.display = 'none'; scene.style.opacity = '1'; }, 500);
@@ -116,16 +101,31 @@ async function loadProfile() {
     }
 }
 
-// --- 6. 3D GYRO (Jen karta, motto ignoruje) ---
+// --- 5. INTERAKTIVITA (Myš + Dotyk) ---
+// Pro mobil používáme touchmove místo gyroskopu pro lepší kompatibilitu
 function handleMove(e) {
-    if(isFlipped) return;
-    const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-    const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+    if(isFlipped) return; // Když je otočená, nehýbeme s ní
+    
+    let clientX, clientY;
+
+    if (e.type === 'touchmove') {
+        // e.preventDefault(); // Zrušili jsme preventDefault, aby šlo scrollovat, pokud je potřeba
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+    } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+    }
+    
     const cx = window.innerWidth / 2;
     const cy = window.innerHeight / 2;
+    
+    // Výpočet náklonu
     const dx = (clientX - cx) / cx;
     const dy = (clientY - cy) / cy;
-    card.style.transform = `rotateX(${-dy * 15}deg) rotateY(${dx * 15}deg)`;
+    
+    // Jemná rotace
+    card.style.transform = `rotateX(${-dy * 10}deg) rotateY(${dx * 10}deg)`;
 }
 
 function resetCard() { 
@@ -133,14 +133,19 @@ function resetCard() {
 }
 
 function flipCard(e) {
+    // Pokud klikne na odkaz, neotáčet
     if (e.target.closest('a')) return;
+    
     isFlipped = !isFlipped;
     card.style.transform = isFlipped ? `rotateY(180deg)` : `rotateY(0deg)`;
 }
 
-// Start
+// Spuštění
 loadProfile();
+
+// Listenery
 document.addEventListener('mousemove', handleMove);
 document.addEventListener('touchmove', handleMove);
 document.addEventListener('mouseleave', resetCard);
+document.addEventListener('touchend', resetCard);
 card.addEventListener('click', flipCard);

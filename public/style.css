@@ -1,9 +1,10 @@
 :root {
     --primary: #ffffff;
-    --glass: rgba(255, 255, 255, 0.15);
-    --border: rgba(255, 255, 255, 0.2);
+    --border: rgba(255, 255, 255, 0.3); /* Výraznější okraj */
+    --card-bg: rgba(15, 15, 15, 0.75); /* Tmavší, kontrastnější pozadí karty */
+    --text-shadow: 0 2px 10px rgba(0,0,0,0.8);
     
-    /* Výchozí barvy (Fallback) */
+    /* Defaultní Fallback */
     --bg-gradient-start: #0f0c29;
     --bg-gradient-end: #302b63;
     --orb-1-color: #24243e; --orb-2-color: #0f0c29; --orb-3-color: #7b4397; --orb-4-color: #dc2430;
@@ -13,133 +14,108 @@
 }
 
 /* =========================================
-   1. DEFINICE TÉMAT (Z "Můj Start")
+   1. DEFINICE TÉMAT (Všech 16)
    ========================================= */
 /* JARO */
-body.spring.morning { --bg-gradient-start: #f3ffe3; --bg-gradient-end: #fff0f5; --orb-1-color: #e2f0cb; --orb-2-color: #ff9ff3; --orb-3-color: #c7ecee; --orb-4-color: #f7d794; --accent: #6ab04c; --text: #2d3436; --orb-blend: multiply; }
-body.spring.noon    { --bg-gradient-start: #badc58; --bg-gradient-end: #dff9fb; --orb-1-color: #f6e58d; --orb-2-color: #6ab04c; --orb-3-color: #ffbe76; --orb-4-color: #7ed6df; --accent: #badc58; --text: #2d3436; --orb-blend: multiply; }
-body.spring.evening { --bg-gradient-start: #e056fd; --bg-gradient-end: #f0932b; --orb-1-color: #ffbe76; --orb-2-color: #be2edd; --orb-3-color: #ff7979; --orb-4-color: #badc58; --accent: #be2edd; --text: #2d3436; --orb-blend: multiply; }
-body.spring.night   { --bg-gradient-start: #2c3a47; --bg-gradient-end: #58b19f; --orb-1-color: #55efc4; --orb-2-color: #a29bfe; --orb-3-color: #00b894; --orb-4-color: #fdcb6e; --accent: #55efc4; --text: #dfe6e9; --orb-blend: screen; }
+body.spring-morning { --bg-gradient-start: #f3ffe3; --bg-gradient-end: #fff0f5; --orb-1-color: #e2f0cb; --orb-2-color: #ff9ff3; --orb-3-color: #c7ecee; --orb-4-color: #f7d794; --accent: #6ab04c; --text: #2d3436; --card-bg: rgba(255,255,255,0.6); --text-shadow: none; --orb-blend: multiply; }
+body.spring-noon    { --bg-gradient-start: #badc58; --bg-gradient-end: #dff9fb; --orb-1-color: #f6e58d; --orb-2-color: #6ab04c; --orb-3-color: #ffbe76; --orb-4-color: #7ed6df; --accent: #badc58; --text: #2d3436; --card-bg: rgba(255,255,255,0.6); --text-shadow: none; --orb-blend: multiply; }
+body.spring-evening { --bg-gradient-start: #e056fd; --bg-gradient-end: #f0932b; --orb-1-color: #ffbe76; --orb-2-color: #be2edd; --orb-3-color: #ff7979; --orb-4-color: #badc58; --accent: #be2edd; --text: #2d3436; --card-bg: rgba(255,255,255,0.6); --text-shadow: none; --orb-blend: multiply; }
+body.spring-night   { --bg-gradient-start: #2c3a47; --bg-gradient-end: #58b19f; --orb-1-color: #55efc4; --orb-2-color: #a29bfe; --orb-3-color: #00b894; --orb-4-color: #fdcb6e; --accent: #55efc4; --text: #dfe6e9; --orb-blend: screen; }
 
 /* LÉTO */
-body.summer.morning { --bg-gradient-start: #fff3e0; --bg-gradient-end: #81ecec; --orb-1-color: #fab1a0; --orb-2-color: #74b9ff; --orb-3-color: #ffeaa7; --orb-4-color: #81ecec; --accent: #00cec9; --text: #2d3436; --orb-blend: multiply; }
-body.summer.noon    { --bg-gradient-start: #f9ca24; --bg-gradient-end: #f0932b; --orb-1-color: #ff7979; --orb-2-color: #badc58; --orb-3-color: #22a6b3; --orb-4-color: #f6e58d; --accent: #f0932b; --text: #2d3436; --orb-blend: multiply; }
-body.summer.evening { --bg-gradient-start: #eb4d4b; --bg-gradient-end: #686de0; --orb-1-color: #f0932b; --orb-2-color: #be2edd; --orb-3-color: #ff7979; --orb-4-color: #ffbe76; --accent: #ff4757; --text: #dfe6e9; --orb-blend: multiply; }
-body.summer.night   { --bg-gradient-start: #130f40; --bg-gradient-end: #30336b; --orb-1-color: #e056fd; --orb-2-color: #f9ca24; --orb-3-color: #ff7979; --orb-4-color: #686de0; --accent: #f9ca24; --text: #dfe6e9; --orb-blend: screen; }
+body.summer-morning { --bg-gradient-start: #fff3e0; --bg-gradient-end: #81ecec; --orb-1-color: #fab1a0; --orb-2-color: #74b9ff; --orb-3-color: #ffeaa7; --orb-4-color: #81ecec; --accent: #00cec9; --text: #2d3436; --card-bg: rgba(255,255,255,0.6); --text-shadow: none; --orb-blend: multiply; }
+body.summer-noon    { --bg-gradient-start: #f9ca24; --bg-gradient-end: #f0932b; --orb-1-color: #ff7979; --orb-2-color: #badc58; --orb-3-color: #22a6b3; --orb-4-color: #f6e58d; --accent: #f0932b; --text: #2d3436; --card-bg: rgba(255,255,255,0.6); --text-shadow: none; --orb-blend: multiply; }
+body.summer-evening { --bg-gradient-start: #eb4d4b; --bg-gradient-end: #686de0; --orb-1-color: #f0932b; --orb-2-color: #be2edd; --orb-3-color: #ff7979; --orb-4-color: #ffbe76; --accent: #ff4757; --text: #dfe6e9; --card-bg: rgba(255,255,255,0.6); --text-shadow: none; --orb-blend: multiply; }
+body.summer-night   { --bg-gradient-start: #130f40; --bg-gradient-end: #30336b; --orb-1-color: #e056fd; --orb-2-color: #f9ca24; --orb-3-color: #ff7979; --orb-4-color: #686de0; --accent: #f9ca24; --text: #dfe6e9; --orb-blend: screen; }
 
 /* PODZIM */
-body.autumn.morning { --bg-gradient-start: #f7f1e3; --bg-gradient-end: #d1ccc0; --orb-1-color: #ffb142; --orb-2-color: #ffda79; --orb-3-color: #d1d8e0; --orb-4-color: #ff5252; --accent: #d35400; --text: #2d3436; --orb-blend: multiply; }
-body.autumn.noon    { --bg-gradient-start: #fff5e6; --bg-gradient-end: #ffdbcc; --orb-1-color: #ff9f43; --orb-2-color: #ee5253; --orb-3-color: #ffbe76; --orb-4-color: #fab1a0; --accent: #d35400; --text: #2d3436; --orb-blend: multiply; }
-body.autumn.evening { --bg-gradient-start: #ffda79; --bg-gradient-end: #ffb142; --orb-1-color: #cc8e35; --orb-2-color: #e17055; --orb-3-color: #b33939; --orb-4-color: #f7f1e3; --accent: #e17055; --text: #2d3436; --orb-blend: multiply; }
-body.autumn.night   { --bg-gradient-start: #2d3436; --bg-gradient-end: #0f0c29; --orb-1-color: #cd6133; --orb-2-color: #f7f1e3; --orb-3-color: #30336b; --orb-4-color: #ffda79; --accent: #ffda79; --text: #dfe6e9; --orb-blend: screen; }
+body.autumn-morning { --bg-gradient-start: #f7f1e3; --bg-gradient-end: #d1ccc0; --orb-1-color: #ffb142; --orb-2-color: #ffda79; --orb-3-color: #d1d8e0; --orb-4-color: #ff5252; --accent: #d35400; --text: #2d3436; --card-bg: rgba(255,255,255,0.6); --text-shadow: none; --orb-blend: multiply; }
+body.autumn-noon    { --bg-gradient-start: #fff5e6; --bg-gradient-end: #ffdbcc; --orb-1-color: #ff9f43; --orb-2-color: #ee5253; --orb-3-color: #ffbe76; --orb-4-color: #fab1a0; --accent: #d35400; --text: #2d3436; --card-bg: rgba(255,255,255,0.6); --text-shadow: none; --orb-blend: multiply; }
+body.autumn-evening { --bg-gradient-start: #ffda79; --bg-gradient-end: #ffb142; --orb-1-color: #cc8e35; --orb-2-color: #e17055; --orb-3-color: #b33939; --orb-4-color: #f7f1e3; --accent: #e17055; --text: #2d3436; --card-bg: rgba(255,255,255,0.6); --text-shadow: none; --orb-blend: multiply; }
+body.autumn-night   { --bg-gradient-start: #2d3436; --bg-gradient-end: #0f0c29; --orb-1-color: #cd6133; --orb-2-color: #f7f1e3; --orb-3-color: #30336b; --orb-4-color: #ffda79; --accent: #ffda79; --text: #dfe6e9; --orb-blend: screen; }
 
 /* ZIMA */
-body.winter.morning { --bg-gradient-start: #f1f2f6; --bg-gradient-end: #dfe4ea; --orb-1-color: #74b9ff; --orb-2-color: #a29bfe; --orb-3-color: #ffffff; --orb-4-color: #81ecec; --accent: #74b9ff; --text: #2d3436; --orb-blend: multiply; }
-body.winter.noon    { --bg-gradient-start: #e3f2fd; --bg-gradient-end: #bbdefb; --orb-1-color: #0984e3; --orb-2-color: #00cec9; --orb-3-color: #fab1a0; --orb-4-color: #ffffff; --accent: #0984e3; --text: #2d3436; --orb-blend: multiply; }
-body.winter.evening { --bg-gradient-start: #6c5ce7; --bg-gradient-end: #a29bfe; --orb-1-color: #fd79a8; --orb-2-color: #74b9ff; --orb-3-color: #e056fd; --orb-4-color: #0984e3; --accent: #e056fd; --text: #dfe6e9; --orb-blend: multiply; }
-body.winter.night   { --bg-gradient-start: #0c2461; --bg-gradient-end: #1e3799; --orb-1-color: #00d2d3; --orb-2-color: #5f27cd; --orb-3-color: #ff9ff3; --orb-4-color: #48dbfb; --accent: #48dbfb; --text: #dfe6e9; --orb-blend: screen; }
+body.winter-morning { --bg-gradient-start: #f1f2f6; --bg-gradient-end: #dfe4ea; --orb-1-color: #74b9ff; --orb-2-color: #a29bfe; --orb-3-color: #ffffff; --orb-4-color: #81ecec; --accent: #74b9ff; --text: #2d3436; --card-bg: rgba(255,255,255,0.6); --text-shadow: none; --orb-blend: multiply; }
+body.winter-noon    { --bg-gradient-start: #e3f2fd; --bg-gradient-end: #bbdefb; --orb-1-color: #0984e3; --orb-2-color: #00cec9; --orb-3-color: #fab1a0; --orb-4-color: #ffffff; --accent: #0984e3; --text: #2d3436; --card-bg: rgba(255,255,255,0.6); --text-shadow: none; --orb-blend: multiply; }
+body.winter-evening { --bg-gradient-start: #6c5ce7; --bg-gradient-end: #a29bfe; --orb-1-color: #fd79a8; --orb-2-color: #74b9ff; --orb-3-color: #e056fd; --orb-4-color: #0984e3; --accent: #e056fd; --text: #dfe6e9; --orb-blend: multiply; }
+body.winter-night   { --bg-gradient-start: #0c2461; --bg-gradient-end: #1e3799; --orb-1-color: #00d2d3; --orb-2-color: #5f27cd; --orb-3-color: #ff9ff3; --orb-4-color: #48dbfb; --accent: #48dbfb; --text: #dfe6e9; --orb-blend: screen; }
 
 /* =========================================
-   2. ZÁKLADNÍ LAYOUT & ORBY
+   2. LAYOUT
    ========================================= */
 body {
     background-color: #000;
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     display: flex; justify-content: center; align-items: center;
-    height: 100vh; margin: 0; overflow: hidden;
+    min-height: 100vh; width: 100%; margin: 0; overflow-x: hidden;
     perspective: 1200px;
-    -webkit-font-smoothing: antialiased;
-    transition: color 1s ease;
 }
 
-/* Dynamické pozadí */
+/* POZADÍ - FIXED (Oprava scrollování) */
 .ambient-background {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -100;
     background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
-    transition: background 3s ease;
+    transition: background 1s ease;
 }
 
-/* Orbs */
+/* ORBY */
 .orb {
-    position: absolute; border-radius: 50%; filter: blur(50px); opacity: 0.7;
+    position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.7;
     mix-blend-mode: var(--orb-blend);
     animation: float 25s ease-in-out infinite alternate;
-    transition: background-color 3s ease, mix-blend-mode 3s ease;
+    transition: background-color 1s ease, mix-blend-mode 1s ease;
 }
-.orb-1 { width: 70vw; height: 70vw; background: var(--orb-1-color); top: -10%; left: -10%; animation-duration: 20s; }
-.orb-2 { width: 60vw; height: 60vw; background: var(--orb-2-color); bottom: -10%; right: -10%; animation-duration: 28s; animation-delay: -5s; }
-.orb-3 { width: 50vw; height: 50vw; background: var(--orb-3-color); top: 20%; left: 30%; animation-duration: 24s; animation-delay: -8s; }
-.orb-4 { width: 40vw; height: 40vw; background: var(--orb-4-color); bottom: 10%; left: 10%; opacity: 0.5; animation: floatReverse 30s ease-in-out infinite alternate; }
+.orb-1 { width: 70vw; height: 70vw; background: var(--orb-1-color); top: -10%; left: -10%; }
+.orb-2 { width: 60vw; height: 60vw; background: var(--orb-2-color); bottom: -10%; right: -10%; animation-delay: -5s; }
+.orb-3 { width: 50vw; height: 50vw; background: var(--orb-3-color); top: 20%; left: 30%; animation-delay: -8s; }
+.orb-4 { width: 40vw; height: 40vw; background: var(--orb-4-color); bottom: 10%; left: 10%; opacity: 0.5; }
 
-@keyframes float {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    33% { transform: translate(15vw, 10vh) rotate(40deg); }
-    66% { transform: translate(-10vw, 20vh) rotate(-20deg); }
-    100% { transform: translate(5vw, -10vh) rotate(10deg); }
-}
-@keyframes floatReverse {
-    0% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(-20vw, -15vh) scale(1.2); }
-    100% { transform: translate(15vw, 10vh) scale(0.9); }
-}
+@keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(20px, 40px); } }
 
 /* =========================================
-   3. ELEGANTNÍ PLOVOUCÍ MOTTO
+   3. MOTTO (Elegantní, dýchající na pozadí)
    ========================================= */
-.floating-motto-container {
+.motto-container {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: -50; /* Před orby, za kartou */
+    pointer-events: none; z-index: -50;
     display: flex; justify-content: center; align-items: center;
-    overflow: hidden;
 }
 
-.floating-motto {
-    font-size: 14px; /* Malé, elegantní */
-    font-weight: 600;
+.motto-text {
+    font-size: 24px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 6px;
-    color: var(--accent); /* Automatický kontrast podle tématu */
-    opacity: 0; /* Výchozí skryté */
-    /* Maska zajistí, že text "vypluje" z ničeho uprostřed a ne z kraje obrazovky */
-    -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 20%, black 80%, transparent 100%);
-    mask-image: linear-gradient(90deg, transparent 0%, black 20%, black 80%, transparent 100%);
-    
-    /* Animace každých 10s */
-    animation: mottoFloat 10s linear infinite;
+    letter-spacing: 8px;
+    color: #ffd700; /* Zlatá */
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    opacity: 0;
+    animation: mottoBreathe 10s ease-in-out infinite;
+    mix-blend-mode: overlay;
 }
 
-@keyframes mottoFloat {
-    0% { opacity: 0; transform: translateX(-50px) scale(0.9); }
-    10% { opacity: 0; }
-    20% { opacity: 0.8; transform: translateX(0px) scale(1); } /* Vynoření */
-    80% { opacity: 0.8; transform: translateX(50px) scale(1); } /* Plavba */
-    90% { opacity: 0; transform: translateX(100px) scale(0.95); } /* Zanoření */
-    100% { opacity: 0; }
+@keyframes mottoBreathe {
+    0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+    20% { opacity: 0.8; transform: scale(1) translateY(0); }
+    80% { opacity: 0.8; transform: scale(1) translateY(0); }
+    100% { opacity: 0; transform: scale(1.05) translateY(-10px); }
 }
 
 /* =========================================
-   4. KARTA & UI
+   4. KARTA (Vysoký Kontrast)
    ========================================= */
-.scene { width: 340px; height: 620px; position: relative; opacity: 0; transition: opacity 1s ease; }
+.scene { width: 320px; height: 580px; position: relative; opacity: 0; transition: opacity 1s ease; }
+
 .card {
     width: 100%; height: 100%; position: relative;
-    transform-style: preserve-3d; transition: transform 0.1s;
-    border-radius: 46px;
-    /* Sklo */
-    background: rgba(255, 255, 255, 0.1); 
-    backdrop-filter: blur(30px) saturate(150%);
-    -webkit-backdrop-filter: blur(30px) saturate(150%);
-    border: 1px solid rgba(255,255,255,0.25);
-    box-shadow: 0 40px 80px -10px rgba(0,0,0,0.5);
-    overflow: hidden;
-}
-
-/* Úprava karty pro světlá témata (automaticky) */
-body[class*="morning"] .card, body[class*="noon"] .card {
-    background: rgba(255, 255, 255, 0.4);
-    border: 1px solid rgba(255,255,255,0.6);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+    transform-style: preserve-3d; 
+    transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1); /* Plynulejší otáčení */
+    border-radius: 40px;
+    /* Kontrastní pozadí */
+    background: var(--card-bg);
+    backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    border: 2px solid var(--border);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
 }
 
 .card-face {
@@ -148,51 +124,55 @@ body[class*="morning"] .card, body[class*="noon"] .card {
     align-items: center; padding: 40px 25px; box-sizing: border-box;
     z-index: 10;
 }
-.card-face.back { transform: rotateY(180deg); background: rgba(0,0,0,0.9); justify-content: center; z-index: 11; border-radius: 46px; }
 
-/* iPhone Clock (Depth Effect) */
-.clock-container { position: absolute; top: 50px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 1; }
-.iphone-clock {
-    font-size: 100px; font-weight: 800; line-height: 1;
-    color: var(--text); opacity: 0.3; /* Bere barvu z tématu */
-    letter-spacing: -2px; pointer-events: none;
-    font-family: "SF Pro Display", sans-serif;
-    transition: color 1s ease;
+/* ZADNÍ STRANA */
+.card-face.back { 
+    transform: rotateY(180deg); 
+    background: rgba(0,0,0,0.95); 
+    justify-content: center; 
+    z-index: 11; 
+    border-radius: 40px;
+    border: 2px solid var(--accent);
 }
 
-/* Avatar */
-.avatar-wrapper {
-    position: relative; margin-top: 60px; width: 140px; height: 140px; z-index: 2;
-}
+/* AVATAR */
 .avatar {
-    width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+    width: 130px; height: 130px; border-radius: 50%; object-fit: cover;
     border: 4px solid rgba(255,255,255,0.2);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-top: 20px;
 }
 
-/* Texty */
-h1 { font-size: 26px; font-weight: 700; margin: 20px 0 5px 0; letter-spacing: -0.5px; z-index: 2; text-align: center; color: var(--text); }
-.bio { font-size: 14px; opacity: 0.8; text-align: center; margin-bottom: 25px; line-height: 1.4; max-width: 90%; z-index: 2; color: var(--text); }
+/* TEXTY */
+h1 { font-size: 26px; font-weight: 800; margin: 20px 0 5px 0; text-align: center; color: var(--text); text-shadow: var(--text-shadow); }
+.bio { font-size: 14px; opacity: 0.9; text-align: center; margin-bottom: 30px; line-height: 1.5; max-width: 90%; color: var(--text); text-shadow: var(--text-shadow); font-weight: 500; }
 
-/* Odkazy */
-.links { width: 100%; display: flex; flex-direction: column; gap: 10px; z-index: 2; overflow-y: auto; padding-right: 5px; max-height: 250px; }
+/* ODKAZY */
+.links { width: 100%; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding-right: 5px; flex-grow: 1; }
 .links::-webkit-scrollbar { width: 0px; }
+
 .link-btn {
     background: rgba(255,255,255,0.15); color: var(--text);
-    padding: 14px; text-align: center; text-decoration: none;
-    border-radius: 16px; font-weight: 600; font-size: 13px;
-    backdrop-filter: blur(5px); transition: 0.2s; border: 1px solid var(--border);
+    padding: 15px; text-align: center; text-decoration: none;
+    border-radius: 14px; font-weight: 700; font-size: 13px;
+    backdrop-filter: blur(5px); transition: 0.2s; border: 1px solid rgba(255,255,255,0.2);
+    text-transform: uppercase; letter-spacing: 1px;
 }
-/* Tmavší linky pro světlá témata */
-body[class*="morning"] .link-btn, body[class*="noon"] .link-btn { background: rgba(255,255,255,0.5); color: #000; }
-.link-btn:hover { transform: scale(1.02); background: var(--accent); color: #fff; border-color: transparent; }
+/* Inverzní tlačítka pro světlá pozadí */
+body[class*="morning"] .link-btn, body[class*="noon"] .link-btn {
+    background: rgba(255,255,255,0.7); color: #000; border-color: rgba(0,0,0,0.1);
+}
+.link-btn:hover { transform: translateY(-2px); background: var(--accent); color: #fff; border-color: transparent; }
 
-.mint-number { position: absolute; bottom: 20px; font-size: 10px; opacity: 0.5; letter-spacing: 2px; color: var(--text); }
+.mint-number { position: absolute; bottom: 20px; font-size: 10px; opacity: 0.6; letter-spacing: 2px; color: var(--text); font-weight: bold; }
 
-/* Admin UI Fix */
+/* LOADER */
+.loader-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s; }
+.spinner { width: 40px; height: 40px; border: 4px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ADMIN UI */
 .admin-container {
-    background: rgba(20,20,20,0.8); backdrop-filter: blur(20px);
-    padding: 30px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
-    width: 90%; max-width: 550px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5); z-index: 10; position: relative;
+    background: #111; padding: 20px; border-radius: 20px; border: 1px solid #333;
+    width: 90%; max-width: 500px; margin: 40px auto; display: flex; flex-direction: column; gap: 15px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8); z-index: 100; position: relative;
 }

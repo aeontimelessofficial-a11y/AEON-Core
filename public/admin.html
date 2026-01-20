@@ -6,38 +6,43 @@
     <title>ÆON | Studio</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Admin specifika: aby byl formulář čitelný nad živým pozadím */
-        body { overflow-y: auto; height: auto; min-height: 100vh; padding: 40px 0; display: block; }
-        
-        .admin-label { color: var(--text); opacity: 0.8; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px; display: block; font-weight: 700; }
-        .admin-input { 
-            background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: var(--text); padding: 16px; border-radius: 12px; width: 100%; box-sizing: border-box; 
-            font-family: inherit; font-size: 14px; outline: none; transition: 0.2s; backdrop-filter: blur(5px);
+        /* Admin specifika */
+        body { 
+            overflow-y: auto; height: auto; min-height: 100vh; padding: 40px 0; display: block; 
+            /* Pozadí bude ovládáno přes JS stejně jako karta */
         }
-        .admin-input:focus { border-color: var(--accent); background: rgba(0,0,0,0.5); }
+        .admin-container { 
+            width: 90%; max-width: 550px; margin: 0 auto; 
+            background: #111; border: 1px solid #333; /* Pevné tmavé pozadí pro formulář */
+        }
         
-        /* Theme Grid */
-        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-height: 250px; overflow-y: auto; padding: 5px; background: rgba(0,0,0,0.2); border-radius: 12px; }
+        .admin-label { color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px; display: block; font-weight: 700; }
+        .admin-input { 
+            background: #222; border: 1px solid #333; color: white; padding: 16px; border-radius: 12px; width: 100%; box-sizing: border-box; 
+            font-family: inherit; font-size: 14px; outline: none;
+        }
+        .admin-input:focus { border-color: white; }
+        
+        /* THEME GRID - Všechna témata */
+        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-height: 300px; overflow-y: auto; padding: 5px; background: #222; border-radius: 12px; }
         .theme-btn {
-            padding: 15px; border-radius: 12px; cursor: pointer; border: 2px solid transparent; text-align: center;
-            font-size: 12px; font-weight: bold; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-            transition: transform 0.2s;
+            padding: 12px; border-radius: 8px; cursor: pointer; border: 2px solid transparent; text-align: center;
+            font-size: 11px; font-weight: bold; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
         .theme-btn:hover { transform: scale(1.02); }
-        .theme-btn.selected { border-color: white; box-shadow: 0 0 15px rgba(255,255,255,0.5); }
+        .theme-btn.selected { border-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
         /* Avatars */
-        .avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; }
+        .avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; background: #222; padding: 15px; border-radius: 12px; }
         .avatar-option { width: 100%; border-radius: 50%; cursor: pointer; transition: 0.2s; border: 2px solid transparent; background: #fff; }
         .avatar-option:hover { transform: scale(1.1); }
-        .avatar-option.selected { border-color: var(--accent); box-shadow: 0 0 10px var(--accent); }
+        .avatar-option.selected { border-color: #fff; box-shadow: 0 0 10px #fff; }
 
         .link-row { display: flex; gap: 10px; margin-bottom: 8px; }
         
         button#saveBtn {
-            background: var(--accent); border: none; padding: 18px; color: #000; font-weight: bold;
+            background: white; border: none; padding: 18px; color: black; font-weight: bold;
             border-radius: 12px; margin-top: 20px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; width: 100%;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
     </style>
 </head>
@@ -48,8 +53,8 @@
     </div>
 
     <div class="admin-container">
-        <h1 style="color: var(--text); text-align: center;">ÆON Studio</h1>
-        <div id="loading" style="text-align:center; color:var(--accent); font-size: 12px;">NAČÍTÁM DATA...</div>
+        <h1 style="color: white; text-align: center; margin-bottom: 20px;">ÆON Studio</h1>
+        <div id="loading" style="text-align:center; color:#888; font-size: 12px;">NAČÍTÁM...</div>
 
         <label class="admin-label">URL (Slug)</label>
         <input type="text" class="admin-input" id="slug" placeholder="např. ondra" required>
@@ -62,35 +67,45 @@
         <input type="text" class="admin-input" id="name" placeholder="Jan Novák">
         <label class="admin-label">Bio</label>
         <input type="text" class="admin-input" id="bio" placeholder="Digital Creator">
-        <label class="admin-label">Motto (Plovoucí na pozadí)</label>
-        <input type="text" class="admin-input" id="motto" placeholder="Např. FUTURE IS NOW">
+        <label class="admin-label">Motto (Pozadí)</label>
+        <input type="text" class="admin-input" id="motto" placeholder="FUTURE IS NOW">
 
         <label class="admin-label">Avatar</label>
         <div class="avatar-grid" id="avatarStudio"></div>
-        <div style="text-align:center; font-size:10px; color:var(--text); opacity:0.6; margin: 5px 0;">NEBO NAHRAJ VLASTNÍ</div>
-        <input type="file" id="photoInput" accept="image/*" style="color: var(--text);">
+        <input type="file" id="photoInput" accept="image/*" style="margin-top:10px; color:#888;">
         <input type="hidden" id="base64String">
-        <img id="preview" style="width:50px; height:50px; border-radius:50%; margin: 10px auto; display:block; object-fit:cover; border: 2px solid var(--accent);">
+        <img id="preview" style="width:50px; height:50px; border-radius:50%; margin: 10px auto; display:block; object-fit:cover; border: 1px solid #333;">
 
         <label class="admin-label">Odkazy</label>
         <div id="linksContainer"></div>
-        <button onclick="addLinkField()" style="background:rgba(255,255,255,0.1); border:1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text); cursor: pointer; margin-top:10px; width:100%;">+ Přidat</button>
+        <button onclick="addLinkField()" style="background:#333; color:#fff; border:1px solid #444; padding:10px; border-radius:8px; margin-top:10px; width:100%; cursor:pointer;">+ Přidat</button>
 
         <button onclick="saveCard()" id="saveBtn">ULOŽIT KARTU</button>
-        <div id="status" style="text-align:center; margin-top:10px; color: yellow; text-shadow: 0 2px 4px black;"></div>
+        <div id="status" style="text-align:center; margin-top:10px; color: yellow;"></div>
     </div>
 
     <script>
-        // --- 1. THEMES ---
+        // 1. THEMES LIST
         const themes = [
-            { id: "winter-night", name: "Zima - Noc", bg: "linear-gradient(45deg, #0c2461, #1e3799)" },
-            { id: "winter-morning", name: "Zima - Ráno", bg: "linear-gradient(45deg, #f1f2f6, #dfe4ea)", textDark: true },
+            { id: "spring-morning", name: "Jaro - Ráno", bg: "linear-gradient(45deg, #f3ffe3, #fff0f5)", dark: true },
+            { id: "spring-noon", name: "Jaro - Poledne", bg: "linear-gradient(45deg, #badc58, #dff9fb)", dark: true },
+            { id: "spring-evening", name: "Jaro - Večer", bg: "linear-gradient(45deg, #e056fd, #f0932b)", dark: true },
             { id: "spring-night", name: "Jaro - Noc", bg: "linear-gradient(45deg, #2c3a47, #58b19f)" },
-            { id: "spring-morning", name: "Jaro - Ráno", bg: "linear-gradient(45deg, #f3ffe3, #fff0f5)", textDark: true },
+            
+            { id: "summer-morning", name: "Léto - Ráno", bg: "linear-gradient(45deg, #fff3e0, #81ecec)", dark: true },
+            { id: "summer-noon", name: "Léto - Poledne", bg: "linear-gradient(45deg, #f9ca24, #f0932b)", dark: true },
+            { id: "summer-evening", name: "Léto - Večer", bg: "linear-gradient(45deg, #eb4d4b, #686de0)", dark: true },
             { id: "summer-night", name: "Léto - Noc", bg: "linear-gradient(45deg, #130f40, #30336b)" },
-            { id: "summer-noon", name: "Léto - Poledne", bg: "linear-gradient(45deg, #f9ca24, #f0932b)", textDark: true },
+
+            { id: "autumn-morning", name: "Podzim - Ráno", bg: "linear-gradient(45deg, #f7f1e3, #d1ccc0)", dark: true },
+            { id: "autumn-noon", name: "Podzim - Poledne", bg: "linear-gradient(45deg, #fff5e6, #ffdbcc)", dark: true },
+            { id: "autumn-evening", name: "Podzim - Večer", bg: "linear-gradient(45deg, #ffda79, #ffb142)", dark: true },
             { id: "autumn-night", name: "Podzim - Noc", bg: "linear-gradient(45deg, #2d3436, #0f0c29)" },
-            { id: "autumn-evening", name: "Podzim - Večer", bg: "linear-gradient(45deg, #ffda79, #ffb142)", textDark: true }
+
+            { id: "winter-morning", name: "Zima - Ráno", bg: "linear-gradient(45deg, #f1f2f6, #dfe4ea)", dark: true },
+            { id: "winter-noon", name: "Zima - Poledne", bg: "linear-gradient(45deg, #e3f2fd, #bbdefb)", dark: true },
+            { id: "winter-evening", name: "Zima - Večer", bg: "linear-gradient(45deg, #6c5ce7, #a29bfe)", dark: true },
+            { id: "winter-night", name: "Zima - Noc", bg: "linear-gradient(45deg, #0c2461, #1e3799)" }
         ];
 
         const themeContainer = document.getElementById('themeGrid');
@@ -99,25 +114,25 @@
             div.className = 'theme-btn';
             div.innerText = t.name;
             div.style.background = t.bg;
-            div.style.color = t.textDark ? '#333' : 'white';
+            div.style.color = t.dark ? '#000' : '#fff';
             div.onclick = () => selectTheme(t.id, div);
             themeContainer.appendChild(div);
         });
 
-        // TOTO JE TA FUNKCE PRO ŽIVÝ NÁHLED
+        // LIVE PREVIEW FUNCTION
         function selectTheme(id, el) {
             document.getElementById('selectedTheme').value = id;
             document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('selected'));
             el.classList.add('selected');
             
-            // Okamžitá změna pozadí editoru
-            document.body.className = ''; 
+            // Okamžitá aplikace na body editoru
+            document.body.className = '';
             const parts = id.split('-');
             document.body.classList.add(parts[0]);
             document.body.classList.add(parts[1]);
         }
 
-        // --- 2. AVATARS ---
+        // 2. AVATARS
         const seeds = ["Leo", "Mila", "Caleb", "Eliza", "Chase", "Jade", "Nora", "Jack", "Felix", "Ruby"];
         const avContainer = document.getElementById('avatarStudio');
         seeds.forEach(s => {
@@ -133,7 +148,7 @@
             avContainer.appendChild(img);
         });
 
-        // --- 3. LINKS & LOAD ---
+        // 3. LOAD
         const linksWrapper = document.getElementById('linksContainer');
         function addLinkField(l="", u="") {
             const d = document.createElement('div'); d.className = 'link-row';
@@ -154,27 +169,35 @@
                         document.getElementById('name').value = d.name || "";
                         document.getElementById('bio').value = d.bio || "";
                         document.getElementById('motto').value = d.motto || "";
+                        
                         if(d.theme) {
-                            selectTheme(d.theme, document.createElement('div')); // Trigger preview
+                            // Najít tlačítko a simulovat klik
+                            const btn = Array.from(document.querySelectorAll('.theme-btn')).find(b => b.innerText.includes(d.theme.replace('winter-night', 'Zima - Noc'))); // Zjednodušeno
+                            // Lepší: najít v datech
+                            const tIndex = themes.findIndex(x => x.id === d.theme);
+                            if(tIndex > -1) selectTheme(d.theme, document.querySelectorAll('.theme-btn')[tIndex]);
+                            else selectTheme('winter-night', document.querySelectorAll('.theme-btn')[15]);
                         } else {
-                            selectTheme('winter-night', document.createElement('div'));
+                            selectTheme('winter-night', document.querySelectorAll('.theme-btn')[15]);
                         }
+
                         if(d.avatar) {
                             document.getElementById('base64String').value = d.avatar;
                             document.getElementById('preview').src = d.avatar;
                         }
+                        linksWrapper.innerHTML = '';
                         if(d.links) d.links.forEach(x => addLinkField(x.label, x.url));
                         if(!d.links || d.links.length === 0) { addLinkField(); addLinkField(); }
                     }
                 } catch(e){}
             } else { 
                 addLinkField(); addLinkField(); 
-                selectTheme('winter-night', document.createElement('div')); // Default preview
+                selectTheme('winter-night', document.querySelectorAll('.theme-btn')[15]);
             }
             document.getElementById('loading').style.display = 'none';
         }
 
-        // --- 4. SAVE ---
+        // 4. SAVE
         async function saveCard() {
             const stat = document.getElementById('status'); stat.innerText = "Ukládám...";
             const slug = document.getElementById('slug').value.toLowerCase().replace(/\s+/g, '-');
