@@ -9,9 +9,16 @@
 </head>
 <body>
 
-    <div class="background-layer"></div>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
+    <div class="ambient-background">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+    </div>
+
+    <div class="background-motto-container">
+        <div class="background-motto" id="backgroundMotto">FUTURE</div>
+    </div>
 
     <div id="loader" class="loader-container">
         <div class="spinner"></div>
@@ -22,19 +29,18 @@
             
             <div class="card-face front">
                 
-                <div class="iphone-clock" id="iphoneClock">00:00</div>
+                <div class="clock-container">
+                    <div class="iphone-clock" id="iphoneClock">00:00</div>
+                </div>
 
-                <div class="avatar-container">
+                <div class="avatar-wrapper">
                     <img src="" class="avatar" style="display: none;">
                 </div>
 
                 <h1 id="name"></h1>
                 <p class="bio"></p>
                 
-                <div class="links">
-                    </div>
-
-                <div class="motto-overlay" id="mottoOverlay"></div>
+                <div class="links"></div>
 
                 <div class="mint-number">NO. ----</div>
             </div>

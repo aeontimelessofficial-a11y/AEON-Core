@@ -1,9 +1,10 @@
 const card = document.getElementById('artifact');
 const scene = document.querySelector('.scene');
 const loader = document.getElementById('loader');
+const mottoBg = document.getElementById('backgroundMotto');
 let isFlipped = false;
 
-// --- 1. CLOCK LOGIC (iPhone Style) ---
+// --- 1. CLOCK (iPhone Style) ---
 function updateClock() {
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
@@ -11,20 +12,10 @@ function updateClock() {
     const clockEl = document.getElementById('iphoneClock');
     if(clockEl) clockEl.innerText = `${hours}:${minutes}`;
 }
-setInterval(updateClock, 1000); // Aktualizace každou vteřinu
-updateClock(); // První spuštění
+setInterval(updateClock, 1000);
+updateClock();
 
-// --- 2. THEME LOGIC ---
-function applyTheme(themeName) {
-    document.body.className = ''; // Reset
-    if (themeName) {
-        document.body.classList.add(themeName);
-    } else {
-        document.body.classList.add('theme-midnight'); // Default
-    }
-}
-
-// --- 3. URL FIXER ---
+// --- 2. URL FIXER ---
 function fixUrl(url) {
     if (!url) return "#";
     url = url.trim();
@@ -32,29 +23,18 @@ function fixUrl(url) {
     return url;
 }
 
-// --- 4. QR CODE ---
+// --- 3. QR CODE ---
 function generateQR(url) {
     const qrContainer = document.getElementById('qrcode');
     qrContainer.innerHTML = "";
     new QRCode(qrContainer, {
-        text: url, width: 120, height: 120,
+        text: url, width: 140, height: 140,
         colorDark : "#000000", colorLight : "#ffffff",
         correctLevel : QRCode.CorrectLevel.M
     });
 }
 
-// --- 5. SECURITY & HOLOGRAM LOGIC ---
-function securityProtocol() {
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    const h = window.location.hostname;
-    // Povolit localhost, netlify a vlastní doménu
-    if (!h.includes('netlify.app') && !h.includes('localhost') && !h.includes('aeon')) {
-        // Silent fail or warning
-        console.warn("Artifact location mismatch.");
-    }
-}
-
-// --- 6. LOAD PROFILE ---
+// --- 4. LOAD DATA ---
 async function loadProfile() {
     const params = new URLSearchParams(window.location.search);
     const userSlug = params.get('slug') || 'jan-novak';
@@ -65,31 +45,30 @@ async function loadProfile() {
         
         const data = await response.json();
 
-        // Aplikace Tématu
-        applyTheme(data.theme); // Načteme uložené téma z DB
+        // 1. Téma pozadí (Aplikujeme CSS třídu na body)
+        // Pokud není nastaveno, dáme default (např. winter-night)
+        document.body.className = data.theme || 'winter-night';
 
-        // Texty
+        // 2. Data
         document.querySelector('h1').innerText = data.name;
         document.querySelector('.bio').innerText = data.bio;
         
-        // Avatar
+        // 3. Avatar
         if (data.avatar) {
             document.querySelector('.avatar').src = data.avatar;
             document.querySelector('.avatar').style.display = 'block';
         }
 
-        // Číslo
+        // 4. Motto na POZADÍ
+        if (mottoBg) {
+            mottoBg.innerText = data.motto || "FUTURE IS NOW";
+        }
+
+        // 5. Číslo
         const mintNum = data.mint_number || "---";
         document.querySelector('.mint-number').innerText = `NO. ${mintNum}`;
 
-        // MOTTO (Bezpečnostní prvek)
-        const mottoEl = document.getElementById('mottoOverlay');
-        const mottoText = data.motto || "AUTHENTIC";
-        if (mottoEl) {
-             mottoEl.innerText = mottoText;
-        }
-
-        // Odkazy
+        // 6. Odkazy
         const linksContainer = document.querySelector('.links');
         linksContainer.innerHTML = ''; 
         if (data.links && Array.isArray(data.links)) {
@@ -108,7 +87,7 @@ async function loadProfile() {
         // QR
         generateQR(window.location.href);
 
-        // Zobrazení
+        // Show
         loader.style.opacity = '0';
         setTimeout(() => { loader.style.display = 'none'; scene.style.opacity = '1'; }, 500);
 
@@ -118,7 +97,7 @@ async function loadProfile() {
     }
 }
 
-// --- 7. 3D GYRO & HOLOGRAM EFFECT ---
+// --- 5. 3D EFEKT & MOTTO REVEAL ---
 function handleMove(e) {
     if(isFlipped) return;
     
@@ -128,52 +107,40 @@ function handleMove(e) {
     const cx = window.innerWidth / 2;
     const cy = window.innerHeight / 2;
     
-    // Výpočet náklonu (-1 až 1)
+    // -1 až 1
     const dx = (clientX - cx) / cx;
     const dy = (clientY - cy) / cy;
     
-    // Rotace karty
-    const rotateY = dx * 15; // Max 15 stupňů
-    const rotateX = -dy * 15;
-    
-    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    // 1. Rotace karty
+    card.style.transform = `rotateX(${-dy * 15}deg) rotateY(${dx * 15}deg)`;
 
-    // HOLOGRAM LOGIKA:
-    // Zobrazí se jen pod určitým úhlem (když se světlo "leskne")
-    // Např. když je karta nakloněná hodně doprava
-    const hologram = document.getElementById('mottoOverlay');
+    // 2. Motto Reveal (Na pozadí)
+    // Motto se odhalí, když se hýbe myší/mobilem
+    // Čím dál od středu, tím víc je vidět
+    const intensity = Math.min(Math.abs(dx) + Math.abs(dy), 1);
     
-    // Intenzita lesku na základě úhlu (jednoduchá fyzika odlesku)
-    const shine = Math.abs(dx + dy); 
-    
-    if (hologram) {
-        // Motto se zviditelní, když s kartou hýbeme
-        hologram.style.opacity = shine > 0.3 ? shine : 0;
-        // Posun textu proti pohybu pro 3D efekt
-        hologram.style.transform = `translateX(${dx * 20}px) translateY(${dy * 20}px) rotate(-90deg)`;
+    if (mottoBg) {
+        mottoBg.style.opacity = intensity * 0.4; // Max 40% viditelnost (velmi jemné)
+        // Parallax efekt proti pohybu
+        mottoBg.style.transform = `translate(${dx * -40}px, ${dy * -40}px) rotate(-5deg)`;
     }
 }
 
 function resetCard() { 
     if(!isFlipped) {
         card.style.transform = `rotateX(0deg) rotateY(0deg)`;
-        const h = document.getElementById('mottoOverlay');
-        if(h) h.style.opacity = 0;
+        if(mottoBg) mottoBg.style.opacity = 0;
     }
 }
 
 function flipCard(e) {
-    // Pokud klikneme na odkaz, neotáčet
     if (e.target.closest('a')) return;
-    
     isFlipped = !isFlipped;
     card.style.transform = isFlipped ? `rotateY(180deg)` : `rotateY(0deg)`;
 }
 
 // Spuštění
-securityProtocol();
 loadProfile();
-
 document.addEventListener('mousemove', handleMove);
 document.addEventListener('touchmove', handleMove);
 document.addEventListener('mouseleave', resetCard);
