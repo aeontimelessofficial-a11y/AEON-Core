@@ -2,23 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ÆON | Identity Artifact</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ÆON | Identity</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
-    <div class="ambient-background">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="orb orb-4"></div>
-    </div>
+    <div class="background-layer"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
 
     <div id="loader" class="loader-container">
         <div class="spinner"></div>
-        <div style="font-size: 12px; color: #00d2ff; letter-spacing: 2px;">INITIALIZING...</div>
     </div>
 
     <div class="scene">
@@ -26,24 +22,26 @@
             
             <div class="card-face front">
                 
-                <div class="security-strip-container">
-                    <div class="security-strip">
-                        <div class="motto-text">FORGED BY ÆON ✦ FORGED BY ÆON ✦</div>
-                    </div>
+                <div class="iphone-clock" id="iphoneClock">00:00</div>
+
+                <div class="avatar-container">
+                    <img src="" class="avatar" style="display: none;">
                 </div>
 
-                <div class="mint-number">NO. ----</div>
-                <img src="" class="avatar" style="display: none;">
-                <h1></h1>
+                <h1 id="name"></h1>
                 <p class="bio"></p>
                 
                 <div class="links">
                     </div>
+
+                <div class="motto-overlay" id="mottoOverlay"></div>
+
+                <div class="mint-number">NO. ----</div>
             </div>
 
             <div class="card-face back">
                 <div id="qrcode"></div>
-                <div style="margin-top: 20px; font-size: 12px; color: #fff; font-weight: bold; letter-spacing: 1px;">SCAN TO CONNECT</div>
+                <div style="margin-top: 20px; font-weight: bold; color: #fff; letter-spacing: 1px; font-size: 12px;">SCAN TO CONNECT</div>
             </div>
         </div>
     </div>
