@@ -8,7 +8,7 @@
     --orb-1-color: #24243e; --orb-2-color: #0f0c29; --orb-3-color: #7b4397; --orb-4-color: #dc2430;
     --accent: #ffffff;
     --text-main: #ffffff;
-    --card-glass: rgba(20, 20, 20, 0.65);
+    --card-bg: rgba(20, 20, 20, 0.65);
     --input-bg: rgba(0, 0, 0, 0.5);
     --orb-blend: screen;
 }
@@ -70,23 +70,42 @@ body {
     will-change: transform; /* Optimalizace pro plynulý pohyb */
 }
 
-/* ⚡ PŮVODNÍ ANIMACE (ROZHÝBÁNÍ) */
+/* ⚡ DEFAULTNÍ ANIMACE (PRO PC) */
 .orb-1 { width: 70vw; height: 70vw; background: var(--o1); top: -10%; left: -10%; animation: float 20s ease-in-out infinite alternate; }
 .orb-2 { width: 60vw; height: 60vw; background: var(--o2); bottom: -10%; right: -10%; animation: float 28s ease-in-out infinite alternate; animation-delay: -5s; }
 .orb-3 { width: 50vw; height: 50vw; background: var(--o3); top: 20%; left: 30%; animation: float 24s ease-in-out infinite alternate; animation-delay: -8s; }
 .orb-4 { width: 40vw; height: 40vw; background: var(--o4); bottom: 10%; left: 10%; opacity: 0.5; animation: floatReverse 30s ease-in-out infinite alternate; }
 
-@keyframes float {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    33% { transform: translate(15vw, 10vh) rotate(40deg); }
-    66% { transform: translate(-10vw, 20vh) rotate(-20deg); }
-    100% { transform: translate(5vw, -10vh) rotate(10deg); }
+@keyframes float { 
+    0% { transform: translate(0, 0); } 
+    100% { transform: translate(30px, 60px); } 
+}
+@keyframes floatReverse { 
+    0% { transform: translate(0, 0); } 
+    100% { transform: translate(-30px, -20px); } 
 }
 
-@keyframes floatReverse {
+/* =========================================
+   ⚡ MOBILE ANIMATION BOOST (VELKÉ PŘELÍVÁNÍ)
+   ========================================= */
+@media (max-width: 768px) {
+    /* Přepíšeme animace na mnohem větší pohyby pro mobil */
+    .orb-1 { animation: floatMobile1 18s ease-in-out infinite alternate; }
+    .orb-2 { animation: floatMobile2 25s ease-in-out infinite alternate; }
+    .orb-3 { animation: floatMobile1 22s ease-in-out infinite alternate; animation-delay: -5s; }
+    .orb-4 { animation: floatMobile2 28s ease-in-out infinite alternate; animation-delay: -10s; }
+}
+
+@keyframes floatMobile1 {
     0% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(-20vw, -15vh) scale(1.2); }
-    100% { transform: translate(15vw, 10vh) scale(0.9); }
+    50% { transform: translate(40vw, 20vh) scale(1.1); } /* Velký posun doprava dolů */
+    100% { transform: translate(-20vw, 40vh) scale(0.9); } /* Velký posun doleva dolů */
+}
+
+@keyframes floatMobile2 {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-30vw, -10vh) scale(1.2); } /* Velký posun doleva nahoru */
+    100% { transform: translate(30vw, -30vh) scale(0.8); } /* Velký posun doprava nahoru */
 }
 
 /* =========================================
