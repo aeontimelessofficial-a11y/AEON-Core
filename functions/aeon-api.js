@@ -14,8 +14,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Tvé tajné heslo jen pro Dashboard (výpis všech uživatelů)
-const MASTER_KEY = "aeon-secret-2024"; 
+// 🔒 HESLO PRO DASHBOARD
+const MASTER_KEY = "20071"; 
 
 export const handler = async (event, context) => {
   const headers = {
@@ -27,12 +27,11 @@ export const handler = async (event, context) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
 
   try {
-    // 1. DASHBOARD MODE (VYŽADUJE HESLO)
+    // 1. DASHBOARD (Vyžaduje heslo)
     if (event.httpMethod === 'GET' && event.queryStringParameters.mode === 'dashboard') {
         const clientKey = event.headers['x-master-key'] || event.headers['X-Master-Key'];
-        
         if (clientKey !== MASTER_KEY) {
-            return { statusCode: 401, headers, body: JSON.stringify({ error: "Nesprávné heslo (Master Key)" }) };
+            return { statusCode: 401, headers, body: JSON.stringify({ error: "Nesprávné heslo." }) };
         }
 
         const querySnapshot = await getDocs(collection(db, "cards"));
@@ -51,7 +50,7 @@ export const handler = async (event, context) => {
         return { statusCode: 200, headers, body: JSON.stringify({ count: users.length, users: users }) };
     }
 
-    // 2. PUBLIC MODE (Čtení karty) - Bez hesla
+    // 2. ČTENÍ KARTY (Veřejné)
     if (event.httpMethod === 'GET') {
         const slug = event.queryStringParameters.slug;
         if (!slug) return { statusCode: 400, headers, body: "Chybí slug" };
@@ -67,16 +66,13 @@ export const handler = async (event, context) => {
         else return { statusCode: 404, headers, body: "Nenalezeno" };
     }
 
-    // 3. SAVE MODE (Ukládání) - TEĎ BEZ HESLA (Open Beta)
+    // 3. ULOŽENÍ KARTY (Veřejné - Open Beta)
     if (event.httpMethod === 'POST') {
-        // Tady jsme odstranili kontrolu Master Key, aby mohli uživatelé tvořit karty.
-        // Později sem přidáme kontrolu "licenseKey" z Gumroadu.
-        
         const payload = JSON.parse(event.body);
-        const data = payload.data || payload; // Podpora pro starý i nový formát
+        const data = payload.data || payload; 
         const slug = data.slug;
         
-        // Sanitizace (Ochrana proti vložení škodlivého kódu do jména)
+        // Sanitizace
         if(data.name) data.name = data.name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         if(data.bio) data.bio = data.bio.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -88,12 +84,10 @@ export const handler = async (event, context) => {
             const userDoc = await transaction.get(userRef);
             
             if (userDoc.exists()) {
-                // UPDATE (Uživatel existuje)
                 const existing = userDoc.data();
                 finalData = { ...data, mint_number: existing.mint_number || 1000 };
                 transaction.set(userRef, finalData);
             } else {
-                // CREATE (Nový uživatel)
                 const counterDoc = await transaction.get(counterRef);
                 let newCount = 1001;
                 if (counterDoc.exists()) newCount = counterDoc.data().value + 1;

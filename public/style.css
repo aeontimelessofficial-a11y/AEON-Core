@@ -1,6 +1,6 @@
 :root {
     --primary: #ffffff;
-    --accent: #00d2ff; /* Chronos Blue */
+    --accent: #00d2ff;
     --gold: #ffd700;
     --dark-bg: #050505;
     --glass: rgba(255, 255, 255, 0.05);
@@ -10,118 +10,89 @@
 body {
     background-color: var(--dark-bg);
     color: var(--primary);
-    font-family: 'Courier New', Courier, monospace; /* Tech font */
+    font-family: 'Courier New', Courier, monospace;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
     overflow: hidden;
-    perspective: 1000px; /* Klíčové pro 3D efekt */
+    perspective: 1000px;
+    user-select: none; /* Zákaz označování textu */
+    -webkit-user-select: none;
 }
 
-/* --- 3D SCÉNA --- */
+/* --- LOADER (Točící kolečko) --- */
+.loader-container {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #000;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease-out;
+}
+.spinner {
+    width: 50px; height: 50px;
+    border: 3px solid rgba(0, 210, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--accent);
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 20px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* --- SECURITY OVERLAY (Šum) --- */
+.noise-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none; z-index: 9000;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* --- 3D SCÉNA (Skrytá při načítání) --- */
 .scene {
-    width: 320px;
-    height: 500px;
+    width: 320px; height: 500px;
     position: relative;
+    opacity: 0; /* Skryté, dokud se nenačte */
+    transition: opacity 0.8s ease-in;
 }
 
 .card {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.1s; /* Plynulost pohybu */
+    width: 100%; height: 100%; position: relative;
+    transform-style: preserve-3d; transition: transform 0.1s;
     border-radius: 20px;
 }
 
-/* --- STRANY KARTY --- */
 .card-face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden; /* Skryje záda při otáčení */
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px;
-    box-sizing: border-box;
-    /* Skleněný efekt */
-    background: var(--glass);
-    backdrop-filter: blur(10px);
+    position: absolute; width: 100%; height: 100%;
+    backface-visibility: hidden; border-radius: 20px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: space-between;
+    padding: 20px; box-sizing: border-box;
+    background: var(--glass); backdrop-filter: blur(10px);
     border: 1px solid var(--border);
     box-shadow: 0 0 30px rgba(0, 210, 255, 0.1);
 }
 
-/* ZADNÍ STRANA (pro QR kód) */
 .card-face.back {
-    transform: rotateY(180deg);
-    background: rgba(0,0,0,0.9);
+    transform: rotateY(180deg); background: rgba(0,0,0,0.9);
     justify-content: center;
 }
 
-/* --- OBSAH KARTY --- */
-.mint-number {
-    font-size: 10px;
-    color: var(--border);
-    letter-spacing: 2px;
-    align-self: flex-end;
-}
-
+.mint-number { font-size: 10px; color: var(--border); letter-spacing: 2px; align-self: flex-end; }
 .avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: #333;
-    border: 2px solid var(--accent);
-    margin-top: 20px;
-    box-shadow: 0 0 20px var(--accent);
-    
-    /* --- OPRAVA FOTKY (aby nebyla šišatá) --- */
-    object-fit: cover; 
-    object-position: center;
+    width: 100px; height: 100px; border-radius: 50%;
+    background: #111; border: 2px solid var(--accent);
+    margin-top: 20px; box-shadow: 0 0 20px var(--accent);
+    object-fit: cover; object-position: center;
 }
-
-h1 {
-    font-size: 24px;
-    margin: 10px 0 5px 0;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    text-align: center; /* Pro jistotu centrovaný text */
-}
-
-.bio {
-    font-size: 12px;
-    color: #888;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.links {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
+h1 { font-size: 24px; margin: 10px 0 5px 0; text-transform: uppercase; letter-spacing: 3px; text-align: center; }
+.bio { font-size: 12px; color: #888; text-align: center; margin-bottom: 20px; }
+.links { width: 100%; display: flex; flex-direction: column; gap: 10px; }
 .link-btn {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border);
-    color: white;
-    padding: 12px;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 8px;
-    transition: 0.3s;
-    font-size: 14px;
-    text-transform: uppercase;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    color: white; padding: 12px; text-align: center; text-decoration: none;
+    border-radius: 8px; transition: 0.3s; font-size: 14px; text-transform: uppercase;
 }
-
-.link-btn:hover {
-    background: var(--accent);
-    color: black;
-    box-shadow: 0 0 15px var(--accent);
-}
+.link-btn:hover { background: var(--accent); color: black; box-shadow: 0 0 15px var(--accent); }
