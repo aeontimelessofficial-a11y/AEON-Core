@@ -80,6 +80,11 @@ async function loadProfile() {
             });
         }
 
+        // TADY SE AKTIVUJE PREMIUM POKUD TO API POŠLE
+        if (data.premium) {
+            document.getElementById('artifact').classList.add('premium');
+        }
+
         generateQR(window.location.href);
 
         if(loader) {
@@ -102,47 +107,7 @@ function flipCard(e) {
 // Start
 loadProfile();
 card.addEventListener('click', flipCard);
-// --- 6. HOLOGRAPHIC EFFECT (GYRO/MOUSE) ---
-const cardEl = document.querySelector('.card');
 
-// A. PC: Pohyb myši
-document.addEventListener('mousemove', (e) => {
-    if (!cardEl.classList.contains('premium')) return;
-
-    const x = e.clientX / window.innerWidth;
-    const y = e.clientY / window.innerHeight;
-
-    // Posuneme pozici gradientu oproti myši (zrcadlový efekt)
-    const moveX = 100 - (x * 100); 
-    const moveY = 100 - (y * 100);
-
-    cardEl.style.setProperty('--foil-x', `${moveX}%`);
-    cardEl.style.setProperty('--foil-y', `${moveY}%`);
-});
-
-// B. MOBIL: Gyroskop (Tilt)
-if (window.DeviceOrientationEvent) {
-    window.addEventListener('deviceorientation', (e) => {
-        if (!cardEl.classList.contains('premium')) return;
-
-        // Gamma: náklon doleva/doprava (-90 až 90)
-        // Beta: náklon dopředu/dozadu (-180 až 180)
-        let tiltX = e.gamma; 
-        let tiltY = e.beta; 
-
-        // Omezíme extrémy a převedeme na % (0-100)
-        // Střed (rovně) = 50%
-        const xPercent = 50 + (tiltX / 45 * 50); 
-        const yPercent = 50 + (tiltY / 45 * 50);
-
-        cardEl.style.setProperty('--foil-x', `${xPercent}%`);
-        cardEl.style.setProperty('--foil-y', `${yPercent}%`);
-    });
-}
-
-// PRO TESTOVÁNÍ: Přidáme třídu 'premium' hned po načtení, abys to viděl.
-// Až to budeš mít ověřené, tento řádek smaž a budeme ho přidávat jen dárcům.
-setTimeout(() => {
-    cardEl.classList.add('premium'); 
-    console.log("Hologram test mode: ON");
-}, 1000);
+// --- PRO TESTOVÁNÍ PREMIUM VZHLEDU (SMAŽ, AŽ TO BUDEŠ MÍT NAPOJENÉ) ---
+// Tento řádek zapne zlatý rámeček hned, abys viděl, jak to vypadá.
+document.getElementById('artifact').classList.add('premium');

@@ -230,45 +230,38 @@ h1 {
 .avatar-option.selected { border-color: var(--accent); box-shadow: 0 0 10px var(--accent); }
 
 .link-row { display: flex; gap: 10px; margin-bottom: 5px; }
+
 /* =========================================
-   PREMIUM HOLOGRAPHIC FOIL (Pouze pro dárce)
+   PREMIUM DONOR STYLE (Zlatý Rámeček & Odznak)
    ========================================= */
-.card.premium {
-    /* Žádná změna velikosti ani tvaru, jen aktivace 3D prostoru */
+.card.premium .card-face {
+    /* Zlatý okraj (místo bílého) */
+    border-color: rgba(255, 215, 0, 0.5);
+    /* Jemná zlatá záře okolo a uvnitř */
+    box-shadow: 
+        0 25px 50px rgba(0,0,0,0.3), 
+        0 0 15px rgba(255, 215, 0, 0.2),
+        inset 0 0 10px rgba(255, 215, 0, 0.1);
 }
 
-/* Samotná lesklá vrstva */
-.card.premium::after {
-    content: "";
+/* Zlatý odznak "AE" v rohu */
+.card.premium .card-face.front::after {
+    content: "Æ";
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    border-radius: 36px; /* Musí sedět s kartou */
-    z-index: 10; /* Nad obsahem, ale pod tlačítky (pokud mají vyšší z-index) */
-    pointer-events: none; /* Aby šlo klikat skrz */
-    
-    /* Trik s průhledností a leskem */
-    background: linear-gradient(
-        105deg,
-        transparent 20%,
-        rgba(255, 255, 255, 0.1) 40%, 
-        rgba(200, 240, 255, 0.4) 45%, /* Azurový záblesk */
-        rgba(255, 255, 255, 0.1) 50%,
-        transparent 80%
-    );
-    
-    /* Smíchání s podkladem - udělá to ten "kovový" efekt */
-    mix-blend-mode: color-dodge; 
-    opacity: 0.7;
-    
-    /* Pozice odlesku se bude měnit JS */
-    background-size: 200% 200%;
-    background-position: var(--foil-x, 50%) var(--foil-y, 50%);
-    
-    transition: opacity 0.5s;
-}
-
-/* Jemný zlatavý rámeček pro premium (volitelné, pokud chceš víc flex) */
-.card.premium {
-    box-shadow: 0 25px 50px rgba(0,0,0,0.3), 
-                0 0 0 1px rgba(255, 215, 0, 0.3) inset; /* Zlatý vnitřní lesk */
+    top: 25px;
+    right: 25px;
+    width: 22px; 
+    height: 22px;
+    /* Efekt zlatého kovu */
+    background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728);
+    color: #1a1a1a;
+    font-size: 10px;
+    font-weight: 900;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.4);
 }
