@@ -230,3 +230,45 @@ h1 {
 .avatar-option.selected { border-color: var(--accent); box-shadow: 0 0 10px var(--accent); }
 
 .link-row { display: flex; gap: 10px; margin-bottom: 5px; }
+/* =========================================
+   PREMIUM HOLOGRAPHIC FOIL (Pouze pro dárce)
+   ========================================= */
+.card.premium {
+    /* Žádná změna velikosti ani tvaru, jen aktivace 3D prostoru */
+}
+
+/* Samotná lesklá vrstva */
+.card.premium::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 36px; /* Musí sedět s kartou */
+    z-index: 10; /* Nad obsahem, ale pod tlačítky (pokud mají vyšší z-index) */
+    pointer-events: none; /* Aby šlo klikat skrz */
+    
+    /* Trik s průhledností a leskem */
+    background: linear-gradient(
+        105deg,
+        transparent 20%,
+        rgba(255, 255, 255, 0.1) 40%, 
+        rgba(200, 240, 255, 0.4) 45%, /* Azurový záblesk */
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 80%
+    );
+    
+    /* Smíchání s podkladem - udělá to ten "kovový" efekt */
+    mix-blend-mode: color-dodge; 
+    opacity: 0.7;
+    
+    /* Pozice odlesku se bude měnit JS */
+    background-size: 200% 200%;
+    background-position: var(--foil-x, 50%) var(--foil-y, 50%);
+    
+    transition: opacity 0.5s;
+}
+
+/* Jemný zlatavý rámeček pro premium (volitelné, pokud chceš víc flex) */
+.card.premium {
+    box-shadow: 0 25px 50px rgba(0,0,0,0.3), 
+                0 0 0 1px rgba(255, 215, 0, 0.3) inset; /* Zlatý vnitřní lesk */
+}
