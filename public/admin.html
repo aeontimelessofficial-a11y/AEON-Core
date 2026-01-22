@@ -4,26 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ÆON | Studio</title>
-    <link rel="stylesheet" href="style.css">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layouts.css">
 </head>
 <body>
 
-<<<<<<< HEAD
-    <div class="lang-wrapper">
-        <select id="langSelect" class="lang-select" onchange="changeAdminLang(this.value)">
-            <option value="en">🇺🇸 English</option>
-            <option value="cs">🇨🇿 Čeština</option>
-            <option value="de">🇩🇪 Deutsch</option>
-            <option value="es">🇪🇸 Español</option>
-            <option value="fr">🇫🇷 Français</option>
-            <option value="it">🇮🇹 Italiano</option>
-            <option value="pl">🇵🇱 Polski</option>
-            <option value="ru">🇷🇺 Русский</option>
-            <option value="ua">🇺🇦 Українська</option>
-            <option value="ja">🇯🇵 日本語</option>
-        </select>
-=======
     <div class="lang-switcher">
         <div class="lang-btn" onclick="setLanguage('cs')" id="lang-cs">
             <img src="https://flagcdn.com/w40/cz.png" alt="CZ">
@@ -31,11 +21,11 @@
         <div class="lang-btn" onclick="setLanguage('en')" id="lang-en">
             <img src="https://flagcdn.com/w40/gb.png" alt="EN">
         </div>
->>>>>>> parent of 430a031 (NEW)
     </div>
 
     <div class="fixed-background">
-        <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div>
+        <div class="orb orb-1"></div><div class="orb orb-2"></div>
+        <div class="orb orb-3"></div><div class="orb orb-4"></div>
     </div>
 
     <div class="admin-container">
@@ -45,345 +35,36 @@
         <label class="admin-label" data-i18n="slug_label">URL (Slug)</label>
         <input type="text" class="admin-input" id="slug" placeholder="e.g. john-doe" required>
 
-        <label class="admin-label" data-i18n="theme_label">Atmosphere</label>
+        <label class="admin-label" data-i18n="theme_label">Choose Atmosphere</label>
         <div class="theme-grid" id="themeGrid"></div>
         <input type="hidden" id="selectedTheme" value="winter-night">
 
         <label class="admin-label" data-i18n="identity_label">Identity</label>
         <input type="text" class="admin-input" id="name" placeholder="Name">
-        <input type="text" class="admin-input" id="bio" placeholder="Bio" style="margin-top:5px;">
+        <input type="text" class="admin-input" id="bio" placeholder="Bio / Job Title" style="margin-top:5px;">
         <input type="text" class="admin-input" id="motto" placeholder="Motto" style="margin-top:5px;">
 
         <label class="admin-label" data-i18n="avatar_label">Avatar</label>
         <div class="avatar-grid" id="avatarStudio"></div>
-<<<<<<< HEAD
-        
-        <div class="file-upload-wrapper">
-            <label for="photoInput" class="custom-file-upload">
-                <i class="fa-solid fa-cloud-arrow-up"></i> <span data-i18n="avatar_upload">Upload Photo</span>
-            </label>
-            <input type="file" id="photoInput" accept="image/*">
-        </div>
-        
-=======
         <div style="text-align:center; font-size:10px; color:var(--text-main); opacity:0.7; margin: 5px 0;" data-i18n="avatar_upload">OR UPLOAD YOUR OWN</div>
         <input type="file" id="photoInput" accept="image/*" style="color: var(--text-main);">
->>>>>>> parent of 430a031 (NEW)
         <input type="hidden" id="base64String">
         <img id="preview" style="width:50px; height:50px; border-radius:50%; margin: 10px auto; display:block; object-fit:cover; border: 2px solid var(--accent);">
 
         <label class="admin-label" data-i18n="social_label">Social Hub</label>
-        <div class="social-grid" id="socialGrid"></div>
+        <div class="social-grid" id="socialGrid">
+            </div>
         <div id="activeSocialsContainer"></div>
 
         <label class="admin-label" data-i18n="other_links_label">Other Links</label>
         <div id="linksContainer"></div>
-        <button onclick="addLinkField()" id="addLinkBtn" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); padding: 10px; border-radius: 8px; color: var(--text-main); cursor: pointer; margin-top:10px; width:100%;">+ Custom Link</button>
+        <button onclick="addLinkField()" id="addLinkBtn" class="link-btn" style="margin-top:10px; cursor: pointer;">+ Add Custom Link</button>
 
         <button onclick="saveCard()" id="saveBtn" style="background: var(--accent); border: none; padding: 16px; color: #000; font-weight: bold; border-radius: 12px; margin-top: 20px; cursor: pointer; width: 100%;">SAVE CARD</button>
         <div id="status" style="text-align:center; margin-top:10px; color: yellow; text-shadow: 0 1px 2px black; font-weight:bold;"></div>
     </div>
 
-    <script>
-        // --- ADMIN SLOVNÍK (10 JAZYKŮ) ---
-        const i18n = {
-            en: { slug_label: "URL Slug", theme_label: "Atmosphere", identity_label: "Identity", avatar_label: "Avatar", avatar_upload: "Upload Photo", social_label: "Social Hub", other_links_label: "Custom Links", save: "SAVE CARD", done: "DONE!", error: "ERROR", fill_name: "Please fill link name!", social_ph: "username", name_ph: "Name", bio_ph: "Bio", motto_ph: "Motto", link_name: "Title", link_url: "https://..." },
-            cs: { slug_label: "URL Adresa", theme_label: "Atmosféra", identity_label: "Identita", avatar_label: "Avatar", avatar_upload: "Nahrát fotku", social_label: "Sociální sítě", other_links_label: "Vlastní odkazy", save: "ULOŽIT KARTU", done: "HOTOVO!", error: "CHYBA", fill_name: "Vyplň název odkazu!", social_ph: "uživatel", name_ph: "Jméno", bio_ph: "Bio", motto_ph: "Motto", link_name: "Název", link_url: "https://..." },
-            de: { slug_label: "URL-Slug", theme_label: "Atmosphäre", identity_label: "Identität", avatar_label: "Avatar", avatar_upload: "Foto hochladen", social_label: "Sozial", other_links_label: "Andere Links", save: "SPEICHERN", done: "FERTIG!", error: "FEHLER", fill_name: "Linknamen eingeben!", social_ph: "benutzer", name_ph: "Name", bio_ph: "Bio", motto_ph: "Motto", link_name: "Titel", link_url: "https://..." },
-            es: { slug_label: "URL Slug", theme_label: "Atmósfera", identity_label: "Identidad", avatar_label: "Avatar", avatar_upload: "Subir foto", social_label: "Redes", other_links_label: "Enlaces", save: "GUARDAR", done: "HECHO!", error: "ERROR", fill_name: "¡Nombre del enlace!", social_ph: "usuario", name_ph: "Nombre", bio_ph: "Bio", motto_ph: "Lema", link_name: "Título", link_url: "https://..." },
-            fr: { slug_label: "Slug URL", theme_label: "Atmosphère", identity_label: "Identité", avatar_label: "Avatar", avatar_upload: "Télécharger", social_label: "Réseaux", other_links_label: "Liens", save: "ENREGISTRER", done: "FAIT!", error: "ERREUR", fill_name: "Nom du lien!", social_ph: "utilisateur", name_ph: "Nom", bio_ph: "Bio", motto_ph: "Devise", link_name: "Titre", link_url: "https://..." },
-            it: { slug_label: "Slug URL", theme_label: "Atmosfera", identity_label: "Identità", avatar_label: "Avatar", avatar_upload: "Carica foto", social_label: "Social", other_links_label: "Link", save: "SALVA", done: "FATTO!", error: "ERRORE", fill_name: "Nome del link!", social_ph: "utente", name_ph: "Nome", bio_ph: "Bio", motto_ph: "Motto", link_name: "Titolo", link_url: "https://..." },
-            pl: { slug_label: "Adres URL", theme_label: "Atmosfera", identity_label: "Tożsamość", avatar_label: "Awatar", avatar_upload: "Prześlij zdjęcie", social_label: "Społeczność", other_links_label: "Linki", save: "ZAPISZ", done: "GOTOWE!", error: "BŁĄD", fill_name: "Nazwa linku!", social_ph: "użytkownik", name_ph: "Imię", bio_ph: "Bio", motto_ph: "Motto", link_name: "Tytuł", link_url: "https://..." },
-            ru: { slug_label: "URL Адрес", theme_label: "Атмосфера", identity_label: "Личность", avatar_label: "Аватар", avatar_upload: "Загрузить фото", social_label: "Соцсети", other_links_label: "Ссылки", save: "СОХРАНИТЬ", done: "ГОТОВО!", error: "ОШИБКА", fill_name: "Имя ссылки!", social_ph: "имя", name_ph: "Имя", bio_ph: "Био", motto_ph: "Девиз", link_name: "Название", link_url: "https://..." },
-            ua: { slug_label: "URL Адреса", theme_label: "Атмосфера", identity_label: "Особистість", avatar_label: "Аватар", avatar_upload: "Завантажити", social_label: "Соцмережі", other_links_label: "Посилання", save: "ЗБЕРЕГТИ", done: "ГОТОВО!", error: "ПОМИЛКА", fill_name: "Назва посилання!", social_ph: "ім'я", name_ph: "Ім'я", bio_ph: "Біо", motto_ph: "Девіз", link_name: "Назва", link_url: "https://..." },
-            ja: { slug_label: "URLスラッグ", theme_label: "雰囲気", identity_label: "アイデンティティ", avatar_label: "アバター", avatar_upload: "写真をアップ", social_label: "ソーシャル", other_links_label: "リンク", save: "保存する", done: "完了！", error: "エラー", fill_name: "リンク名！", social_ph: "ユーザー名", name_ph: "名前", bio_ph: "自己紹介", motto_ph: "モットー", link_name: "タイトル", link_url: "https://..." }
-        };
-
-        let currentLang = 'en';
-
-        function changeAdminLang(lang) {
-            currentLang = lang;
-            const t = i18n[lang];
-            // Labels
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if(t[key]) el.innerText = t[key];
-            });
-            // Placeholders & Buttons
-            document.getElementById('saveBtn').innerText = t.save;
-            document.getElementById('addLinkBtn').innerText = "+ " + t.other_links_label;
-            document.getElementById('name').placeholder = t.name_ph;
-            document.getElementById('bio').placeholder = t.bio_ph;
-            document.getElementById('motto').placeholder = t.motto_ph;
-            
-            // Inputy
-            document.querySelectorAll('.social-input').forEach(i => {
-                if(!i.closest('.mode-url')) i.placeholder = t.social_ph;
-            });
-            document.querySelectorAll('.l-lbl').forEach(i => i.placeholder = t.link_name);
-        }
-
-        // --- PLATFORMS ---
-        const platforms = {
-            instagram: { icon: 'fa-instagram', prefix: 'instagram.com/', url: 'https://instagram.com/', label: 'Instagram' },
-            facebook:  { icon: 'fa-facebook-f', prefix: 'facebook.com/', url: 'https://facebook.com/', label: 'Facebook' },
-            tiktok:    { icon: 'fa-tiktok', prefix: 'tiktok.com/@', url: 'https://tiktok.com/@', label: 'TikTok' },
-            youtube:   { icon: 'fa-youtube', prefix: 'youtube.com/@', url: 'https://youtube.com/@', label: 'YouTube' },
-            twitter:   { icon: 'fa-x-twitter', prefix: 'x.com/', url: 'https://x.com/', label: 'X' },
-            linkedin:  { icon: 'fa-linkedin-in', prefix: 'linkedin.com/in/', url: 'https://linkedin.com/in/', label: 'LinkedIn' },
-            twitch:    { icon: 'fa-twitch', prefix: 'twitch.tv/', url: 'https://twitch.tv/', label: 'Twitch' },
-            discord:   { icon: 'fa-discord', prefix: 'discord.gg/', url: 'https://discord.gg/', label: 'Discord' },
-            pinterest: { icon: 'fa-pinterest', prefix: 'pinterest.com/', url: 'https://pinterest.com/', label: 'Pinterest' },
-            reddit:    { icon: 'fa-reddit-alien', prefix: 'reddit.com/user/', url: 'https://reddit.com/user/', label: 'Reddit' },
-            snapchat:  { icon: 'fa-snapchat', prefix: 'snapchat.com/add/', url: 'https://snapchat.com/add/', label: 'Snapchat' },
-            threads:   { icon: 'fa-brands fa-threads', prefix: 'threads.net/@', url: 'https://threads.net/@', label: 'Threads' }
-        };
-
-        const socialGrid = document.getElementById('socialGrid');
-        for (const [key, p] of Object.entries(platforms)) {
-            const btn = document.createElement('button');
-            btn.className = 'social-icon-btn';
-            btn.onclick = () => addSocial(key);
-            btn.innerHTML = `<i class="fa-brands ${p.icon}"></i>`;
-            socialGrid.appendChild(btn);
-        }
-
-        const activeSocialsDiv = document.getElementById('activeSocialsContainer');
-
-        function addSocial(type, value = "", isFullUrl = false) {
-            if(document.querySelector(`.social-input[data-type="${type}"]`)) return;
-            const p = platforms[type];
-            const div = document.createElement('div');
-            div.className = 'active-social-row';
-            if(isFullUrl) div.classList.add('mode-url'); 
-
-            div.innerHTML = `
-                <i class="fa-brands ${p.icon}" style="font-size:18px; width:25px; text-align:center;"></i>
-                <div class="input-wrapper">
-                    <span class="social-prefix">${p.prefix}</span>
-                    <input class="social-input" type="text" placeholder="${i18n[currentLang].social_ph}" data-type="${type}" value="${value}">
-                </div>
-                <div class="action-group">
-                    <button class="mini-btn ${isFullUrl ? 'active' : ''} toggle-mode" onclick="toggleMode(this)"><i class="fa-solid fa-link"></i></button>
-                    <button class="mini-btn" onclick="testSocialLink(this, '${type}')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
-                    <button class="mini-btn remove" onclick="this.closest('.active-social-row').remove()"><i class="fas fa-times"></i></button>
-                </div>
-            `;
-            activeSocialsDiv.appendChild(div);
-            
-            const input = div.querySelector('.social-input');
-            input.addEventListener('input', () => validateRow(div, input.value, type));
-            if(value) validateRow(div, value, type);
-        }
-
-        function validateRow(row, val, type) {
-            val = val.trim();
-            row.classList.remove('valid', 'invalid'); 
-            if(val.length === 0) return;
-            const isUrlMode = row.classList.contains('mode-url');
-            if (isUrlMode) {
-                const domainCheck = type === 'twitter' ? (val.includes('x.com') || val.includes('twitter.com')) : val.includes(type);
-                if (val.startsWith('http') && domainCheck) row.classList.add('valid'); else row.classList.add('invalid');
-            } else {
-                if (val.includes(' ') || val.includes('/') || val.includes('.' + type) || val.includes('http')) row.classList.add('invalid');
-                else row.classList.add('valid');
-            }
-        }
-
-        function toggleMode(btn) {
-            const row = btn.closest('.active-social-row');
-            const input = row.querySelector('.social-input');
-            const type = input.getAttribute('data-type');
-            row.classList.toggle('mode-url');
-            btn.classList.toggle('active');
-            if (row.classList.contains('mode-url')) input.placeholder = "https://...";
-            else input.placeholder = i18n[currentLang].social_ph;
-            input.focus();
-            validateRow(row, input.value, type);
-        }
-
-        function testSocialLink(btn, type) {
-            const row = btn.closest('.active-social-row');
-            const val = row.querySelector('.social-input').value.trim();
-            if(!val) return;
-            let finalUrl = row.classList.contains('mode-url') ? val : platforms[type].url + val.replace('@', '');
-            if(row.classList.contains('mode-url') && !finalUrl.startsWith('http')) finalUrl = 'https://' + finalUrl;
-            window.open(finalUrl, '_blank');
-        }
-
-        const linksWrapper = document.getElementById('linksContainer');
-        function addLinkField(l="", u="") {
-            const d = document.createElement('div'); d.className = 'link-row';
-            d.innerHTML = `
-                <input class="admin-input l-lbl" placeholder="${i18n[currentLang].link_name}" value="${l}" style="width:40%"> 
-                <input class="admin-input l-url" placeholder="${i18n[currentLang].link_url}" value="${u}" style="width:60%"> 
-                <i class="fas fa-times remove-social" style="margin-top:10px;" onclick="this.parentElement.remove()"></i>`;
-            linksWrapper.appendChild(d);
-        }
-
-        async function saveCard() {
-            const stat = document.getElementById('status'); 
-            
-            // VALIDACE VLASTNÍCH ODKAZŮ
-            let valid = true;
-            document.querySelectorAll('.link-row').forEach(r => {
-                const lblInput = r.querySelector('.l-lbl');
-                const urlInput = r.querySelector('.l-url');
-                lblInput.classList.remove('error');
-                if (urlInput.value.trim() !== "" && lblInput.value.trim() === "") {
-                    lblInput.classList.add('error');
-                    valid = false;
-                }
-            });
-
-            if (!valid) {
-                alert(i18n[currentLang].fill_name);
-                stat.innerText = i18n[currentLang].error;
-                return; 
-            }
-
-            stat.innerText = "Ukládám...";
-            const slug = document.getElementById('slug').value.toLowerCase().replace(/\s+/g, '-');
-            const links = [];
-
-            document.querySelectorAll('.active-social-row').forEach(row => {
-                const input = row.querySelector('.social-input');
-                const type = input.getAttribute('data-type');
-                let val = input.value.trim();
-                if(val) {
-                    let finalUrl = row.classList.contains('mode-url') ? val : platforms[type].url + val.replace('@', '');
-                    if(row.classList.contains('mode-url') && !finalUrl.startsWith('http')) finalUrl = 'https://' + finalUrl;
-                    links.push({ label: platforms[type].label, url: finalUrl });
-                }
-            });
-
-            document.querySelectorAll('.link-row').forEach(r => {
-                const l = r.querySelector('.l-lbl').value; const u = r.querySelector('.l-url').value;
-                if(l && u) links.push({label: l, url: u});
-            });
-
-            const payload = {
-                data: {
-                    slug: slug, name: document.getElementById('name').value,
-                    bio: document.getElementById('bio').value, motto: document.getElementById('motto').value,
-                    theme: document.getElementById('selectedTheme').value,
-                    avatar: document.getElementById('base64String').value, links: links
-                }
-            };
-
-            try {
-                await fetch('/api/aeon-api', { method: 'POST', body: JSON.stringify(payload) });
-                stat.innerText = i18n[currentLang].done; stat.style.color = "#0f0";
-                setTimeout(() => window.location.href = `/?slug=${slug}`, 1500);
-            } catch(e) { stat.innerText = i18n[currentLang].error; }
-        }
-
-        window.onload = async function() {
-            // DETEKCE JAZYKA
-            const userLang = (navigator.language || 'en').substring(0,2);
-            if(i18n[userLang]) {
-                document.getElementById('langSelect').value = userLang;
-                changeAdminLang(userLang);
-            }
-
-            const params = new URLSearchParams(window.location.search);
-            const slug = params.get('slug');
-            if(slug) {
-                document.getElementById('slug').value = slug;
-                try {
-                    const res = await fetch(`/api/aeon-api?slug=${slug}`);
-                    if(res.ok) {
-                        const d = await res.json();
-                        document.getElementById('name').value = d.name || "";
-                        document.getElementById('bio').value = d.bio || "";
-                        document.getElementById('motto').value = d.motto || "";
-                        
-                        if(d.theme) {
-                            const btn = Array.from(document.querySelectorAll('.theme-btn')).find(b => b.innerText.includes(d.theme.split('-')[1].charAt(0).toUpperCase())); 
-                            if(btn) btn.click();
-                        } else { 
-                            const def = document.querySelector('.theme-btn'); if(def) def.click();
-                        }
-
-                        if(d.avatar) { document.getElementById('base64String').value = d.avatar; document.getElementById('preview').src = d.avatar; }
-                        
-                        activeSocialsDiv.innerHTML = '';
-                        linksWrapper.innerHTML = '';
-                        
-                        if(d.links) {
-                            d.links.forEach(x => {
-                                let found = false;
-                                for (const [key, p] of Object.entries(platforms)) {
-                                    if (x.url.startsWith(p.url)) {
-                                        addSocial(key, x.url.replace(p.url, ''), false); found = true; break;
-                                    } else if (x.url.includes(key) || (key==='twitter' && x.url.includes('x.com'))) {
-                                        addSocial(key, x.url, true); found = true; break;
-                                    }
-                                }
-                                if (!found) addLinkField(x.label, x.url);
-                            });
-                        }
-                    }
-                } catch(e){}
-            } else {
-                const def = document.querySelector('.theme-btn'); if(def) def.click();
-            }
-            document.getElementById('loading').style.display = 'none';
-        }
-
-        // Témata (Generování)
-        const themes = [
-            { id: "spring-morning", name: "Jaro Ráno", bg: "#f3ffe3" }, { id: "spring-noon", name: "Jaro Poledne", bg: "#badc58" },
-            { id: "spring-evening", name: "Jaro Večer", bg: "#e056fd", dark:true }, { id: "spring-night", name: "Jaro Noc", bg: "#2c3a47", dark:true },
-            { id: "summer-morning", name: "Léto Ráno", bg: "#81ecec" }, { id: "summer-noon", name: "Léto Poledne", bg: "#f9ca24" },
-            { id: "summer-evening", name: "Léto Večer", bg: "#eb4d4b", dark:true }, { id: "summer-night", name: "Léto Noc", bg: "#130f40", dark:true },
-            { id: "autumn-morning", name: "Podzim Ráno", bg: "#d1ccc0" }, { id: "autumn-noon", name: "Podzim Poledne", bg: "#ffdbcc" },
-            { id: "autumn-evening", name: "Podzim Večer", bg: "#e17055", dark:true }, { id: "autumn-night", name: "Podzim Noc", bg: "#2d3436", dark:true },
-            { id: "winter-morning", name: "Zima Ráno", bg: "#dfe4ea" }, { id: "winter-noon", name: "Zima Poledne", bg: "#bbdefb" },
-            { id: "winter-evening", name: "Zima Večer", bg: "#a29bfe", dark:true }, { id: "winter-night", name: "Zima Noc", bg: "#0c2461", dark:true }
-        ];
-        const themeContainer = document.getElementById('themeGrid');
-        themes.forEach(t => {
-            const div = document.createElement('div');
-            div.className = 'theme-btn' + (t.dark ? ' dark-text' : '');
-            div.innerText = t.name; div.style.background = t.bg;
-            div.onclick = () => {
-                document.getElementById('selectedTheme').value = t.id;
-                document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('selected'));
-                div.classList.add('selected');
-                document.body.className = ''; const parts = t.id.split('-'); document.body.classList.add(parts[0]); document.body.classList.add(parts[1]);
-            };
-            themeContainer.appendChild(div);
-        });
-
-        // Avataři
-        const seeds = ["Leo", "Mila", "Caleb", "Eliza", "Chase", "Jade", "Nora", "Jack", "Felix", "Ruby"];
-        const avContainer = document.getElementById('avatarStudio');
-        seeds.forEach(s => {
-            const img = document.createElement('img');
-            const url = `https://api.dicebear.com/7.x/notionists/svg?seed=${s}&backgroundColor=transparent`;
-            img.src = url; img.className = 'avatar-option';
-            img.onclick = () => {
-                document.getElementById('base64String').value = url; document.getElementById('preview').src = url;
-                document.querySelectorAll('.avatar-option').forEach(x => x.classList.remove('selected')); img.classList.add('selected');
-            };
-            avContainer.appendChild(img);
-        });
-
-        document.getElementById('photoInput').addEventListener('change', function(e) {
-            const file = e.target.files[0]; if(!file) return;
-            const r = new FileReader();
-            r.onload = function(ev) {
-                const i = new Image(); i.onload = function() {
-                    const c = document.createElement('canvas'); const x = c.getContext('2d');
-                    const m = 500; let w=i.width, h=i.height;
-                    if(w>h){if(w>m){h*=m/w;w=m}}else{if(h>m){w*=m/h;h=m}}
-                    c.width=w; c.height=h; x.drawImage(i,0,0,w,h);
-                    const d = c.toDataURL('image/jpeg',0.8);
-                    document.getElementById('preview').src=d; document.getElementById('base64String').value=d;
-                }; i.src = ev.target.result;
-            }; r.readAsDataURL(file);
-        });
-    </script>
+    <script src="js/config.js"></script>
+    <script src="js/admin.js"></script>
 </body>
 </html>

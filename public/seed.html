@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AEON Data Injector</title>
+    <title>AEON Data Seeder</title>
     <style>body { font-family: sans-serif; padding: 50px; background: #111; color: white; text-align: center; }</style>
 </head>
 <body>
-    <h1>💉 Data Injector</h1>
+    <h1>🌱 Data Seeder</h1>
     <p>Kliknutím vytvoříš v databázi testovací profil "jan-novak".</p>
-    <button onclick="injectData()" style="padding: 20px; font-size: 20px; cursor: pointer;">VYTVOŘIT PROFIL</button>
+    <button onclick="injectData()" style="padding: 20px; font-size: 20px; cursor: pointer; background: #00d2ff; border: none; font-weight: bold; border-radius: 10px;">VYTVOŘIT PROFIL</button>
     <div id="status" style="margin-top: 20px; color: yellow;"></div>
 
     <script>
@@ -15,42 +15,34 @@
             const status = document.getElementById('status');
             status.innerText = "Pracuji...";
 
-<<<<<<< HEAD
-=======
             // Data pro testovacího uživatele
->>>>>>> parent of 342ba41 (REVOLUTION)
+            // Obsahuje mix sociálních sítí (pro test mřížky) a vlastních odkazů
             const testUser = {
                 slug: "jan-novak",
                 name: "Jan Novák",
                 bio: "CEO of ÆON | Future Architect",
+                motto: "Create. Share. Inspire.",
                 mint_number: 42,
-                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix", // Jiný avatar
+                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
                 links: [
-                    { label: "My Project", url: "https://google.com" },
-<<<<<<< HEAD
-                    { label: "Contact Me", url: "mailto:jan@aeon.vip" },
-                    // Test ikon v mřížce
+                    // Tyto by se měly zobrazit jako ikony v mřížce
                     { label: "Instagram", url: "https://instagram.com/jan.novak" },
-                    { label: "Twitter", url: "https://x.com/jan" }
-=======
-                    { label: "Contact Me", url: "mailto:jan@aeon.vip" }
->>>>>>> parent of 342ba41 (REVOLUTION)
+                    { label: "Twitter", url: "https://x.com/jan" },
+                    { label: "YouTube", url: "https://youtube.com/@jan" },
+                    
+                    // Tyto by se měly zobrazit jako velká tlačítka pod tím
+                    { label: "My Portfolio", url: "https://google.com" },
+                    { label: "Email Me", url: "mailto:jan@aeon.vip" }
                 ],
-                instagram: "https://instagram.com/jan.novak"
+                theme: "winter-night"
             };
 
             try {
-<<<<<<< HEAD
-                // OPRAVENO PRO VERCEL
+                // OPRAVA: URL pro Vercel API
                 const response = await fetch('/api/aeon-api', {
                     method: 'POST',
+                    // Důležité: Data balíme do objektu { data: ... }
                     body: JSON.stringify({ data: testUser }) 
-=======
-                // Pošleme data na náš backend
-                const response = await fetch('/.netlify/functions/aeon-api', {
-                    method: 'POST',
-                    body: JSON.stringify(testUser)
->>>>>>> parent of 342ba41 (REVOLUTION)
                 });
                 
                 const result = await response.json();
