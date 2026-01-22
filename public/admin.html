@@ -46,8 +46,13 @@
 
         <label class="admin-label" data-i18n="avatar_label">Avatar</label>
         <div class="avatar-grid" id="avatarStudio"></div>
-        <div style="text-align:center; font-size:10px; color:var(--text-main); opacity:0.7; margin: 5px 0;" data-i18n="avatar_upload">OR UPLOAD YOUR OWN</div>
-        <input type="file" id="photoInput" accept="image/*" style="color: var(--text-main);">
+        
+        <div style="text-align:center; font-size:10px; color:var(--text-main); opacity:0.7; margin: 15px 0 5px 0;" data-i18n="avatar_upload">OR UPLOAD YOUR OWN</div>
+        <label for="photoInput" class="custom-file-upload">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Choose Photo
+        </label>
+        <input type="file" id="photoInput" accept="image/*" style="display: none;">
+        
         <input type="hidden" id="base64String">
         <img id="preview" style="width:50px; height:50px; border-radius:50%; margin: 10px auto; display:block; object-fit:cover; border: 2px solid var(--accent);">
 

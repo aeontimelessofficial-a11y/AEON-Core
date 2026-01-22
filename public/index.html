@@ -16,12 +16,8 @@
 <body>
 
     <div class="lang-switcher">
-        <div class="lang-btn" onclick="changeLanguage('cs')" title="Česky">
-            <img src="https://flagcdn.com/w40/cz.png" alt="CZ">
-        </div>
-        <div class="lang-btn" onclick="changeLanguage('en')" title="English">
-            <img src="https://flagcdn.com/w40/gb.png" alt="EN">
-        </div>
+        <select id="langSelect" class="lang-select" onchange="changeLanguage(this.value)">
+            </select>
     </div>
 
     <div class="fixed-background">
