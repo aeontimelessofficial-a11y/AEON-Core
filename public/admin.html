@@ -15,15 +15,12 @@
 <body>
 
     <div class="lang-switcher">
-        <select id="langSelect" class="lang-select" onchange="setLanguage(this.value)">
-            <option value="en">🇺🇸 English</option>
-            <option value="cs">🇨🇿 Čeština</option>
-            <option value="de">🇩🇪 Deutsch</option>
-            <option value="es">🇪🇸 Español</option>
-            <option value="fr">🇫🇷 Français</option>
-            <option value="it">🇮🇹 Italiano</option>
-            <option value="pl">🇵🇱 Polski</option>
-        </select>
+        <div class="lang-btn" onclick="setLanguage('cs')" id="lang-cs">
+            <img src="https://flagcdn.com/w40/cz.png" alt="CZ">
+        </div>
+        <div class="lang-btn" onclick="setLanguage('en')" id="lang-en">
+            <img src="https://flagcdn.com/w40/gb.png" alt="EN">
+        </div>
     </div>
 
     <div class="fixed-background">
@@ -48,13 +45,8 @@
 
         <label class="admin-label" data-i18n="avatar_label">Avatar</label>
         <div class="avatar-grid" id="avatarStudio"></div>
-        
-        <label for="photoInput" class="custom-file-upload">
-            <i class="fas fa-cloud-upload-alt"></i> 
-            <span data-i18n="avatar_upload">OR UPLOAD YOUR OWN</span>
-        </label>
-        <input type="file" id="photoInput" accept="image/*">
-        
+        <div style="text-align:center; font-size:10px; color:var(--text-main); opacity:0.7; margin: 5px 0;" data-i18n="avatar_upload">OR UPLOAD YOUR OWN</div>
+        <input type="file" id="photoInput" accept="image/*" style="color: var(--text-main);">
         <input type="hidden" id="base64String">
         <img id="preview" style="width:50px; height:50px; border-radius:50%; margin: 10px auto; display:block; object-fit:cover; border: 2px solid var(--accent);">
 

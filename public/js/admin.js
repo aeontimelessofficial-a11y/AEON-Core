@@ -3,12 +3,8 @@ let currentLang = 'en';
 // --- JAZYKOVÁ LOGIKA PRO ADMINA ---
 function setLanguage(lang) {
     currentLang = lang;
-    
-    // ZMĚNA: Aktualizace selectu (aby odpovídal vybranému jazyku)
-    const select = document.getElementById('langSelect');
-    if (select) {
-        select.value = lang;
-    }
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('lang-' + lang).classList.add('active');
 
     // 'translations' je nyní globální proměnná z config.js
     const t = translations[lang];
@@ -41,15 +37,8 @@ function setLanguage(lang) {
 window.onload = async function() {
     // 1. Detekce jazyka
     const userLang = navigator.language || navigator.userLanguage; 
-    // Získáme první část kódu (např. 'cs' z 'cs-CZ')
-    let detected = userLang.split('-')[0];
-    
-    // Pokud máme překlad, použijeme ho, jinak EN
-    if (translations[detected]) {
-        setLanguage(detected);
-    } else {
-        setLanguage('en');
-    }
+    if (userLang.startsWith('cs') || userLang.startsWith('sk')) setLanguage('cs');
+    else setLanguage('en');
 
     // 2. Generování tlačítek v horním panelu Social Hub
     // 'platforms' je nyní globální proměnná z config.js
@@ -106,7 +95,7 @@ window.onload = async function() {
         document.getElementById('slug').value = slug;
         document.getElementById('saveBtn').innerText = translations[currentLang].update;
         try {
-            const res = await fetch(`${API_URL}?slug=${slug}`);
+            const res = await fetch(`/api/aeon-api?slug=${slug}`);
             if(res.ok) {
                 const d = await res.json();
                 document.getElementById('name').value = d.name || "";
@@ -300,7 +289,7 @@ async function saveCard() {
     };
 
     try {
-        await fetch(`${API_URL}`, { method: 'POST', body: JSON.stringify(payload) });
+        await fetch('/api/aeon-api', { method: 'POST', body: JSON.stringify(payload) });
         stat.innerText = translations[currentLang].done; stat.style.color = "#0f0";
         setTimeout(() => window.location.href = `/?slug=${slug}`, 1500);
     } catch(e) { stat.innerText = translations[currentLang].error; }
