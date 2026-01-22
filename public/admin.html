@@ -9,6 +9,7 @@
 </head>
 <body>
 
+<<<<<<< HEAD
     <div class="lang-wrapper">
         <select id="langSelect" class="lang-select" onchange="changeAdminLang(this.value)">
             <option value="en">🇺🇸 English</option>
@@ -22,6 +23,15 @@
             <option value="ua">🇺🇦 Українська</option>
             <option value="ja">🇯🇵 日本語</option>
         </select>
+=======
+    <div class="lang-switcher">
+        <div class="lang-btn" onclick="setLanguage('cs')" id="lang-cs">
+            <img src="https://flagcdn.com/w40/cz.png" alt="CZ">
+        </div>
+        <div class="lang-btn" onclick="setLanguage('en')" id="lang-en">
+            <img src="https://flagcdn.com/w40/gb.png" alt="EN">
+        </div>
+>>>>>>> parent of 430a031 (NEW)
     </div>
 
     <div class="fixed-background">
@@ -46,6 +56,7 @@
 
         <label class="admin-label" data-i18n="avatar_label">Avatar</label>
         <div class="avatar-grid" id="avatarStudio"></div>
+<<<<<<< HEAD
         
         <div class="file-upload-wrapper">
             <label for="photoInput" class="custom-file-upload">
@@ -54,6 +65,10 @@
             <input type="file" id="photoInput" accept="image/*">
         </div>
         
+=======
+        <div style="text-align:center; font-size:10px; color:var(--text-main); opacity:0.7; margin: 5px 0;" data-i18n="avatar_upload">OR UPLOAD YOUR OWN</div>
+        <input type="file" id="photoInput" accept="image/*" style="color: var(--text-main);">
+>>>>>>> parent of 430a031 (NEW)
         <input type="hidden" id="base64String">
         <img id="preview" style="width:50px; height:50px; border-radius:50%; margin: 10px auto; display:block; object-fit:cover; border: 2px solid var(--accent);">
 
