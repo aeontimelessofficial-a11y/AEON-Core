@@ -3,8 +3,12 @@ let currentLang = 'en';
 // --- JAZYKOVÁ LOGIKA PRO ADMINA ---
 function setLanguage(lang) {
     currentLang = lang;
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('lang-' + lang).classList.add('active');
+    
+    // ZMĚNA: Aktualizace selectu (aby odpovídal vybranému jazyku)
+    const select = document.getElementById('langSelect');
+    if (select) {
+        select.value = lang;
+    }
 
     // 'translations' je nyní globální proměnná z config.js
     const t = translations[lang];
@@ -37,8 +41,15 @@ function setLanguage(lang) {
 window.onload = async function() {
     // 1. Detekce jazyka
     const userLang = navigator.language || navigator.userLanguage; 
-    if (userLang.startsWith('cs') || userLang.startsWith('sk')) setLanguage('cs');
-    else setLanguage('en');
+    // Získáme první část kódu (např. 'cs' z 'cs-CZ')
+    let detected = userLang.split('-')[0];
+    
+    // Pokud máme překlad, použijeme ho, jinak EN
+    if (translations[detected]) {
+        setLanguage(detected);
+    } else {
+        setLanguage('en');
+    }
 
     // 2. Generování tlačítek v horním panelu Social Hub
     // 'platforms' je nyní globální proměnná z config.js

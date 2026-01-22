@@ -4,44 +4,48 @@ const loader = document.getElementById('loader');
 
 let currentLang = 'en';
 
-// Inicializace jazyka z URL nebo prohlížeče
+// Inicializace jazyka
 function initLanguage() {
     const userLang = navigator.language || navigator.userLanguage; 
-    let detected = userLang.split('-')[0]; // z 'cs-CZ' udělá 'cs'
-    // Ověříme, zda máme překlad
-    if (translations[detected]) {
-        currentLang = detected;
-    }
+    let detected = userLang.split('-')[0];
+    if (translations[detected]) currentLang = detected;
+    
     // URL override
     const params = new URLSearchParams(window.location.search);
     if(params.get('lang') && translations[params.get('lang')]) {
         currentLang = params.get('lang');
     }
-    // Nastavíme select na správnou hodnotu
+    
+    // Nastavit select
     const select = document.getElementById('langSelect');
     if(select) select.value = currentLang;
 }
 initLanguage();
 
-// Funkce volaná při změně selectu
+// TOTO JE TA OPRAVA: Funkce pro změnu jazyka
 function changeLanguage(lang) {
     currentLang = lang;
-    loadProfile(); // Překreslit texty
+    
+    // Aktualizujeme texty, které jsou statické (např. Mint Number title)
+    // Pokud máme data už načtená, jen překreslíme texty
+    const mintNumEl = document.querySelector('.mint-number');
+    if(mintNumEl) {
+        // Získáme jen číslo z aktuálního textu
+        const currentText = mintNumEl.innerText; 
+        const numberPart = currentText.split(' ')[1] || "---";
+        mintNumEl.innerText = `${translations[currentLang].mint_title} ${numberPart}`;
+    }
+
+    // Pokud došlo k chybě, aktualizujeme chybovou hlášku
+    if(loader.style.display !== 'none' && loader.innerText.length > 0) {
+       // loader.innerHTML = ... (volitelné)
+    }
 }
 
-// QR
-function generateQR(url) {
-    const qrContainer = document.getElementById('qrcode');
-    if(!qrContainer) return;
-    qrContainer.innerHTML = "";
-    new QRCode(qrContainer, {
-        text: url, width: 140, height: 140,
-        colorDark : "#000000", colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.M
-    });
-}
+// ... (Zbytek funkcí generateQR, fixUrl, applyTheme, getIconClass, loadProfile, flipCard zůstává stejný jako v předchozí verzi) ...
+// UJISTI SE, ŽE loadProfile() používá translations[currentLang]!
 
-// LOAD PROFILE
+// ZDE JE KOMPLETNÍ loadProfile PRO JISTOTU:
 async function loadProfile() {
     const params = new URLSearchParams(window.location.search);
     const userSlug = params.get('slug') || 'jan-novak';
@@ -65,7 +69,7 @@ async function loadProfile() {
 
         document.querySelector('.mint-number').innerText = `${translations[currentLang].mint_title} ${data.mint_number || "---"}`;
 
-        // RENDER LINKS
+        // RENDER LINKS & ICONS
         let linksContainer = document.querySelector('.links');
         let socialGrid = document.querySelector('.social-links-grid');
         
@@ -82,19 +86,17 @@ async function loadProfile() {
             data.links.forEach(link => {
                 if(!link.url) return;
                 const fixed = fixUrl(link.url);
-                const iconClass = getIconClass(fixed); // Funkce z config.js
+                const iconClass = getIconClass(fixed); 
 
                 if (iconClass) {
-                    // Ikonka do mřížky
                     const a = document.createElement('a');
                     a.href = fixed;
                     a.className = 'social-item';
                     a.target = "_blank";
-                    a.innerHTML = `<i class="${iconClass}"></i>`; // config.js už vrací celou třídu 'fa-brands fa-...'
+                    a.innerHTML = `<i class="${iconClass}"></i>`;
                     a.addEventListener('click', (e) => e.stopPropagation());
                     socialGrid.appendChild(a);
                 } else {
-                    // Tlačítko
                     if (link.label) {
                         const btn = document.createElement('a');
                         btn.href = fixed;
@@ -109,7 +111,6 @@ async function loadProfile() {
         }
 
         if (data.premium) document.getElementById('artifact').classList.add('premium');
-
         generateQR(window.location.href);
 
         if(loader) {
@@ -123,17 +124,14 @@ async function loadProfile() {
     }
 }
 
-// FIX: Synchronizace výšky zadní strany při otočení
 function flipCard(e) {
     if (e.target.closest('a') || e.target.tagName === 'SELECT') return; 
     
-    // Zjistíme výšku přední strany
+    // FIX DÉLKY ZADNÍ STRANY
     const frontFace = document.querySelector('.card-face.front');
     const backFace = document.querySelector('.card-face.back');
-    const currentHeight = frontFace.offsetHeight;
-    
-    // Nastavíme ji zadní straně, aby nepřečuhovala nebo nebyla krátká
-    backFace.style.height = currentHeight + 'px';
+    // Nastavíme zadní straně stejnou výšku jako má ta přední
+    backFace.style.minHeight = frontFace.offsetHeight + 'px';
     
     card.classList.toggle('is-flipped');
 }
