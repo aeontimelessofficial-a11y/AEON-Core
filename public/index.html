@@ -4,17 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ÆON | Identity</title>
-    
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/themes.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/layouts.css">
 </head>
 <body>
 
+<<<<<<< HEAD
     <div class="lang-switcher">
         <select id="langSelect" class="lang-select" onchange="changeLanguage(this.value)">
             <option value="en">English</option>
@@ -22,6 +18,17 @@
             <option value="de">Deutsch</option>
             <option value="es">Español</option>
             <option value="pl">Polski</option>
+=======
+    <div class="lang-container">
+        <i class="fa-solid fa-globe lang-icon"></i>
+        <select id="langSelect" onchange="changeLanguage(this.value)">
+            <option value="en">English</option>
+            <option value="cs">Čeština</option>
+            <option value="sk">Slovenčina</option>
+            <option value="de">Deutsch</option>
+            <option value="pl">Polski</option>
+            <option value="es">Español</option>
+>>>>>>> parent of 342ba41 (REVOLUTION)
             <option value="fr">Français</option>
             <option value="it">Italiano</option>
         </select>
@@ -63,7 +70,6 @@
         </div>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/card.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
