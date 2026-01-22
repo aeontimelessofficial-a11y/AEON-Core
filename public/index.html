@@ -16,17 +16,19 @@
 <body>
 
     <div class="lang-switcher">
-        <div class="lang-btn" onclick="changeLanguage('cs')" title="Česky">
-            <img src="https://flagcdn.com/w40/cz.png" alt="CZ">
-        </div>
-        <div class="lang-btn" onclick="changeLanguage('en')" title="English">
-            <img src="https://flagcdn.com/w40/gb.png" alt="EN">
-        </div>
+        <select id="langSelect" class="lang-select" onchange="changeLanguage(this.value)">
+            <option value="en">English</option>
+            <option value="cs">Čeština</option>
+            <option value="de">Deutsch</option>
+            <option value="es">Español</option>
+            <option value="pl">Polski</option>
+            <option value="fr">Français</option>
+            <option value="it">Italiano</option>
+        </select>
     </div>
 
     <div class="fixed-background">
-        <div class="orb orb-1"></div><div class="orb orb-2"></div>
-        <div class="orb orb-3"></div><div class="orb orb-4"></div>
+        <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div>
     </div>
 
     <div id="loader" class="loader-container">

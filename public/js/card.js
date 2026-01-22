@@ -1,28 +1,35 @@
-// Načtení elementů
 const card = document.getElementById('artifact');
 const scene = document.querySelector('.scene');
 const loader = document.getElementById('loader');
 
 let currentLang = 'en';
 
-// Inicializace jazyka
+// Inicializace jazyka z URL nebo prohlížeče
 function initLanguage() {
     const userLang = navigator.language || navigator.userLanguage; 
-    if (userLang.startsWith('cs') || userLang.startsWith('sk')) {
-        currentLang = 'cs';
+    let detected = userLang.split('-')[0]; // z 'cs-CZ' udělá 'cs'
+    // Ověříme, zda máme překlad
+    if (translations[detected]) {
+        currentLang = detected;
     }
+    // URL override
     const params = new URLSearchParams(window.location.search);
-    if(params.get('lang')) currentLang = params.get('lang');
+    if(params.get('lang') && translations[params.get('lang')]) {
+        currentLang = params.get('lang');
+    }
+    // Nastavíme select na správnou hodnotu
+    const select = document.getElementById('langSelect');
+    if(select) select.value = currentLang;
 }
 initLanguage();
 
-// Funkce pro změnu jazyka (volaná z dropdownu)
+// Funkce volaná při změně selectu
 function changeLanguage(lang) {
     currentLang = lang;
-    loadProfile(); // Znovu načíst texty
+    loadProfile(); // Překreslit texty
 }
 
-// Generování QR kódu
+// QR
 function generateQR(url) {
     const qrContainer = document.getElementById('qrcode');
     if(!qrContainer) return;
@@ -34,42 +41,34 @@ function generateQR(url) {
     });
 }
 
-// Hlavní funkce pro načtení profilu
+// LOAD PROFILE
 async function loadProfile() {
     const params = new URLSearchParams(window.location.search);
     const userSlug = params.get('slug') || 'jan-novak';
 
     try {
-        // Volání API
         const response = await fetch(`/api/aeon-api?slug=${userSlug}`);
         if (!response.ok) throw new Error(translations[currentLang].error_load);
         
         const data = await response.json();
-        
-        // Aplikace vzhledu (funkce z config.js)
         applyTheme(data.theme);
 
-        // Vyplnění textů
         document.querySelector('h1').innerText = data.name;
         document.querySelector('.bio').innerText = data.bio;
         const mottoEl = document.querySelector('.motto');
         if(mottoEl) mottoEl.innerText = data.motto || "";
 
-        // Avatar
         if (data.avatar) {
             document.querySelector('.avatar').src = data.avatar;
             document.querySelector('.avatar').style.display = 'block';
         }
 
-        // Číslo karty
-        const mintNum = data.mint_number || "---";
-        document.querySelector('.mint-number').innerText = `${translations[currentLang].mint_title} ${mintNum}`;
+        document.querySelector('.mint-number').innerText = `${translations[currentLang].mint_title} ${data.mint_number || "---"}`;
 
-        // --- RENDEROVÁNÍ ODKAZŮ (Grid vs List) ---
+        // RENDER LINKS
         let linksContainer = document.querySelector('.links');
         let socialGrid = document.querySelector('.social-links-grid');
         
-        // Pokud elementy v HTML nejsou, vytvoříme je
         if (!socialGrid) {
             socialGrid = document.createElement('div');
             socialGrid.className = 'social-links-grid';
@@ -82,22 +81,20 @@ async function loadProfile() {
         if (data.links && Array.isArray(data.links)) {
             data.links.forEach(link => {
                 if(!link.url) return;
-                const fixed = fixUrl(link.url); // Funkce z config.js
+                const fixed = fixUrl(link.url);
                 const iconClass = getIconClass(fixed); // Funkce z config.js
 
                 if (iconClass) {
-                    // JE TO SOCIÁLNÍ SÍŤ -> IKONA DO MŘÍŽKY
+                    // Ikonka do mřížky
                     const a = document.createElement('a');
                     a.href = fixed;
                     a.className = 'social-item';
                     a.target = "_blank";
-                    // FontAwesome logic
-                    const prefix = iconClass.includes('fa-brands') ? '' : 'fab '; 
-                    a.innerHTML = `<i class="${prefix} ${iconClass}"></i>`;
+                    a.innerHTML = `<i class="${iconClass}"></i>`; // config.js už vrací celou třídu 'fa-brands fa-...'
                     a.addEventListener('click', (e) => e.stopPropagation());
                     socialGrid.appendChild(a);
                 } else {
-                    // JE TO VLASTNÍ ODKAZ -> TLAČÍTKO S TEXTEM
+                    // Tlačítko
                     if (link.label) {
                         const btn = document.createElement('a');
                         btn.href = fixed;
@@ -111,12 +108,10 @@ async function loadProfile() {
             });
         }
 
-        // Premium efekt
         if (data.premium) document.getElementById('artifact').classList.add('premium');
 
         generateQR(window.location.href);
 
-        // Skrytí loaderu
         if(loader) {
             loader.style.opacity = '0';
             setTimeout(() => { loader.style.display = 'none'; scene.style.opacity = '1'; }, 500);
@@ -128,12 +123,20 @@ async function loadProfile() {
     }
 }
 
-// Flip logika
+// FIX: Synchronizace výšky zadní strany při otočení
 function flipCard(e) {
-    if (e.target.closest('a') || e.target.tagName === 'SELECT') return; // Aby se neotáčelo při kliku na linky nebo jazyk
+    if (e.target.closest('a') || e.target.tagName === 'SELECT') return; 
+    
+    // Zjistíme výšku přední strany
+    const frontFace = document.querySelector('.card-face.front');
+    const backFace = document.querySelector('.card-face.back');
+    const currentHeight = frontFace.offsetHeight;
+    
+    // Nastavíme ji zadní straně, aby nepřečuhovala nebo nebyla krátká
+    backFace.style.height = currentHeight + 'px';
+    
     card.classList.toggle('is-flipped');
 }
 
-// Start
 loadProfile();
 card.addEventListener('click', flipCard);

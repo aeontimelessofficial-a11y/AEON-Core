@@ -1,73 +1,88 @@
-/* ORBS & ANIMATION */
+/* Custom File Upload Button */
+/* Skryjeme původní hnusný input */
+input[type="file"] {
+    display: none;
+}
+/* Stylový label, který funguje jako tlačítko */
+.custom-file-upload {
+    border: 1px solid rgba(255,255,255,0.2);
+    background: var(--input-bg);
+    display: inline-block;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 12px;
+    color: var(--text-main);
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    transition: 0.2s;
+    margin-top: 5px;
+}
+.custom-file-upload:hover {
+    background: var(--accent);
+    color: #000;
+    border-color: transparent;
+}
+.custom-file-upload i { margin-right: 5px; }
+
+/* Language Select Menu */
+.lang-switcher {
+    position: absolute; top: 20px; right: 20px; z-index: 1000;
+}
+.lang-select {
+    appearance: none; -webkit-appearance: none;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    padding: 8px 30px 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+.lang-select:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23ffffff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); /* Pokud chceš měnit i šipku */
+}
+.lang-select option {
+    background: #111;
+    color: white;
+}
+
+/* Ostatní komponenty (beze změny) */
 .orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.7; mix-blend-mode: var(--orb-blend); transition: background-color 0.5s ease; will-change: transform; }
-.orb-1 { width: 70vw; height: 70vw; background: var(--o1); top: -10%; left: -10%; animation: float 20s ease-in-out infinite alternate; }
-.orb-2 { width: 60vw; height: 60vw; background: var(--o2); bottom: -10%; right: -10%; animation: float 28s ease-in-out infinite alternate; animation-delay: -5s; }
-.orb-3 { width: 50vw; height: 50vw; background: var(--o3); top: 20%; left: 30%; animation: float 24s ease-in-out infinite alternate; animation-delay: -8s; }
-.orb-4 { width: 40vw; height: 40vw; background: var(--o4); bottom: 10%; left: 10%; opacity: 0.5; animation: floatReverse 30s ease-in-out infinite alternate; }
-
-@keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, 60px); } }
-@keyframes floatReverse { 0% { transform: translate(0, 0); } 100% { transform: translate(-30px, -20px); } }
-
-@media (max-width: 768px) {
-    .orb-1 { animation: floatMobile1 18s ease-in-out infinite alternate; }
-    .orb-2 { animation: floatMobile2 25s ease-in-out infinite alternate; }
-    .orb-3 { animation: floatMobile1 22s ease-in-out infinite alternate; animation-delay: -5s; }
-    .orb-4 { animation: floatMobile2 28s ease-in-out infinite alternate; animation-delay: -10s; }
-}
-@keyframes floatMobile1 { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(40vw, 20vh) scale(1.1); } 100% { transform: translate(-20vw, 40vh) scale(0.9); } }
-@keyframes floatMobile2 { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-30vw, -10vh) scale(1.2); } 100% { transform: translate(30vw, -30vh) scale(0.8); } }
-
-/* UI ELEMENTS */
-.link-btn {
-    background: var(--input-bg); color: var(--text-main); padding: 14px; text-align: center;
-    text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 13px;
-    transition: 0.2s; border: 1px solid rgba(255,255,255,0.1); display: block; width: 100%; box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
+/* ... (zde ponechej definice orbů z minula orb-1, orb-2 atd.) ... */
+.link-btn { background: var(--input-bg); color: var(--text-main); padding: 14px; text-align: center; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 13px; transition: 0.2s; border: 1px solid rgba(255,255,255,0.1); display: block; width: 100%; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 .link-btn:hover { background: var(--accent); color: #fff; transform: translateY(-2px); border-color: transparent; }
-
-.social-icon-btn {
-    background: var(--input-bg); border: 1px solid var(--border);
-    border-radius: 12px; height: 50px; cursor: pointer; color: var(--text-main);
-    font-size: 20px; display: flex; justify-content: center; align-items: center; transition: 0.2s;
-}
+.social-icon-btn { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; height: 50px; cursor: pointer; color: var(--text-main); font-size: 20px; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
 .social-icon-btn:hover { background: var(--accent); color: #000; border-color: transparent; transform: translateY(-2px); }
-
-.active-social-row {
-    display: flex; align-items: center; gap: 8px; background: var(--input-bg);
-    padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border);
-    color: var(--text-main); animation: fadeIn 0.3s ease; position: relative; transition: border-color 0.3s, box-shadow 0.3s;
-}
+.active-social-row { display: flex; align-items: center; gap: 8px; background: var(--input-bg); padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border); color: var(--text-main); animation: fadeIn 0.3s ease; position: relative; transition: border-color 0.3s, box-shadow 0.3s; }
 .active-social-row.valid { border-color: #00ff88; box-shadow: 0 0 5px rgba(0, 255, 136, 0.2); }
 .active-social-row.invalid { border-color: #ff4757; box-shadow: 0 0 5px rgba(255, 71, 87, 0.2); }
-
 .social-prefix { font-size: 11px; color: var(--text-main); opacity: 0.6; white-space: nowrap; font-family: monospace; margin-right: 4px; transition: 0.3s; }
 .active-social-row.mode-url .social-prefix { display: none; }
 .social-input { background: transparent; border: none; color: var(--text-main); width: 100%; outline: none; font-weight: bold; font-size: 14px; }
 .social-input::placeholder { color: var(--text-main); opacity: 0.3; }
-
 .mini-btn { width: 28px; height: 28px; border-radius: 6px; border: none; background: rgba(128,128,128,0.2); color: var(--text-main); opacity: 0.7; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: 0.2s; position: relative; }
 .mini-btn:hover { background: var(--accent); color: #000; opacity: 1; }
 .mini-btn.active { color: var(--accent); background: rgba(0,0,0,0.5); border: 1px solid var(--accent); opacity: 1; }
 .mini-btn.remove:hover { background: #ff4757; color: white; }
-
 .admin-input { background: var(--input-bg); border: 1px solid rgba(255,255,255,0.2); color: var(--text-main); padding: 14px; border-radius: 10px; width: 100%; box-sizing: border-box; font-family: inherit; }
 .admin-input:focus { border-color: var(--accent); outline: none; }
 .admin-input.error { border-color: #ff4757; box-shadow: 0 0 5px rgba(255, 71, 87, 0.5); }
-
-/* MISC */
 .loader-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s; }
 .spinner { width: 40px; height: 40px; border: 4px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
-.lang-switcher { position: absolute; top: 20px; right: 20px; z-index: 1000; display: flex; gap: 10px; }
-.lang-btn { width: 24px; height: 24px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; overflow: hidden; opacity: 0.5; transition: 0.3s; }
-.lang-btn img { width: 100%; height: 100%; object-fit: cover; }
-.lang-btn:hover, .lang-btn.active { opacity: 1; border-color: var(--accent); transform: scale(1.1); }
-
 .help-tooltip { position: absolute; bottom: 35px; right: 0; width: 280px; background: #111; border: 1px solid rgba(255,255,255,0.2); color: #ddd; padding: 12px; border-radius: 8px; z-index: 100; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 11px; line-height: 1.4; }
 .mini-btn:hover .help-tooltip { display: block; }
 .help-title { color: var(--accent); font-weight: bold; margin-bottom: 4px; display: block; border-bottom: 1px solid #333; padding-bottom: 2px; }
 .help-section { margin-bottom: 8px; }
-
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }

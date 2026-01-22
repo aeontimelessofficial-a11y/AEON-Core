@@ -15,33 +15,26 @@
             const status = document.getElementById('status');
             status.innerText = "Pracuji...";
 
-            // Data pro testovacího uživatele
-            // Obsahuje mix sociálních sítí (pro test mřížky) a vlastních odkazů
             const testUser = {
                 slug: "jan-novak",
                 name: "Jan Novák",
                 bio: "CEO of ÆON | Future Architect",
-                motto: "Create. Share. Inspire.",
                 mint_number: 42,
                 avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
                 links: [
-                    // Tyto by se měly zobrazit jako ikony v mřížce
+                    { label: "My Project", url: "https://google.com" },
+                    { label: "Contact Me", url: "mailto:jan@aeon.vip" },
+                    // Test ikon v mřížce
                     { label: "Instagram", url: "https://instagram.com/jan.novak" },
-                    { label: "Twitter", url: "https://x.com/jan" },
-                    { label: "YouTube", url: "https://youtube.com/@jan" },
-                    
-                    // Tyto by se měly zobrazit jako velká tlačítka pod tím
-                    { label: "My Portfolio", url: "https://google.com" },
-                    { label: "Email Me", url: "mailto:jan@aeon.vip" }
+                    { label: "Twitter", url: "https://x.com/jan" }
                 ],
                 theme: "winter-night"
             };
 
             try {
-                // OPRAVA: URL pro Vercel API
+                // OPRAVENO PRO VERCEL
                 const response = await fetch('/api/aeon-api', {
                     method: 'POST',
-                    // Důležité: Data balíme do objektu { data: ... }
                     body: JSON.stringify({ data: testUser }) 
                 });
                 

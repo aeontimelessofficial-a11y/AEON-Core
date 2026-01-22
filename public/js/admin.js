@@ -6,6 +6,7 @@ function setLanguage(lang) {
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('lang-' + lang).classList.add('active');
 
+    // 'translations' je nyní globální proměnná z config.js
     const t = translations[lang];
 
     // Překlad statických textů (labely)
@@ -21,7 +22,7 @@ function setLanguage(lang) {
     document.getElementById('motto').placeholder = t.motto_ph;
     document.getElementById('addLinkBtn').innerText = t.add_link;
     
-    // Tlačítko uložit (jednoduchý reset textu)
+    // Tlačítko uložit
     document.getElementById('saveBtn').innerText = t.save; 
     
     // Dynamické inputy
@@ -40,13 +41,14 @@ window.onload = async function() {
     else setLanguage('en');
 
     // 2. Generování tlačítek v horním panelu Social Hub
+    // 'platforms' je nyní globální proměnná z config.js
     const socialGrid = document.getElementById('socialGrid');
     for (const [key, p] of Object.entries(platforms)) {
         const btn = document.createElement('button');
         btn.className = 'social-icon-btn';
         btn.title = p.label;
         btn.onclick = () => addSocial(key);
-        btn.innerHTML = `<i class="fa-brands ${p.icon}"></i>`;
+        btn.innerHTML = `<i class="${p.icon}"></i>`; // Změna: p.icon už obsahuje celou třídu (fa-brands ...)
         socialGrid.appendChild(btn);
     }
 
@@ -145,8 +147,12 @@ function selectTheme(id, el) {
     document.getElementById('selectedTheme').value = id;
     document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('selected'));
     if(el && el.classList) el.classList.add('selected');
-    // Aplikace tématu na pozadí editoru (používá funkci z config.js)
-    applyTheme(id); 
+    
+    // Použijeme funkci applyTheme z config.js (pokud tam je) nebo manuálně
+    document.body.className = ''; 
+    const parts = id.split('-'); 
+    document.body.classList.add(parts[0]); 
+    document.body.classList.add(parts[1]);
 }
 
 function addSocial(type, value = "", isFullUrl = false) {
@@ -158,7 +164,7 @@ function addSocial(type, value = "", isFullUrl = false) {
     if(isFullUrl) div.classList.add('mode-url'); 
 
     div.innerHTML = `
-        <i class="fa-brands ${p.icon}" style="font-size:18px; width:25px; text-align:center;"></i>
+        <i class="${p.icon}" style="font-size:18px; width:25px; text-align:center;"></i>
         <div class="input-wrapper">
             <span class="social-prefix">${p.prefix}</span>
             <input class="social-input" type="text" placeholder="${translations[currentLang].social_ph}" data-type="${type}" value="${value}">
