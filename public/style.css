@@ -1,92 +1,131 @@
-/* ... (Proměnné :root a definice témat nech stejné jako minule) ... */
-/* Pro jistotu sem dávám jen ty části, které se mění pro opravu chyb */
+:root {
+    --primary: #ffffff;
+    --border: rgba(255, 255, 255, 0.2);
+    /* Výchozí barvy (Fallback) */
+    --bg-gradient-start: #0f0c29; --bg-gradient-end: #302b63;
+    --orb-1-color: #24243e; --orb-2-color: #0f0c29; --orb-3-color: #7b4397; --orb-4-color: #dc2430;
+    --accent: #ffffff; --text-main: #ffffff;
+    --card-bg: rgba(20, 20, 20, 0.65); --input-bg: rgba(0, 0, 0, 0.5);
+    --orb-blend: screen;
+}
+
+/* TÉMATA (Zkráceno - zkopíruj si seznam témat z minula, jsou stejná) */
+body.spring.morning { --bg-start: #f3ffe3; --bg-end: #fff0f5; --accent: #6ab04c; --text-main: #1a1a1a; --card-glass: rgba(255,255,255,0.65); --input-bg: rgba(255,255,255,0.5); --orb-blend: multiply; }
+body.winter.night   { --bg-start: #0c2461; --bg-end: #1e3799; --accent: #48dbfb; --text-main: #ffffff; --card-glass: rgba(10,20,50,0.75); --input-bg: rgba(0,0,0,0.5); --orb-blend: screen; }
+/* ... (sem patří všechna ostatní témata) ... */
 
 /* ZÁKLAD */
 body {
     background-color: #000; color: var(--text-main);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     margin: 0; min-height: 100vh; overflow-x: hidden; display: block; 
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none;
 }
 
-/* OPRAVA POZICIONOVÁNÍ KARTY A OKRAJŮ */
+.fixed-background { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -100; background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%); transition: background 0.5s ease; pointer-events: none; }
+.orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.7; mix-blend-mode: var(--orb-blend); transition: background-color 0.5s ease; will-change: transform; }
+
+/* Animace Orbů (Pro úsporu místa stejné jako minule - zkopírovat) */
+.orb-1 { top: -10%; left: -10%; width: 70vw; height: 70vw; background: var(--o1); animation: float 20s infinite alternate; }
+.orb-2 { bottom: -10%; right: -10%; width: 60vw; height: 60vw; background: var(--o2); animation: float 28s infinite alternate; }
+/* ... atd ... */
+@keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, 60px); } }
+
+/* KARTA - OPRAVA VÝŠKY A OKRAJŮ */
 .card-wrapper {
-    display: flex; justify-content: center; align-items: flex-start; /* Změna z center na flex-start pro scrollování */
-    min-height: 100vh; 
-    width: 100%; 
-    padding: 60px 20px; /* Větší padding nahoře a dole (aby nešla až ke kraji) */
+    display: flex; justify-content: center; align-items: flex-start; /* Zarovnání nahoru, aby scrollovalo */
+    min-height: 100vh; width: 100%; 
+    padding-top: 60px; /* Místo nahoře */
+    padding-bottom: 80px; /* Místo dole (aby nebyla na okraji) */
     box-sizing: border-box;
-    perspective: 1200px;
 }
 
 .scene {
-    width: 100%; max-width: 320px;
-    position: relative;
+    width: 320px;
+    position: relative; perspective: 1200px;
     opacity: 0; transition: opacity 1s ease;
+    /* Výšku nastaví JS dynamicky podle obsahu */
 }
 
 .card {
-    width: 100%; 
-    position: relative;
-    transform-style: preserve-3d; 
+    width: 100%; transform-style: preserve-3d; 
     transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    cursor: pointer; 
-    border-radius: 36px;
+    cursor: pointer; border-radius: 36px;
 }
-
 .card.is-flipped { transform: rotateY(180deg); }
 
-/* OPRAVA VÝŠKY PŘEDNÍ A ZADNÍ STRANY */
 .card-face {
-    width: 100%; 
+    position: absolute; top: 0; left: 0; width: 100%; 
+    /* Backface height se nastaví JS, aby odpovídal předku */
     backface-visibility: hidden; -webkit-backface-visibility: hidden;
-    border-radius: 36px; 
-    display: flex; flex-direction: column; align-items: center;
+    border-radius: 36px; display: flex; flex-direction: column; align-items: center;
     padding: 40px 25px; box-sizing: border-box;
     background: var(--card-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.2); 
-    box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 25px 50px rgba(0,0,0,0.3);
 }
+.card-face.front { position: relative; /* Front určuje výšku */ z-index: 2; }
+.card-face.back { transform: rotateY(180deg); background: #000; color: white; justify-content: center; z-index: 1; height: 100%; }
 
-/* Přední strana určuje výšku (relative) */
-.card-face.front {
-    position: relative; 
-    z-index: 2;
-    min-height: 500px; /* Minimální výška */
-}
+.avatar-wrapper { margin-top: 10px; width: 110px; height: 110px; position: relative; flex-shrink: 0; }
+.avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
 
-/* Zadní strana se roztáhne podle přední (absolute) */
-.card-face.back {
-    position: absolute; 
-    top: 0; left: 0; height: 100%; /* Vyplní výšku přední strany */
-    transform: rotateY(180deg); 
-    background: #050505; /* Tmavé pozadí pro QR */
-    color: white; 
-    justify-content: center; 
-    z-index: 1;
-}
+h1 { font-size: 24px; font-weight: 800; margin: 15px 0 5px 0; text-align: center; color: var(--text-main); }
+.bio { font-size: 13px; opacity: 0.9; text-align: center; margin-bottom: 10px; line-height: 1.5; color: var(--text-main); }
+.motto { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: var(--accent); margin-bottom: 20px; font-weight: 700; }
 
-/* STYL PRO JAZYKOVÝ PŘEPÍNAČ (Dropdown) */
-.lang-container {
-    position: absolute; top: 20px; right: 20px; z-index: 1000;
-    display: flex; align-items: center; gap: 8px;
-    background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px);
+/* SOCIAL GRID */
+.social-links-grid {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+    width: 100%; margin-bottom: 15px;
 }
-.lang-icon { color: var(--text-main); opacity: 0.7; font-size: 14px; }
-#langSelect {
-    background: transparent; border: none; color: var(--text-main);
-    font-size: 12px; font-weight: bold; cursor: pointer; outline: none;
-    text-transform: uppercase;
+.social-item {
+    flex: 1 0 30%; max-width: 32%; height: 50px;
+    background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+    display: flex; justify-content: center; align-items: center;
+    color: var(--text-main); font-size: 22px; text-decoration: none; transition: 0.2s;
 }
-#langSelect option { background: #000; color: #fff; }
-
-/* ... (Zbytek stylů jako Avatar, Social Grid, Link Btn atd. zůstává stejný) ... */
-/* ZAJISTI, ŽE MÁŠ V CSS I TOTO PRO IKONKY: */
-.social-links-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; margin-bottom: 15px; }
-.social-item { flex: 1 0 30%; max-width: 32%; height: 50px; background: var(--input-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; justify-content: center; align-items: center; color: var(--text-main); font-size: 20px; text-decoration: none; transition: 0.2s; }
 .social-item:hover { background: var(--accent); color: #000; transform: translateY(-2px); }
-.links { width: 100%; display: flex; flex-direction: column; gap: 10px; padding-bottom: 10px; }
-.link-btn { background: var(--input-bg); color: var(--text-main); padding: 14px; text-align: center; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 13px; transition: 0.2s; border: 1px solid rgba(255,255,255,0.1); display: block; width: 100%; box-sizing: border-box; }
-.link-btn:hover { background: var(--accent); color: #fff; transform: translateY(-2px); border-color: transparent; }
-/* ... (Admin styly, Premium styly atd.) ... */
+
+/* LINK BUTTONS */
+.links { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+.link-btn {
+    background: var(--input-bg); color: var(--text-main); padding: 14px; text-align: center;
+    text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 13px;
+    transition: 0.2s; border: 1px solid rgba(255,255,255,0.1); display: block; width: 100%; box-sizing: border-box;
+}
+.link-btn:hover { background: var(--accent); color: #fff; border-color: transparent; }
+
+/* JAZYKOVÝ PŘEPÍNAČ (Dropdown) */
+.lang-wrapper { position: absolute; top: 20px; right: 20px; z-index: 1000; }
+.lang-select {
+    appearance: none; -webkit-appearance: none;
+    background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2); color: var(--text-main);
+    padding: 8px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;
+    cursor: pointer; outline: none; text-align: center;
+}
+.lang-select option { background: #000; color: #fff; }
+
+/* HEZKÉ TLAČÍTKO PRO UPLOAD */
+.file-upload-wrapper { width: 100%; margin: 10px 0; text-align: center; }
+input[type="file"] { display: none; } /* Skryjeme ošklivý input */
+.custom-file-upload {
+    display: inline-block; padding: 10px 20px; cursor: pointer;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px; color: var(--text-main); font-size: 11px; font-weight: bold;
+    transition: 0.2s; width: 100%; box-sizing: border-box; text-transform: uppercase;
+}
+.custom-file-upload:hover { background: var(--accent); color: #000; }
+
+/* ADMIN UI & QR */
+#qrcode { background: white; padding: 15px; border-radius: 15px; margin-top: auto; }
+.card.premium .card-face { border-color: rgba(255, 215, 0, 0.5); box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
+.card.premium .card-face.front::after { content: "Æ"; position: absolute; top: 25px; right: 25px; width: 22px; height: 22px; background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728); color: #1a1a1a; font-size: 10px; font-weight: 900; border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 10; }
+
+.admin-container { background: var(--card-glass); backdrop-filter: blur(20px); padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); width: 90%; max-width: 550px; margin: 50px auto; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+.admin-label { color: var(--text-main); font-size: 11px; text-transform: uppercase; font-weight: 800; margin-top: 10px; opacity: 0.8; }
+.admin-input { background: var(--input-bg); border: 1px solid rgba(255,255,255,0.2); color: var(--text-main); padding: 14px; border-radius: 10px; width: 100%; box-sizing: border-box; }
+.admin-input:focus { border-color: var(--accent); outline: none; }
+.admin-input.error { border-color: #ff4757; }
+/* ... (Gridy a tlačítka z minula) ... */
+.social-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }

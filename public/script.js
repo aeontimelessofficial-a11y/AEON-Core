@@ -2,69 +2,64 @@ const card = document.getElementById('artifact');
 const scene = document.querySelector('.scene');
 const loader = document.getElementById('loader');
 
-// --- 0. TRANSLATIONS (Rozšířený slovník) ---
+// --- 0. TRANSLATIONS (Více jazyků) ---
 const translations = {
-    en: { mint_title: "NO.", error_load: "PROFILE NOT FOUND", error_sys: "SYSTEM ERROR", bio_ph: "Digital Creator" },
-    cs: { mint_title: "Č.", error_load: "PROFIL NENALEZEN", error_sys: "CHYBA SYSTÉMU", bio_ph: "Digitální tvůrce" },
-    sk: { mint_title: "Č.", error_load: "PROFIL NENÁJDENÝ", error_sys: "CHYBA SYSTÉMU", bio_ph: "Digitálny tvorca" },
-    de: { mint_title: "NR.", error_load: "PROFIL NICHT GEFUNDEN", error_sys: "SYSTEMFEHLER", bio_ph: "Digitaler Schöpfer" },
-    pl: { mint_title: "NR", error_load: "NIE ZNALEZIONO PROFILU", error_sys: "BŁĄD SYSTEMU", bio_ph: "Twórca cyfrowy" },
-    es: { mint_title: "Nº", error_load: "PERFIL NO ENCONTRADO", error_sys: "ERROR DEL SISTEMA", bio_ph: "Creador digital" },
-    fr: { mint_title: "Nº", error_load: "PROFIL INTROUVABLE", error_sys: "ERREUR SYSTÈME", bio_ph: "Créateur numérique" },
-    it: { mint_title: "N.", error_load: "PROFILO NON TROVATO", error_sys: "ERRORE DI SISTEMA", bio_ph: "Creatore digitale" }
+    en: { mint: "NO.", error: "PROFILE NOT FOUND", sys_err: "SYSTEM ERROR" },
+    cs: { mint: "NO.", error: "PROFIL NENALEZEN", sys_err: "SYSTÉMOVÁ CHYBA" },
+    de: { mint: "NR.", error: "PROFIL NICHT GEFUNDEN", sys_err: "SYSTEMFEHLER" },
+    es: { mint: "NÚM.", error: "PERFIL NO ENCONTRADO", sys_err: "ERROR DEL SISTEMA" },
+    fr: { mint: "N°", error: "PROFIL INTROUVABLE", sys_err: "ERREUR SYSTÈME" },
+    it: { mint: "N.", error: "PROFILO NON TROVATO", sys_err: "ERRORE DI SISTEMA" },
+    pl: { mint: "NR", error: "NIE ZNALEZIONO PROFILU", sys_err: "BŁĄD SYSTEMU" },
+    ru: { mint: "№", error: "ПРОФИЛЬ НЕ НАЙДЕН", sys_err: "СИСТЕМНАЯ ОШИБКА" },
+    ua: { mint: "№", error: "ПРОФІЛЬ НЕ ЗНАЙДЕНО", sys_err: "СИСТЕМНА ПОМИЛКА" },
+    ja: { mint: "番", error: "プロフィールが見つかりません", sys_err: "システムエラー" }
 };
-
 let currentLang = 'en';
 
-// Inicializace jazyka
+// Inicializace jazyka z dropdownu nebo URL
 function initLanguage() {
-    const savedLang = localStorage.getItem('aeon_lang');
-    if (savedLang && translations[savedLang]) {
-        currentLang = savedLang;
+    const selector = document.getElementById('langSelect');
+    if (selector) {
+        // Pokud jsme na Adminu, posloucháme změnu
+        selector.addEventListener('change', (e) => {
+            currentLang = e.target.value;
+            // Tady bychom volali updateAdminText(currentLang), ale to je v admin.html
+        });
     } else {
-        const userLang = (navigator.language || navigator.userLanguage).substring(0, 2);
-        if (translations[userLang]) currentLang = userLang;
+        // Jsme na kartě -> čteme z URL nebo prohlížeče
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlLang = urlParams.get('lang');
+        const browserLang = (navigator.language || 'en').substring(0,2);
+        
+        if (urlLang && translations[urlLang]) currentLang = urlLang;
+        else if (translations[browserLang]) currentLang = browserLang;
     }
-    
-    // Nastavit dropdown
-    const select = document.getElementById('langSelect');
-    if(select) select.value = currentLang;
 }
-
-// Změna jazyka uživatelem
-function changeLanguage(lang) {
-    currentLang = lang;
-    localStorage.setItem('aeon_lang', lang);
-    loadProfile(); // Přenačíst data (aby se přeložily popisky)
-}
-
 initLanguage();
 
 // --- ICONS MAPPING ---
-const platformIcons = [
-    { domain: 'instagram.com', icon: 'fa-instagram', brand: true },
-    { domain: 'facebook.com', icon: 'fa-facebook-f', brand: true },
-    { domain: 'tiktok.com', icon: 'fa-tiktok', brand: true },
-    { domain: 'youtube.com', icon: 'fa-youtube', brand: true },
-    { domain: 'x.com', icon: 'fa-x-twitter', brand: true },
-    { domain: 'twitter.com', icon: 'fa-x-twitter', brand: true },
-    { domain: 'linkedin.com', icon: 'fa-linkedin-in', brand: true },
-    { domain: 'twitch.tv', icon: 'fa-twitch', brand: true },
-    { domain: 'discord.gg', icon: 'fa-discord', brand: true },
-    { domain: 'pinterest.com', icon: 'fa-pinterest', brand: true },
-    { domain: 'reddit.com', icon: 'fa-reddit-alien', brand: true },
-    { domain: 'snapchat.com', icon: 'fa-snapchat', brand: true },
-    { domain: 'threads.net', icon: 'fa-threads', brand: true }
-];
-
 function getIconClass(url) {
-    for (let p of platformIcons) {
-        if (url.includes(p.domain)) return { icon: p.icon, brand: p.brand };
-    }
-    return null;
+    if (url.includes('instagram.com')) return 'fa-brands fa-instagram';
+    if (url.includes('facebook.com')) return 'fa-brands fa-facebook-f';
+    if (url.includes('tiktok.com')) return 'fa-brands fa-tiktok';
+    if (url.includes('youtube.com')) return 'fa-brands fa-youtube';
+    if (url.includes('x.com') || url.includes('twitter.com')) return 'fa-brands fa-x-twitter';
+    if (url.includes('linkedin.com')) return 'fa-brands fa-linkedin-in';
+    if (url.includes('twitch.tv')) return 'fa-brands fa-twitch';
+    if (url.includes('discord.gg') || url.includes('discord.com')) return 'fa-brands fa-discord';
+    if (url.includes('pinterest.com')) return 'fa-brands fa-pinterest';
+    if (url.includes('reddit.com')) return 'fa-brands fa-reddit-alien';
+    if (url.includes('snapchat.com')) return 'fa-brands fa-snapchat';
+    if (url.includes('threads.net')) return 'fa-brands fa-threads';
+    if (url.includes('github.com')) return 'fa-brands fa-github';
+    if (url.includes('spotify.com')) return 'fa-brands fa-spotify';
+    if (url.includes('soundcloud.com')) return 'fa-brands fa-soundcloud';
+    if (url.includes('telegram.org') || url.includes('t.me')) return 'fa-brands fa-telegram';
+    if (url.includes('whatsapp.com')) return 'fa-brands fa-whatsapp';
+    return null; 
 }
 
-// --- THEME & UTILS ---
 function applyTheme(themeString) {
     document.body.className = ''; 
     if (!themeString) themeString = 'winter-night';
@@ -94,21 +89,36 @@ function generateQR(url) {
     });
 }
 
-// --- LOAD DATA ---
+// --- FIX VÝŠKY ZADNÍ STRANY ---
+// Toto zajistí, že když se přední strana natáhne, zadní bude stejně velká
+function adjustBackFaceHeight() {
+    const front = document.querySelector('.card-face.front');
+    const back = document.querySelector('.card-face.back');
+    const scene = document.querySelector('.scene');
+    
+    if(front && back && scene) {
+        // Počkáme chvilku na vykreslení fontů a obrázků
+        setTimeout(() => {
+            const h = front.offsetHeight; // Výška přední strany
+            scene.style.height = h + 'px'; // Roztáhneme scénu
+            back.style.height = h + 'px'; // Roztáhneme zadek
+        }, 100);
+    }
+}
+
 async function loadProfile() {
     const params = new URLSearchParams(window.location.search);
     const userSlug = params.get('slug') || 'jan-novak';
 
     try {
         const response = await fetch(`/api/aeon-api?slug=${userSlug}`);
-        if (!response.ok) throw new Error(translations[currentLang].error_load);
+        if (!response.ok) throw new Error(translations[currentLang].error);
         
         const data = await response.json();
         applyTheme(data.theme);
 
         document.querySelector('h1').innerText = data.name;
-        document.querySelector('.bio').innerText = data.bio || "";
-        
+        document.querySelector('.bio').innerText = data.bio;
         const mottoEl = document.querySelector('.motto');
         if(mottoEl) mottoEl.innerText = data.motto || "";
 
@@ -118,12 +128,19 @@ async function loadProfile() {
         }
 
         const mintNum = data.mint_number || "---";
-        document.querySelector('.mint-number').innerText = `${translations[currentLang].mint_title} ${mintNum}`;
+        document.querySelector('.mint-number').innerText = `${translations[currentLang].mint} ${mintNum}`;
 
-        // --- RENDER LINKS ---
+        // RENDER LINKS
         let linksContainer = document.querySelector('.links');
         let socialGrid = document.querySelector('.social-links-grid');
         
+        // Vytvoření gridu pokud není
+        if (!socialGrid) {
+            socialGrid = document.createElement('div');
+            socialGrid.className = 'social-links-grid';
+            linksContainer.parentNode.insertBefore(socialGrid, linksContainer);
+        }
+
         linksContainer.innerHTML = ''; 
         socialGrid.innerHTML = '';
 
@@ -131,21 +148,19 @@ async function loadProfile() {
             data.links.forEach(link => {
                 if(!link.url) return;
                 const fixed = fixUrl(link.url);
-                const iconInfo = getIconClass(fixed);
+                const iconClass = getIconClass(fixed);
 
-                if (iconInfo) {
+                if (iconClass) {
                     // IKONA
                     const a = document.createElement('a');
                     a.href = fixed;
                     a.className = 'social-item';
                     a.target = "_blank";
-                    // FontAwesome Brands vs Solid
-                    const prefix = iconInfo.brand ? 'fa-brands' : 'fas'; 
-                    a.innerHTML = `<i class="${prefix} ${iconInfo.icon}"></i>`;
+                    a.innerHTML = `<i class="${iconClass}"></i>`; // Použije třídu z getIconClass (už obsahuje fa-brands)
                     a.addEventListener('click', (e) => e.stopPropagation());
                     socialGrid.appendChild(a);
                 } else {
-                    // TEXTOVÉ TLAČÍTKO
+                    // TLAČÍTKO
                     if (link.label) {
                         const btn = document.createElement('a');
                         btn.href = fixed;
@@ -165,20 +180,25 @@ async function loadProfile() {
 
         if(loader) {
             loader.style.opacity = '0';
-            setTimeout(() => { loader.style.display = 'none'; scene.style.opacity = '1'; }, 500);
+            setTimeout(() => { 
+                loader.style.display = 'none'; 
+                scene.style.opacity = '1'; 
+                adjustBackFaceHeight(); // Spočítat výšku až je vše načteno
+            }, 500);
         }
 
     } catch (error) {
         console.error(error);
-        if(loader) loader.innerHTML = `<div style='color:white'>${translations[currentLang].error_sys}</div>`;
+        if(loader) loader.innerHTML = `<div style='color:white'>${translations[currentLang].sys_err}</div>`;
     }
 }
 
 function flipCard(e) {
-    // Pokud klikne na select jazyka nebo odkaz, neotáčet
-    if (e.target.closest('a') || e.target.closest('select')) return;
+    if (e.target.closest('a')) return;
     card.classList.toggle('is-flipped');
 }
 
 loadProfile();
 card.addEventListener('click', flipCard);
+// Přepočítat výšku i při změně velikosti okna
+window.addEventListener('resize', adjustBackFaceHeight);
