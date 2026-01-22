@@ -1,4 +1,4 @@
-// --- 1. KONFIGURACE API (VERCEL VERZE) ---
+// --- 1. KONFIGURACE API ---
 const API_URL = '/api/aeon-api'; 
 
 // --- 2. JAZYKY A PŘEKLADY ---
@@ -46,7 +46,6 @@ const translations = {
         alert_fill_name: "Vyplň prosím NÁZEV odkazu!", help_title: "Nápověda",
         help_1: "Mám jen jméno:", help_2: "Mám celý odkaz:"
     },
-    // Ostatní jazyky mají fallback na angličtinu v kódu, nebo základní překlad
     de: { mint_title: "NR.", error_load: "NICHT GEFUNDEN", save: "SPEICHERN" },
     es: { mint_title: "Nº", error_load: "NO ENCONTRADO", save: "GUARDAR" },
     pl: { mint_title: "NR", error_load: "NIE ZNALEZIONO", save: "ZAPISZ" },
