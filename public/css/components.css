@@ -70,14 +70,12 @@
     max-width: 220px; 
     width: 100%;
     
-    /* Pevné, tmavší skleněné pozadí (už se neztrácí do modra) */
     background: rgba(20, 20, 20, 0.7); 
-    padding: 8px 0; /* Padding jen nahoře/dole */
+    padding: 8px 0; 
     border-radius: 30px;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     
-    /* Jemný rámeček */
     border: 1px solid rgba(255,255,255,0.15);
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
@@ -88,7 +86,6 @@
     gap: 12px; 
     overflow-x: auto; 
     
-    /* Maska je TEĎ TADY - mizí jen vlaječky, ne celý bar */
     mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
     
@@ -109,16 +106,13 @@
     width: 30px; 
     height: 30px; 
     border-radius: 50%; 
-    
-    /* Výchozí stav: Žádný hnusný rámeček, jen jemný obrys */
     border: 1px solid rgba(255,255,255,0.1); 
-    
     cursor: pointer; 
     overflow: hidden; 
     opacity: 0.5; 
     transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     position: relative;
-    filter: grayscale(100%); /* Neaktivní jsou černobílé */
+    filter: grayscale(100%); 
 }
 
 .lang-btn img { 
@@ -139,12 +133,32 @@
     opacity: 1; 
     filter: grayscale(0%); 
     
-    /* Aktivní stav: Čistá bílá elegance */
+    /* Změna: Odstraněna záře (box-shadow), zůstal jen rámeček */
     border: 2px solid #ffffff; 
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); 
-    
     transform: scale(1.25); 
     z-index: 10;
+}
+
+/* MOBILNÍ ÚPRAVY */
+@media (max-width: 768px) {
+    .lang-switcher {
+        top: 15px;
+        right: 15px;
+        /* Zmenšeno na cca 3 vlajky */
+        max-width: 130px;
+        padding: 6px 0;
+    }
+
+    .lang-btn {
+        /* Celkové zmenšení vlaječek */
+        width: 24px;
+        height: 24px;
+    }
+
+    #lang-scroll-wrapper {
+        gap: 8px; /* Menší mezery */
+        padding: 4px 15px;
+    }
 }
 
 .help-tooltip { position: absolute; bottom: 35px; right: 0; width: 280px; background: #111; border: 1px solid rgba(255,255,255,0.2); color: #ddd; padding: 12px; border-radius: 8px; z-index: 100; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 11px; line-height: 1.4; }
