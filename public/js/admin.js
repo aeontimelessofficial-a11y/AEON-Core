@@ -106,7 +106,7 @@ window.onload = async function() {
         document.getElementById('slug').value = slug;
         document.getElementById('saveBtn').innerText = translations[currentLang].update;
         try {
-            const res = await fetch(`/api/aeon-api?slug=${slug}`);
+            const res = await fetch(`${API_URL}?slug=${slug}`);
             if(res.ok) {
                 const d = await res.json();
                 document.getElementById('name').value = d.name || "";
@@ -300,7 +300,7 @@ async function saveCard() {
     };
 
     try {
-        await fetch('/api/aeon-api', { method: 'POST', body: JSON.stringify(payload) });
+        await fetch(`${API_URL}`, { method: 'POST', body: JSON.stringify(payload) });
         stat.innerText = translations[currentLang].done; stat.style.color = "#0f0";
         setTimeout(() => window.location.href = `/?slug=${slug}`, 1500);
     } catch(e) { stat.innerText = translations[currentLang].error; }
