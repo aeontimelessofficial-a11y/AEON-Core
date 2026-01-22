@@ -60,33 +60,61 @@
 .spinner { width: 40px; height: 40px; border: 4px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* LANGUAGE SWITCHER - PREMIUM LOOK */
+/* LANGUAGE SWITCHER - SCROLLABLE STRIP */
 .lang-switcher { 
     position: absolute; 
     top: 25px; 
     right: 25px; 
     z-index: 1000; 
+    
+    /* Fixní šířka pro scroll */
+    max-width: 220px; 
+    width: 100%;
+    
+    background: rgba(0, 0, 0, 0.4); 
+    padding: 8px 12px;
+    border-radius: 30px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.15);
+    
+    /* Maska pro fade efekt na krajích */
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+/* Scroll kontejner uvnitř */
+#lang-scroll-wrapper {
     display: flex; 
     gap: 12px; 
-    background: rgba(0, 0, 0, 0.3); /* Jemné podbarvení */
-    padding: 8px;
-    border-radius: 30px;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: opacity 0.3s;
+    overflow-x: auto; 
+    
+    /* Skrytí posuvníku, ale zachování funkčnosti */
+    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  /* IE */
+    
+    /* Plynulé scrollování na mobilech */
+    -webkit-overflow-scrolling: touch; 
+    
+    /* Zarovnání */
+    align-items: center;
+    padding: 0 5px; /* Rezerva pro scale efekt */
+}
+
+#lang-scroll-wrapper::-webkit-scrollbar { 
+    display: none; /* Chrome, Safari */
 }
 
 .lang-btn { 
+    flex-shrink: 0; /* Aby se nesmrskly */
     width: 32px; 
     height: 32px; 
     border-radius: 50%; 
     border: 2px solid rgba(255,255,255,0.1); 
     cursor: pointer; 
     overflow: hidden; 
-    opacity: 0.6; 
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    opacity: 0.5; 
+    transition: all 0.3s ease; 
     position: relative;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
 }
 
 .lang-btn img { 
@@ -96,20 +124,18 @@
     display: block;
 }
 
-/* Hover efekt */
 .lang-btn:hover { 
     opacity: 1; 
-    transform: translateY(-2px) scale(1.1); 
+    transform: scale(1.1); 
     border-color: rgba(255,255,255,0.5); 
 }
 
-/* Aktivní jazyk */
 .lang-btn.active { 
     opacity: 1; 
-    border-color: var(--accent); /* Použije barvu tématu */
-    transform: scale(1.15); 
-    box-shadow: 0 0 15px var(--accent), 0 0 5px rgba(255,255,255,0.5);
-    z-index: 1;
+    border-color: var(--accent); 
+    transform: scale(1.2); 
+    box-shadow: 0 0 15px var(--accent);
+    z-index: 10;
 }
 
 .help-tooltip { position: absolute; bottom: 35px; right: 0; width: 280px; background: #111; border: 1px solid rgba(255,255,255,0.2); color: #ddd; padding: 12px; border-radius: 8px; z-index: 100; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 11px; line-height: 1.4; }

@@ -15,12 +15,7 @@
 <body>
 
     <div class="lang-switcher">
-        <div class="lang-btn" onclick="setLanguage('cs')" id="lang-cs">
-            <img src="https://flagcdn.com/w40/cz.png" alt="CZ">
-        </div>
-        <div class="lang-btn" onclick="setLanguage('en')" id="lang-en">
-            <img src="https://flagcdn.com/w40/gb.png" alt="EN">
-        </div>
+        <div id="lang-scroll-wrapper"></div>
     </div>
 
     <div class="fixed-background">
@@ -50,17 +45,15 @@
         <div style="margin-top: 15px;">
             <input type="file" id="photoInput" accept="image/*" style="display: none;">
             <input type="hidden" id="base64String">
-
             <label for="photoInput" class="link-btn" style="cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
                 <span data-i18n="avatar_upload">UPLOAD OWN PHOTO</span>
             </label>
-
             <img id="preview" style="width:80px; height:80px; border-radius:50%; margin: 15px auto; display:block; object-fit:cover; border: 3px solid var(--accent); box-shadow: 0 0 20px rgba(0,0,0,0.3);">
         </div>
+
         <label class="admin-label" data-i18n="social_label">Social Hub</label>
-        <div class="social-grid" id="socialGrid">
-            </div>
+        <div class="social-grid" id="socialGrid"></div>
         <div id="activeSocialsContainer"></div>
 
         <label class="admin-label" data-i18n="other_links_label">Other Links</label>
