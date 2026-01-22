@@ -7,69 +7,86 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        /* ZÁKLADNÍ ROZLOŽENÍ */
         body { overflow-y: auto; display: block; padding-bottom: 50px; }
         
         .social-grid {
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px;
         }
+        
         .social-icon-btn {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 12px; height: 50px; cursor: pointer; color: var(--text-main);
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px; height: 50px; cursor: pointer; 
+            color: var(--text-main);
             font-size: 20px; display: flex; justify-content: center; align-items: center;
             transition: 0.2s; position: relative;
         }
-        .social-icon-btn:hover { background: var(--accent); color: black; border-color: transparent; }
-        
-        /* Styl pro aktivní řádek */
-        .active-social-row {
-            display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.4);
-            padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; 
-            border: 1px solid rgba(255,255,255,0.1);
-            animation: fadeIn 0.3s ease; position: relative;
+        .social-icon-btn:hover { 
+            background: var(--accent); color: #000; border-color: transparent; transform: translateY(-2px);
         }
-        .active-social-row.valid { border-color: #00ff88; background: rgba(0, 255, 136, 0.05); }
+        
+        /* AKTIVNÍ ŘÁDEK */
+        .active-social-row {
+            display: flex; align-items: center; gap: 8px; 
+            background: var(--input-bg);
+            padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; 
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            animation: fadeIn 0.3s ease; position: relative;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        /* STAVY VALIDACE */
+        /* Správně (Zelená) */
+        .active-social-row.valid { 
+            border-color: #00ff88; 
+            box-shadow: 0 0 5px rgba(0, 255, 136, 0.2);
+        }
+        /* Chyba (Červená) */
+        .active-social-row.invalid { 
+            border-color: #ff4757; 
+            box-shadow: 0 0 5px rgba(255, 71, 87, 0.2);
+        }
 
-        /* INPUT AREA */
         .input-wrapper { flex-grow: 1; display: flex; align-items: center; overflow: hidden; }
         
         .social-prefix {
-            font-size: 10px; color: #888; white-space: nowrap; font-family: monospace; 
+            font-size: 11px; color: var(--text-main); opacity: 0.6;
+            white-space: nowrap; font-family: monospace; 
             margin-right: 4px; transition: 0.3s;
         }
-        /* Když je aktivní mód celé URL, prefix zmizí */
         .active-social-row.mode-url .social-prefix { display: none; }
         
         .social-input {
-            background: transparent; border: none; color: white; width: 100%; 
-            outline: none; font-weight: bold; font-size: 14px;
+            background: transparent; border: none; color: var(--text-main);
+            width: 100%; outline: none; font-weight: bold; font-size: 14px;
         }
+        .social-input::placeholder { color: var(--text-main); opacity: 0.3; }
 
-        /* AKCE VPRAVO */
         .action-group { display: flex; gap: 4px; }
         
         .mini-btn {
             width: 28px; height: 28px; border-radius: 6px; border: none;
-            background: rgba(255,255,255,0.05); color: #888; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 12px;
-            transition: 0.2s; position: relative;
+            background: rgba(128, 128, 128, 0.2); color: var(--text-main); opacity: 0.7;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; 
+            font-size: 12px; transition: 0.2s; position: relative;
         }
-        .mini-btn:hover { background: rgba(255,255,255,0.2); color: white; }
-        .mini-btn.active { color: var(--accent); background: rgba(255,255,255,0.2); }
+        .mini-btn:hover { background: var(--accent); color: #000; opacity: 1; }
+        .mini-btn.active { color: var(--accent); background: rgba(0,0,0,0.5); border: 1px solid var(--accent); opacity: 1; }
         .mini-btn.remove:hover { background: #ff4757; color: white; }
 
-        /* TOOLTIP (Nápověda) */
+        /* TOOLTIP */
         .help-tooltip {
             position: absolute; bottom: 35px; right: 0; width: 280px;
-            background: #111; border: 1px solid rgba(255,255,255,0.2);
+            background: #111; border: 1px solid rgba(255,255,255,0.2); color: #ddd;
             padding: 12px; border-radius: 8px; z-index: 100;
             display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            font-size: 11px; line-height: 1.4; color: #ccc;
+            font-size: 11px; line-height: 1.4; 
         }
         .mini-btn:hover .help-tooltip { display: block; }
-        
         .help-title { color: var(--accent); font-weight: bold; margin-bottom: 4px; display: block; border-bottom: 1px solid #333; padding-bottom: 2px; }
         .help-section { margin-bottom: 8px; }
-        .help-section:last-child { margin-bottom: 0; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -131,7 +148,6 @@
     </div>
 
     <script>
-        // --- KONFIGURACE ---
         const platforms = {
             instagram: { icon: 'fa-instagram', prefix: 'instagram.com/', url: 'https://instagram.com/', label: 'Instagram', tip: 'Jméno je nahoře na profilu.' },
             facebook:  { icon: 'fa-facebook-f', prefix: 'facebook.com/', url: 'https://facebook.com/', label: 'Facebook', tip: 'Jdi na svůj profil > ... > Kopírovat odkaz.' },
@@ -155,7 +171,7 @@
             const p = platforms[type];
             const div = document.createElement('div');
             div.className = 'active-social-row';
-            if(isFullUrl) div.classList.add('mode-url'); // Pokud načítáme uloženou celou URL
+            if(isFullUrl) div.classList.add('mode-url'); 
 
             div.innerHTML = `
                 <i class="fa-brands ${p.icon}" style="font-size:18px; width:25px; text-align:center;"></i>
@@ -170,68 +186,81 @@
                         <i class="fa-solid fa-question"></i>
                         <div class="help-tooltip">
                             <span class="help-title">${p.label} - Nápověda</span>
-                            <div class="help-section">
-                                <strong style="color:white">1. Mám jen přezdívku:</strong><br>
-                                Zadej ji do políčka. ${p.tip}
-                            </div>
-                            <div class="help-section">
-                                <strong style="color:white">2. Mám celý odkaz:</strong><br>
-                                Klikni na ikonu řetězu (🔗) vpravo a vlož celou adresu (https://...).
-                            </div>
+                            <div class="help-section"><strong style="color:white">1. Mám jen přezdívku:</strong><br>Zadej ji do políčka. ${p.tip}</div>
+                            <div class="help-section"><strong style="color:white">2. Mám celý odkaz:</strong><br>Klikni na ikonu řetězu (🔗) a vlož celou adresu.</div>
                         </div>
                     </div>
-
                     <button class="mini-btn ${isFullUrl ? 'active' : ''} toggle-mode" title="Přepnout: Celý odkaz / Jen jméno" onclick="toggleMode(this)">
                         <i class="fa-solid fa-link"></i>
                     </button>
-
                     <button class="mini-btn" title="Otestovat" onclick="testSocialLink(this, '${type}')">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i>
                     </button>
-
                     <button class="mini-btn remove" title="Odstranit" onclick="this.closest('.active-social-row').remove()">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
             `;
-            
             activeSocialsDiv.appendChild(div);
             
             const input = div.querySelector('.social-input');
-            input.addEventListener('input', () => validateRow(div, input.value));
-            if(value) validateRow(div, value);
+            input.addEventListener('input', () => validateRow(div, input.value, type));
+            if(value) validateRow(div, value, type);
         }
 
-        // --- FUNKCIONALITA ---
+        // --- VALIDACE (SEMAFOR) ---
+        function validateRow(row, val, type) {
+            val = val.trim();
+            row.classList.remove('valid', 'invalid'); // Reset
+
+            if(val.length === 0) return; // Prázdné = neutrální
+
+            const isUrlMode = row.classList.contains('mode-url');
+
+            // 1. Validace pro režim CELÁ URL
+            if (isUrlMode) {
+                // Musí začínat http a obsahovat název platformy (např. "instagram")
+                // (Výjimka pro "x.com" a "twitter")
+                const domainCheck = type === 'twitter' ? (val.includes('x.com') || val.includes('twitter.com')) : val.includes(type);
+                
+                if (val.startsWith('http') && domainCheck) {
+                    row.classList.add('valid');
+                } else {
+                    row.classList.add('invalid');
+                }
+            } 
+            // 2. Validace pro režim USERNAME
+            else {
+                // Nesmí obsahovat mezery, lomítka, nebo "http" (to by znamenalo že tam někdo cpe link)
+                if (val.includes(' ') || val.includes('/') || val.includes('.' + type) || val.includes('http')) {
+                    row.classList.add('invalid');
+                } else {
+                    row.classList.add('valid');
+                }
+            }
+        }
 
         function toggleMode(btn) {
             const row = btn.closest('.active-social-row');
             const input = row.querySelector('.social-input');
-            const prefix = row.querySelector('.social-prefix');
+            const type = input.getAttribute('data-type');
             
-            // Přepínáme třídu 'mode-url'
             row.classList.toggle('mode-url');
             btn.classList.toggle('active');
 
-            // Měníme placeholder podle módu
             if (row.classList.contains('mode-url')) {
                 input.placeholder = "https://...";
             } else {
                 input.placeholder = "username";
             }
             input.focus();
-        }
-
-        function validateRow(row, val) {
-            if(val.trim().length > 0) row.classList.add('valid');
-            else row.classList.remove('valid');
+            validateRow(row, input.value, type); // Znovu validovat po přepnutí
         }
 
         function testSocialLink(btn, type) {
             const row = btn.closest('.active-social-row');
             const input = row.querySelector('.social-input');
             const val = input.value.trim();
-            
             if(!val) { alert("Vyplň políčko."); return; }
 
             let finalUrl;
@@ -239,17 +268,12 @@
                 finalUrl = val;
                 if(!finalUrl.startsWith('http')) finalUrl = 'https://' + finalUrl;
             } else {
-                // Odstranit @ pro jistotu
                 finalUrl = platforms[type].url + val.replace('@', '');
             }
             window.open(finalUrl, '_blank');
         }
 
-
-        // --- Zbytek logiky (Load/Save) ---
-        // (Zkráceno, stejné jako minule, jen upraven Save a Load pro nové funkce)
-
-        // ... (Zde je kód pro Themes, Avatars, Links - neměnil se, ale pro jistotu vložím Load/Save logiku upravenou) ...
+        // --- Zbytek logiky (Load/Save atd.) ---
         const themes = [
             { id: "spring-morning", name: "Jaro Ráno", bg: "#f3ffe3" }, { id: "spring-noon", name: "Jaro Poledne", bg: "#badc58" },
             { id: "spring-evening", name: "Jaro Večer", bg: "#e056fd", dark:true }, { id: "spring-night", name: "Jaro Noc", bg: "#2c3a47", dark:true },
@@ -300,14 +324,11 @@
             linksWrapper.appendChild(d);
         }
 
-        // --- UPDATED SAVE & LOAD ---
-        
         async function saveCard() {
             const stat = document.getElementById('status'); stat.innerText = "Ukládám...";
             const slug = document.getElementById('slug').value.toLowerCase().replace(/\s+/g, '-');
             const links = [];
 
-            // Socials
             document.querySelectorAll('.active-social-row').forEach(row => {
                 const input = row.querySelector('.social-input');
                 const type = input.getAttribute('data-type');
@@ -316,18 +337,15 @@
                 if(val) {
                     let finalUrl;
                     if (row.classList.contains('mode-url')) {
-                        // Režim celé URL - bereme jak je
                         finalUrl = val;
                         if(!finalUrl.startsWith('http')) finalUrl = 'https://' + finalUrl;
                     } else {
-                        // Režim username - složíme
                         finalUrl = platforms[type].url + val.replace('@', ''); 
                     }
                     links.push({ label: platforms[type].label, url: finalUrl });
                 }
             });
 
-            // Custom links
             document.querySelectorAll('.link-row').forEach(r => {
                 const l = r.querySelector('.l-lbl').value; const u = r.querySelector('.l-url').value;
                 if(l && u) links.push({label: l, url: u});
@@ -377,16 +395,13 @@
                             d.links.forEach(x => {
                                 let found = false;
                                 for (const [key, p] of Object.entries(platforms)) {
-                                    // Zkontrolujeme, zda URL začíná standardním prefixem (např. https://instagram.com/)
                                     if (x.url.startsWith(p.url)) {
-                                        // Standardní username mód
                                         const username = x.url.replace(p.url, '');
-                                        addSocial(key, username, false); // false = username mode
+                                        addSocial(key, username, false);
                                         found = true;
                                         break;
-                                    } else if (x.url.includes(key)) {
-                                        // Je to ta síť (obsahuje slovo instagram), ale nesedí prefix -> asi custom URL
-                                        addSocial(key, x.url, true); // true = full url mode
+                                    } else if (x.url.includes(key) || (key==='twitter' && x.url.includes('x.com'))) {
+                                        addSocial(key, x.url, true);
                                         found = true;
                                         break;
                                     }
