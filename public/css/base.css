@@ -1,0 +1,24 @@
+:root {
+    --primary: #ffffff;
+    --border: rgba(255, 255, 255, 0.2);
+    /* Výchozí barvy (Fallback - Midnight) */
+    --bg-gradient-start: #0f0c29; --bg-gradient-end: #302b63;
+    --orb-1-color: #24243e; --orb-2-color: #0f0c29; --orb-3-color: #7b4397; --orb-4-color: #dc2430;
+    --accent: #ffffff; --text-main: #ffffff;
+    --card-bg: rgba(20, 20, 20, 0.65); --input-bg: rgba(0, 0, 0, 0.5);
+    --orb-blend: screen;
+}
+
+body {
+    background-color: #000; color: var(--text-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0; min-height: 100vh; overflow-x: hidden; display: block; 
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none; user-select: none;
+}
+
+.fixed-background { 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
+    z-index: -100; background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%); 
+    transition: background 0.5s ease; pointer-events: none; 
+}
