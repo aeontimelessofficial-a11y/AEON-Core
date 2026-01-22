@@ -30,11 +30,13 @@
         .social-prefix { font-size: 11px; color: var(--text-main); opacity: 0.6; white-space: nowrap; font-family: monospace; margin-right: 4px; }
         .active-social-row.mode-url .social-prefix { display: none; }
         .social-input { background: transparent; border: none; color: var(--text-main); width: 100%; outline: none; font-weight: bold; font-size: 14px; }
+        .social-input::placeholder { color: var(--text-main); opacity: 0.3; }
         
         .action-group { display: flex; gap: 4px; }
         .mini-btn { width: 28px; height: 28px; border-radius: 6px; border: none; background: rgba(128,128,128,0.2); color: var(--text-main); opacity: 0.7; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: 0.2s; }
         .mini-btn:hover { background: var(--accent); color: #000; opacity: 1; }
         .mini-btn.active { color: var(--accent); background: rgba(0,0,0,0.5); border: 1px solid var(--accent); opacity: 1; }
+        .mini-btn.remove:hover { background: #ff4757; color: white; }
         
         /* Tooltip */
         .help-tooltip { position: absolute; bottom: 35px; right: 0; width: 280px; background: #111; border: 1px solid rgba(255,255,255,0.2); color: #ddd; padding: 12px; border-radius: 8px; z-index: 100; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 11px; }
@@ -171,15 +173,8 @@
             document.getElementById('bio').placeholder = t.bio_ph;
             document.getElementById('motto').placeholder = t.motto_ph;
             document.getElementById('addLinkBtn').innerText = t.add_link;
+            document.getElementById('saveBtn').innerText = t.save; 
             
-            // Tlačítko Save (zachovat logiku update/save)
-            const slugVal = document.getElementById('slug').value;
-            const btn = document.getElementById('saveBtn');
-            // Pokud jsme v editačním módu (poznáme podle textu nebo URL), musíme držet kontext,
-            // ale pro jednoduchost při přepnutí jazyka resetneme na základní "Save" nebo "Update"
-            btn.innerText = t.save; 
-            
-            // Překlad placeholderů v dynamických polích
             document.querySelectorAll('.social-input').forEach(i => {
                 if(!i.closest('.mode-url')) i.placeholder = t.social_ph;
             });
@@ -367,9 +362,21 @@
             if (userLang.startsWith('cs') || userLang.startsWith('sk')) setLanguage('cs');
             else setLanguage('en');
 
-            // Avataři & Témata (zůstává z minula, jen render)
-            // ... (Zde zkopíruj generování Avatara a Themes z minula, aby to tu nebylo dlouhé. Je to stejné.) ...
-            // PRO JISTOTU GENEROVÁNÍ TÉMAT ZNOVU (krátká verze):
+            // Avatars
+            const seeds = ["Leo", "Mila", "Caleb", "Eliza", "Chase", "Jade", "Nora", "Jack", "Felix", "Ruby"];
+            const avContainer = document.getElementById('avatarStudio');
+            seeds.forEach(s => {
+                const img = document.createElement('img');
+                const url = `https://api.dicebear.com/7.x/notionists/svg?seed=${s}&backgroundColor=transparent`;
+                img.src = url; img.className = 'avatar-option';
+                img.onclick = () => {
+                    document.getElementById('base64String').value = url; document.getElementById('preview').src = url;
+                    document.querySelectorAll('.avatar-option').forEach(x => x.classList.remove('selected')); img.classList.add('selected');
+                };
+                avContainer.appendChild(img);
+            });
+            
+            // Themes
             const themes = [
                 { id: "spring-morning", name: "Jaro Ráno", bg: "#f3ffe3" }, { id: "spring-noon", name: "Jaro Poledne", bg: "#badc58" },
                 { id: "spring-evening", name: "Jaro Večer", bg: "#e056fd", dark:true }, { id: "spring-night", name: "Jaro Noc", bg: "#2c3a47", dark:true },
@@ -393,19 +400,6 @@
                 };
                 themeContainer.appendChild(div);
             });
-            // Avatars
-            const seeds = ["Leo", "Mila", "Caleb", "Eliza", "Chase", "Jade", "Nora", "Jack", "Felix", "Ruby"];
-            const avContainer = document.getElementById('avatarStudio');
-            seeds.forEach(s => {
-                const img = document.createElement('img');
-                const url = `https://api.dicebear.com/7.x/notionists/svg?seed=${s}&backgroundColor=transparent`;
-                img.src = url; img.className = 'avatar-option';
-                img.onclick = () => {
-                    document.getElementById('base64String').value = url; document.getElementById('preview').src = url;
-                    document.querySelectorAll('.avatar-option').forEach(x => x.classList.remove('selected')); img.classList.add('selected');
-                };
-                avContainer.appendChild(img);
-            });
 
             // LOAD DATA
             const params = new URLSearchParams(window.location.search);
@@ -423,7 +417,10 @@
                         if(d.theme) {
                             const btn = Array.from(document.querySelectorAll('.theme-btn')).find(b => b.innerText.includes(d.theme.split('-')[1].charAt(0).toUpperCase())); 
                             if(btn) btn.click();
-                        } else { selectTheme('winter-night', document.createElement('div')); }
+                        } else { 
+                            // Default theme click
+                            document.querySelector('.theme-btn').click();
+                        }
                         if(d.avatar) { document.getElementById('base64String').value = d.avatar; document.getElementById('preview').src = d.avatar; }
                         
                         activeSocialsDiv.innerHTML = '';
@@ -445,8 +442,8 @@
                     }
                 } catch(e){}
             } else { 
-                // Default theme selection visual
-                 // (Simplified for brevity)
+               // Default theme click
+               if(document.querySelector('.theme-btn')) document.querySelector('.theme-btn').click();
             }
             document.getElementById('loading').style.display = 'none';
         }

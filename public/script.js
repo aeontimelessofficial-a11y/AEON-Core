@@ -17,20 +17,18 @@ const translations = {
 };
 let currentLang = 'en'; // Default
 
-// Detekce jazyka
 function initLanguage() {
     const userLang = navigator.language || navigator.userLanguage; 
     if (userLang.startsWith('cs') || userLang.startsWith('sk')) {
         currentLang = 'cs';
     }
-    // Pokud chceš v URL ?lang=en override
     const params = new URLSearchParams(window.location.search);
     if(params.get('lang')) currentLang = params.get('lang');
 }
 initLanguage();
 
 // --- PLATFORM ICONS MAPPING ---
-// Musíme vědět, jaká URL patří k jaké ikonce
+// Seznam domén, které chceme zobrazovat jako ikonky v mřížce
 const platformIcons = [
     { domain: 'instagram.com', icon: 'fa-instagram' },
     { domain: 'facebook.com', icon: 'fa-facebook-f' },
@@ -51,7 +49,7 @@ function getIconClass(url) {
     for (let p of platformIcons) {
         if (url.includes(p.domain)) return p.icon;
     }
-    return null; // Není to sociální síť, je to custom link
+    return null; // Není to sociální síť z našeho seznamu
 }
 
 // --- 1. THEME LOGIC ---
@@ -111,16 +109,15 @@ async function loadProfile() {
         const mintNum = data.mint_number || "---";
         document.querySelector('.mint-number').innerText = `${translations[currentLang].mint_title} ${mintNum}`;
 
-        // --- LINK RENDERING LOGIC (GRID vs LIST) ---
-        // Vytvoříme kontejnery, pokud neexistují
+        // --- RENDER LINKS (GRID vs LIST) ---
         let linksContainer = document.querySelector('.links');
-        let socialGrid = document.querySelector('.social-links-grid');
         
-        // Pokud v HTML nejsou, vytvoříme je (pro jistotu)
+        // Vytvoříme/najdeme kontejner pro mřížku
+        let socialGrid = document.querySelector('.social-links-grid');
         if (!socialGrid) {
             socialGrid = document.createElement('div');
             socialGrid.className = 'social-links-grid';
-            // Vložíme GRID před LIST
+            // Vložíme GRID před běžné linky
             linksContainer.parentNode.insertBefore(socialGrid, linksContainer);
         }
 
@@ -139,8 +136,8 @@ async function loadProfile() {
                     a.href = fixed;
                     a.className = 'social-item';
                     a.target = "_blank";
-                    // Oprava pro fa-brands vs fas (FontAwesome 6 logic)
-                    const prefix = iconClass.includes('fa-') ? '' : 'fab '; 
+                    // FontAwesome 6 logic (některé jsou 'fab', některé 'fa-brands')
+                    const prefix = iconClass.includes('fa-brands') ? '' : 'fab '; 
                     a.innerHTML = `<i class="${prefix} ${iconClass}"></i>`;
                     a.addEventListener('click', (e) => e.stopPropagation());
                     socialGrid.appendChild(a);
