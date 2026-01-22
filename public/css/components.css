@@ -60,26 +60,26 @@
 .spinner { width: 40px; height: 40px; border: 4px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* LANGUAGE SWITCHER - SCROLLABLE STRIP */
+/* LANGUAGE SWITCHER - SCROLLABLE STRIP (LUXURY VERSION) */
 .lang-switcher { 
     position: absolute; 
     top: 25px; 
     right: 25px; 
     z-index: 1000; 
     
-    /* Fixní šířka pro scroll */
     max-width: 220px; 
     width: 100%;
     
-    background: rgba(0, 0, 0, 0.4); 
-    padding: 8px 12px;
+    /* Pevné, tmavší skleněné pozadí (už se neztrácí do modra) */
+    background: rgba(20, 20, 20, 0.7); 
+    padding: 8px 0; /* Padding jen nahoře/dole */
     border-radius: 30px;
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     
-    /* Maska pro fade efekt na krajích */
-    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    /* Jemný rámeček */
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 /* Scroll kontejner uvnitř */
@@ -88,33 +88,37 @@
     gap: 12px; 
     overflow-x: auto; 
     
-    /* Skrytí posuvníku, ale zachování funkčnosti */
-    scrollbar-width: none;  /* Firefox */
-    -ms-overflow-style: none;  /* IE */
+    /* Maska je TEĎ TADY - mizí jen vlaječky, ne celý bar */
+    mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
     
-    /* Plynulé scrollování na mobilech */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch; 
     
-    /* Zarovnání */
     align-items: center;
-    padding: 0 5px; /* Rezerva pro scale efekt */
+    padding: 5px 20px; 
 }
 
 #lang-scroll-wrapper::-webkit-scrollbar { 
-    display: none; /* Chrome, Safari */
+    display: none; 
 }
 
 .lang-btn { 
-    flex-shrink: 0; /* Aby se nesmrskly */
-    width: 32px; 
-    height: 32px; 
+    flex-shrink: 0;
+    width: 30px; 
+    height: 30px; 
     border-radius: 50%; 
-    border: 2px solid rgba(255,255,255,0.1); 
+    
+    /* Výchozí stav: Žádný hnusný rámeček, jen jemný obrys */
+    border: 1px solid rgba(255,255,255,0.1); 
+    
     cursor: pointer; 
     overflow: hidden; 
     opacity: 0.5; 
-    transition: all 0.3s ease; 
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     position: relative;
+    filter: grayscale(100%); /* Neaktivní jsou černobílé */
 }
 
 .lang-btn img { 
@@ -125,16 +129,21 @@
 }
 
 .lang-btn:hover { 
-    opacity: 1; 
+    opacity: 0.9; 
+    filter: grayscale(0%);
     transform: scale(1.1); 
-    border-color: rgba(255,255,255,0.5); 
+    border-color: rgba(255,255,255,0.4); 
 }
 
 .lang-btn.active { 
     opacity: 1; 
-    border-color: var(--accent); 
-    transform: scale(1.2); 
-    box-shadow: 0 0 15px var(--accent);
+    filter: grayscale(0%); 
+    
+    /* Aktivní stav: Čistá bílá elegance */
+    border: 2px solid #ffffff; 
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); 
+    
+    transform: scale(1.25); 
     z-index: 10;
 }
 
