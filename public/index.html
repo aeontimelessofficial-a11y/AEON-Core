@@ -2,18 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ÆON | Identity</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
+    <div class="lang-container">
+        <i class="fa-solid fa-globe lang-icon"></i>
+        <select id="langSelect" onchange="changeLanguage(this.value)">
+            <option value="en">English</option>
+            <option value="cs">Čeština</option>
+            <option value="sk">Slovenčina</option>
+            <option value="de">Deutsch</option>
+            <option value="pl">Polski</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="it">Italiano</option>
+        </select>
+    </div>
+
     <div class="fixed-background">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="orb orb-4"></div>
+        <div class="orb orb-1"></div><div class="orb orb-2"></div>
+        <div class="orb orb-3"></div><div class="orb orb-4"></div>
     </div>
 
     <div id="loader" class="loader-container">
@@ -26,20 +39,24 @@
                 
                 <div class="card-face front">
                     <div class="avatar-wrapper">
-                        <img src="" class="avatar" style="display: none;">
+                        <img src="" class="avatar" style="display:none;">
                     </div>
+                    <h1>Loading...</h1>
+                    <div class="bio"></div>
+                    <div class="motto"></div>
 
-                    <h1 id="name"></h1>
-                    <p class="bio"></p>
-                    <div class="motto"></div> <div class="links"></div>
+                    <div class="social-links-grid"></div>
 
-                    <div class="mint-number">NO. ----</div>
+                    <div class="links"></div>
+
+                    <div class="mint-number">NO. ---</div>
                 </div>
 
                 <div class="card-face back">
                     <div id="qrcode"></div>
-                    <div style="margin-top: 20px; font-weight: bold; letter-spacing: 1px; font-size: 12px; text-transform: uppercase;">Scan to Connect</div>
+                    <div style="margin-top: 20px; font-size: 10px; letter-spacing: 2px; opacity: 0.7;">SCAN TO CONNECT</div>
                 </div>
+
             </div>
         </div>
     </div>

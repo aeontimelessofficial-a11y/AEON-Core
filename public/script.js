@@ -2,57 +2,69 @@ const card = document.getElementById('artifact');
 const scene = document.querySelector('.scene');
 const loader = document.getElementById('loader');
 
-// --- 0. TRANSLATIONS (Slovník pro Kartu) ---
+// --- 0. TRANSLATIONS (Rozšířený slovník) ---
 const translations = {
-    cs: {
-        mint_title: "NO.",
-        error_load: "PROFIL NENALEZEN",
-        error_sys: "SYSTÉMOVÁ CHYBA"
-    },
-    en: {
-        mint_title: "NO.",
-        error_load: "PROFILE NOT FOUND",
-        error_sys: "SYSTEM ERROR"
-    }
+    en: { mint_title: "NO.", error_load: "PROFILE NOT FOUND", error_sys: "SYSTEM ERROR", bio_ph: "Digital Creator" },
+    cs: { mint_title: "Č.", error_load: "PROFIL NENALEZEN", error_sys: "CHYBA SYSTÉMU", bio_ph: "Digitální tvůrce" },
+    sk: { mint_title: "Č.", error_load: "PROFIL NENÁJDENÝ", error_sys: "CHYBA SYSTÉMU", bio_ph: "Digitálny tvorca" },
+    de: { mint_title: "NR.", error_load: "PROFIL NICHT GEFUNDEN", error_sys: "SYSTEMFEHLER", bio_ph: "Digitaler Schöpfer" },
+    pl: { mint_title: "NR", error_load: "NIE ZNALEZIONO PROFILU", error_sys: "BŁĄD SYSTEMU", bio_ph: "Twórca cyfrowy" },
+    es: { mint_title: "Nº", error_load: "PERFIL NO ENCONTRADO", error_sys: "ERROR DEL SISTEMA", bio_ph: "Creador digital" },
+    fr: { mint_title: "Nº", error_load: "PROFIL INTROUVABLE", error_sys: "ERREUR SYSTÈME", bio_ph: "Créateur numérique" },
+    it: { mint_title: "N.", error_load: "PROFILO NON TROVATO", error_sys: "ERRORE DI SISTEMA", bio_ph: "Creatore digitale" }
 };
-let currentLang = 'en'; // Default
 
+let currentLang = 'en';
+
+// Inicializace jazyka
 function initLanguage() {
-    const userLang = navigator.language || navigator.userLanguage; 
-    if (userLang.startsWith('cs') || userLang.startsWith('sk')) {
-        currentLang = 'cs';
+    const savedLang = localStorage.getItem('aeon_lang');
+    if (savedLang && translations[savedLang]) {
+        currentLang = savedLang;
+    } else {
+        const userLang = (navigator.language || navigator.userLanguage).substring(0, 2);
+        if (translations[userLang]) currentLang = userLang;
     }
-    const params = new URLSearchParams(window.location.search);
-    if(params.get('lang')) currentLang = params.get('lang');
+    
+    // Nastavit dropdown
+    const select = document.getElementById('langSelect');
+    if(select) select.value = currentLang;
 }
+
+// Změna jazyka uživatelem
+function changeLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('aeon_lang', lang);
+    loadProfile(); // Přenačíst data (aby se přeložily popisky)
+}
+
 initLanguage();
 
-// --- PLATFORM ICONS MAPPING ---
-// Seznam domén, které chceme zobrazovat jako ikonky v mřížce
+// --- ICONS MAPPING ---
 const platformIcons = [
-    { domain: 'instagram.com', icon: 'fa-instagram' },
-    { domain: 'facebook.com', icon: 'fa-facebook-f' },
-    { domain: 'tiktok.com', icon: 'fa-tiktok' },
-    { domain: 'youtube.com', icon: 'fa-youtube' },
-    { domain: 'x.com', icon: 'fa-x-twitter' },
-    { domain: 'twitter.com', icon: 'fa-x-twitter' },
-    { domain: 'linkedin.com', icon: 'fa-linkedin-in' },
-    { domain: 'twitch.tv', icon: 'fa-twitch' },
-    { domain: 'discord.gg', icon: 'fa-discord' },
-    { domain: 'pinterest.com', icon: 'fa-pinterest' },
-    { domain: 'reddit.com', icon: 'fa-reddit-alien' },
-    { domain: 'snapchat.com', icon: 'fa-snapchat' },
-    { domain: 'threads.net', icon: 'fa-brands fa-threads' }
+    { domain: 'instagram.com', icon: 'fa-instagram', brand: true },
+    { domain: 'facebook.com', icon: 'fa-facebook-f', brand: true },
+    { domain: 'tiktok.com', icon: 'fa-tiktok', brand: true },
+    { domain: 'youtube.com', icon: 'fa-youtube', brand: true },
+    { domain: 'x.com', icon: 'fa-x-twitter', brand: true },
+    { domain: 'twitter.com', icon: 'fa-x-twitter', brand: true },
+    { domain: 'linkedin.com', icon: 'fa-linkedin-in', brand: true },
+    { domain: 'twitch.tv', icon: 'fa-twitch', brand: true },
+    { domain: 'discord.gg', icon: 'fa-discord', brand: true },
+    { domain: 'pinterest.com', icon: 'fa-pinterest', brand: true },
+    { domain: 'reddit.com', icon: 'fa-reddit-alien', brand: true },
+    { domain: 'snapchat.com', icon: 'fa-snapchat', brand: true },
+    { domain: 'threads.net', icon: 'fa-threads', brand: true }
 ];
 
 function getIconClass(url) {
     for (let p of platformIcons) {
-        if (url.includes(p.domain)) return p.icon;
+        if (url.includes(p.domain)) return { icon: p.icon, brand: p.brand };
     }
-    return null; // Není to sociální síť z našeho seznamu
+    return null;
 }
 
-// --- 1. THEME LOGIC ---
+// --- THEME & UTILS ---
 function applyTheme(themeString) {
     document.body.className = ''; 
     if (!themeString) themeString = 'winter-night';
@@ -64,7 +76,6 @@ function applyTheme(themeString) {
     }
 }
 
-// --- 2. URL FIX ---
 function fixUrl(url) {
     if (!url) return "#";
     url = url.trim();
@@ -72,7 +83,6 @@ function fixUrl(url) {
     return url;
 }
 
-// --- 3. QR GENERATOR ---
 function generateQR(url) {
     const qrContainer = document.getElementById('qrcode');
     if(!qrContainer) return;
@@ -84,7 +94,7 @@ function generateQR(url) {
     });
 }
 
-// --- 4. LOAD DATA ---
+// --- LOAD DATA ---
 async function loadProfile() {
     const params = new URLSearchParams(window.location.search);
     const userSlug = params.get('slug') || 'jan-novak';
@@ -97,7 +107,8 @@ async function loadProfile() {
         applyTheme(data.theme);
 
         document.querySelector('h1').innerText = data.name;
-        document.querySelector('.bio').innerText = data.bio;
+        document.querySelector('.bio').innerText = data.bio || "";
+        
         const mottoEl = document.querySelector('.motto');
         if(mottoEl) mottoEl.innerText = data.motto || "";
 
@@ -109,18 +120,10 @@ async function loadProfile() {
         const mintNum = data.mint_number || "---";
         document.querySelector('.mint-number').innerText = `${translations[currentLang].mint_title} ${mintNum}`;
 
-        // --- RENDER LINKS (GRID vs LIST) ---
+        // --- RENDER LINKS ---
         let linksContainer = document.querySelector('.links');
-        
-        // Vytvoříme/najdeme kontejner pro mřížku
         let socialGrid = document.querySelector('.social-links-grid');
-        if (!socialGrid) {
-            socialGrid = document.createElement('div');
-            socialGrid.className = 'social-links-grid';
-            // Vložíme GRID před běžné linky
-            linksContainer.parentNode.insertBefore(socialGrid, linksContainer);
-        }
-
+        
         linksContainer.innerHTML = ''; 
         socialGrid.innerHTML = '';
 
@@ -128,21 +131,21 @@ async function loadProfile() {
             data.links.forEach(link => {
                 if(!link.url) return;
                 const fixed = fixUrl(link.url);
-                const iconClass = getIconClass(fixed);
+                const iconInfo = getIconClass(fixed);
 
-                if (iconClass) {
-                    // JE TO SOCIÁLNÍ SÍŤ -> IKONA DO MŘÍŽKY
+                if (iconInfo) {
+                    // IKONA
                     const a = document.createElement('a');
                     a.href = fixed;
                     a.className = 'social-item';
                     a.target = "_blank";
-                    // FontAwesome 6 logic (některé jsou 'fab', některé 'fa-brands')
-                    const prefix = iconClass.includes('fa-brands') ? '' : 'fab '; 
-                    a.innerHTML = `<i class="${prefix} ${iconClass}"></i>`;
+                    // FontAwesome Brands vs Solid
+                    const prefix = iconInfo.brand ? 'fa-brands' : 'fas'; 
+                    a.innerHTML = `<i class="${prefix} ${iconInfo.icon}"></i>`;
                     a.addEventListener('click', (e) => e.stopPropagation());
                     socialGrid.appendChild(a);
                 } else {
-                    // JE TO VLASTNÍ ODKAZ -> TLAČÍTKO S TEXTEM
+                    // TEXTOVÉ TLAČÍTKO
                     if (link.label) {
                         const btn = document.createElement('a');
                         btn.href = fixed;
@@ -172,7 +175,8 @@ async function loadProfile() {
 }
 
 function flipCard(e) {
-    if (e.target.closest('a')) return;
+    // Pokud klikne na select jazyka nebo odkaz, neotáčet
+    if (e.target.closest('a') || e.target.closest('select')) return;
     card.classList.toggle('is-flipped');
 }
 
