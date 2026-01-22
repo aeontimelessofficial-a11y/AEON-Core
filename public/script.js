@@ -2,18 +2,67 @@ const card = document.getElementById('artifact');
 const scene = document.querySelector('.scene');
 const loader = document.getElementById('loader');
 
+// --- 0. TRANSLATIONS (Slovník pro Kartu) ---
+const translations = {
+    cs: {
+        mint_title: "NO.",
+        error_load: "PROFIL NENALEZEN",
+        error_sys: "SYSTÉMOVÁ CHYBA"
+    },
+    en: {
+        mint_title: "NO.",
+        error_load: "PROFILE NOT FOUND",
+        error_sys: "SYSTEM ERROR"
+    }
+};
+let currentLang = 'en'; // Default
+
+// Detekce jazyka
+function initLanguage() {
+    const userLang = navigator.language || navigator.userLanguage; 
+    if (userLang.startsWith('cs') || userLang.startsWith('sk')) {
+        currentLang = 'cs';
+    }
+    // Pokud chceš v URL ?lang=en override
+    const params = new URLSearchParams(window.location.search);
+    if(params.get('lang')) currentLang = params.get('lang');
+}
+initLanguage();
+
+// --- PLATFORM ICONS MAPPING ---
+// Musíme vědět, jaká URL patří k jaké ikonce
+const platformIcons = [
+    { domain: 'instagram.com', icon: 'fa-instagram' },
+    { domain: 'facebook.com', icon: 'fa-facebook-f' },
+    { domain: 'tiktok.com', icon: 'fa-tiktok' },
+    { domain: 'youtube.com', icon: 'fa-youtube' },
+    { domain: 'x.com', icon: 'fa-x-twitter' },
+    { domain: 'twitter.com', icon: 'fa-x-twitter' },
+    { domain: 'linkedin.com', icon: 'fa-linkedin-in' },
+    { domain: 'twitch.tv', icon: 'fa-twitch' },
+    { domain: 'discord.gg', icon: 'fa-discord' },
+    { domain: 'pinterest.com', icon: 'fa-pinterest' },
+    { domain: 'reddit.com', icon: 'fa-reddit-alien' },
+    { domain: 'snapchat.com', icon: 'fa-snapchat' },
+    { domain: 'threads.net', icon: 'fa-brands fa-threads' }
+];
+
+function getIconClass(url) {
+    for (let p of platformIcons) {
+        if (url.includes(p.domain)) return p.icon;
+    }
+    return null; // Není to sociální síť, je to custom link
+}
+
 // --- 1. THEME LOGIC ---
 function applyTheme(themeString) {
     document.body.className = ''; 
     if (!themeString) themeString = 'winter-night';
-    
     const parts = themeString.split('-');
     if (parts.length === 2) {
-        document.body.classList.add(parts[0]);
-        document.body.classList.add(parts[1]);
+        document.body.classList.add(parts[0]); document.body.classList.add(parts[1]);
     } else {
-        document.body.classList.add('winter');
-        document.body.classList.add('night');
+        document.body.classList.add('winter'); document.body.classList.add('night');
     }
 }
 
@@ -43,12 +92,10 @@ async function loadProfile() {
     const userSlug = params.get('slug') || 'jan-novak';
 
     try {
-        // ZMĚNA: /.netlify/functions/ -> /api/
         const response = await fetch(`/api/aeon-api?slug=${userSlug}`);
-        if (!response.ok) throw new Error("Profil nenalezen");
+        if (!response.ok) throw new Error(translations[currentLang].error_load);
         
         const data = await response.json();
-
         applyTheme(data.theme);
 
         document.querySelector('h1').innerText = data.name;
@@ -62,28 +109,57 @@ async function loadProfile() {
         }
 
         const mintNum = data.mint_number || "---";
-        document.querySelector('.mint-number').innerText = `NO. ${mintNum}`;
+        document.querySelector('.mint-number').innerText = `${translations[currentLang].mint_title} ${mintNum}`;
 
-        const linksContainer = document.querySelector('.links');
+        // --- LINK RENDERING LOGIC (GRID vs LIST) ---
+        // Vytvoříme kontejnery, pokud neexistují
+        let linksContainer = document.querySelector('.links');
+        let socialGrid = document.querySelector('.social-links-grid');
+        
+        // Pokud v HTML nejsou, vytvoříme je (pro jistotu)
+        if (!socialGrid) {
+            socialGrid = document.createElement('div');
+            socialGrid.className = 'social-links-grid';
+            // Vložíme GRID před LIST
+            linksContainer.parentNode.insertBefore(socialGrid, linksContainer);
+        }
+
         linksContainer.innerHTML = ''; 
+        socialGrid.innerHTML = '';
+
         if (data.links && Array.isArray(data.links)) {
             data.links.forEach(link => {
-                if(link.label && link.url) {
-                    const btn = document.createElement('a');
-                    btn.href = fixUrl(link.url);
-                    btn.className = 'link-btn';
-                    btn.innerText = link.label;
-                    btn.target = "_blank"; 
-                    btn.addEventListener('click', (e) => e.stopPropagation());
-                    linksContainer.appendChild(btn);
+                if(!link.url) return;
+                const fixed = fixUrl(link.url);
+                const iconClass = getIconClass(fixed);
+
+                if (iconClass) {
+                    // JE TO SOCIÁLNÍ SÍŤ -> IKONA DO MŘÍŽKY
+                    const a = document.createElement('a');
+                    a.href = fixed;
+                    a.className = 'social-item';
+                    a.target = "_blank";
+                    // Oprava pro fa-brands vs fas (FontAwesome 6 logic)
+                    const prefix = iconClass.includes('fa-') ? '' : 'fab '; 
+                    a.innerHTML = `<i class="${prefix} ${iconClass}"></i>`;
+                    a.addEventListener('click', (e) => e.stopPropagation());
+                    socialGrid.appendChild(a);
+                } else {
+                    // JE TO VLASTNÍ ODKAZ -> TLAČÍTKO S TEXTEM
+                    if (link.label) {
+                        const btn = document.createElement('a');
+                        btn.href = fixed;
+                        btn.className = 'link-btn';
+                        btn.innerText = link.label;
+                        btn.target = "_blank"; 
+                        btn.addEventListener('click', (e) => e.stopPropagation());
+                        linksContainer.appendChild(btn);
+                    }
                 }
             });
         }
 
-        // TADY SE AKTIVUJE PREMIUM POKUD TO API POŠLE
-        if (data.premium) {
-            document.getElementById('artifact').classList.add('premium');
-        }
+        if (data.premium) document.getElementById('artifact').classList.add('premium');
 
         generateQR(window.location.href);
 
@@ -94,20 +170,14 @@ async function loadProfile() {
 
     } catch (error) {
         console.error(error);
-        if(loader) loader.innerHTML = "<div style='color:white'>SYSTEM ERROR</div>";
+        if(loader) loader.innerHTML = `<div style='color:white'>${translations[currentLang].error_sys}</div>`;
     }
 }
 
-// --- 5. FLIP LOGIC ---
 function flipCard(e) {
     if (e.target.closest('a')) return;
     card.classList.toggle('is-flipped');
 }
 
-// Start
 loadProfile();
 card.addEventListener('click', flipCard);
-
-// --- PRO TESTOVÁNÍ PREMIUM VZHLEDU (SMAŽ, AŽ TO BUDEŠ MÍT NAPOJENÉ) ---
-// Tento řádek zapne zlatý rámeček hned, abys viděl, jak to vypadá.
-document.getElementById('artifact').classList.add('premium');
