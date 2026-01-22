@@ -4,24 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ÆON | Identity</title>
-    <link rel="stylesheet" href="style.css">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layouts.css">
 </head>
 <body>
 
-    <div class="lang-container">
-        <i class="fa-solid fa-globe lang-icon"></i>
-        <select id="langSelect" onchange="changeLanguage(this.value)">
-            <option value="en">English</option>
-            <option value="cs">Čeština</option>
-            <option value="sk">Slovenčina</option>
-            <option value="de">Deutsch</option>
-            <option value="pl">Polski</option>
-            <option value="es">Español</option>
-            <option value="fr">Français</option>
-            <option value="it">Italiano</option>
-        </select>
+    <div class="lang-switcher">
+        <div class="lang-btn" onclick="changeLanguage('cs')" title="Česky">
+            <img src="https://flagcdn.com/w40/cz.png" alt="CZ">
+        </div>
+        <div class="lang-btn" onclick="changeLanguage('en')" title="English">
+            <img src="https://flagcdn.com/w40/gb.png" alt="EN">
+        </div>
     </div>
 
     <div class="fixed-background">
@@ -61,6 +61,7 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/card.js"></script>
 </body>
 </html>
