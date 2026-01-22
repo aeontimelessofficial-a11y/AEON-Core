@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ÆON | Studio</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Specifické pro admin */
         body { overflow-y: auto; display: block; padding-bottom: 50px; }
         
         .social-grid {
@@ -17,24 +16,61 @@
             background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
             border-radius: 12px; height: 50px; cursor: pointer; color: var(--text-main);
             font-size: 20px; display: flex; justify-content: center; align-items: center;
-            transition: 0.2s;
+            transition: 0.2s; position: relative;
         }
         .social-icon-btn:hover { background: var(--accent); color: black; border-color: transparent; }
         
+        /* Styl pro aktivní řádek */
         .active-social-row {
-            display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3);
-            padding: 10px; border-radius: 10px; margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.1);
-            animation: fadeIn 0.3s ease;
+            display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.4);
+            padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; 
+            border: 1px solid rgba(255,255,255,0.1);
+            animation: fadeIn 0.3s ease; position: relative;
         }
+        .active-social-row.valid { border-color: #00ff88; background: rgba(0, 255, 136, 0.05); }
+
+        /* INPUT AREA */
+        .input-wrapper { flex-grow: 1; display: flex; align-items: center; overflow: hidden; }
+        
         .social-prefix {
-            font-size: 10px; color: #888; white-space: nowrap; font-family: monospace;
+            font-size: 10px; color: #888; white-space: nowrap; font-family: monospace; 
+            margin-right: 4px; transition: 0.3s;
         }
+        /* Když je aktivní mód celé URL, prefix zmizí */
+        .active-social-row.mode-url .social-prefix { display: none; }
+        
         .social-input {
-            background: transparent; border: none; color: white; width: 100%; outline: none; font-weight: bold;
+            background: transparent; border: none; color: white; width: 100%; 
+            outline: none; font-weight: bold; font-size: 14px;
         }
-        .remove-social {
-            color: #ff4757; cursor: pointer; padding: 5px; font-size: 14px;
+
+        /* AKCE VPRAVO */
+        .action-group { display: flex; gap: 4px; }
+        
+        .mini-btn {
+            width: 28px; height: 28px; border-radius: 6px; border: none;
+            background: rgba(255,255,255,0.05); color: #888; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 12px;
+            transition: 0.2s; position: relative;
         }
+        .mini-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+        .mini-btn.active { color: var(--accent); background: rgba(255,255,255,0.2); }
+        .mini-btn.remove:hover { background: #ff4757; color: white; }
+
+        /* TOOLTIP (Nápověda) */
+        .help-tooltip {
+            position: absolute; bottom: 35px; right: 0; width: 280px;
+            background: #111; border: 1px solid rgba(255,255,255,0.2);
+            padding: 12px; border-radius: 8px; z-index: 100;
+            display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-size: 11px; line-height: 1.4; color: #ccc;
+        }
+        .mini-btn:hover .help-tooltip { display: block; }
+        
+        .help-title { color: var(--accent); font-weight: bold; margin-bottom: 4px; display: block; border-bottom: 1px solid #333; padding-bottom: 2px; }
+        .help-section { margin-bottom: 8px; }
+        .help-section:last-child { margin-bottom: 0; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -68,20 +104,20 @@
         <input type="hidden" id="base64String">
         <img id="preview" style="width:50px; height:50px; border-radius:50%; margin: 10px auto; display:block; object-fit:cover; border: 2px solid var(--accent);">
 
-        <label class="admin-label">Social Hub (Klikni a přidej)</label>
+        <label class="admin-label">Social Hub (Klikni ikonu a zadej ID)</label>
         <div class="social-grid">
             <button class="social-icon-btn" onclick="addSocial('instagram')" title="Instagram"><i class="fab fa-instagram"></i></button>
             <button class="social-icon-btn" onclick="addSocial('facebook')" title="Facebook"><i class="fab fa-facebook-f"></i></button>
             <button class="social-icon-btn" onclick="addSocial('tiktok')" title="TikTok"><i class="fab fa-tiktok"></i></button>
             <button class="social-icon-btn" onclick="addSocial('youtube')" title="YouTube"><i class="fab fa-youtube"></i></button>
-            <button class="social-icon-btn" onclick="addSocial('twitter')" title="X (Twitter)"><i class="fab fa-x-twitter"></i></button>
+            <button class="social-icon-btn" onclick="addSocial('twitter')" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></button>
             <button class="social-icon-btn" onclick="addSocial('linkedin')" title="LinkedIn"><i class="fab fa-linkedin-in"></i></button>
             <button class="social-icon-btn" onclick="addSocial('twitch')" title="Twitch"><i class="fab fa-twitch"></i></button>
             <button class="social-icon-btn" onclick="addSocial('discord')" title="Discord"><i class="fab fa-discord"></i></button>
             <button class="social-icon-btn" onclick="addSocial('pinterest')" title="Pinterest"><i class="fab fa-pinterest"></i></button>
             <button class="social-icon-btn" onclick="addSocial('reddit')" title="Reddit"><i class="fab fa-reddit-alien"></i></button>
             <button class="social-icon-btn" onclick="addSocial('snapchat')" title="Snapchat"><i class="fab fa-snapchat"></i></button>
-            <button class="social-icon-btn" onclick="addSocial('threads')" title="Threads"><i class="fa-solid fa-at"></i></button>
+            <button class="social-icon-btn" onclick="addSocial('threads')" title="Threads"><i class="fa-brands fa-threads"></i></button>
         </div>
 
         <div id="activeSocialsContainer"></div>
@@ -95,23 +131,125 @@
     </div>
 
     <script>
-        // --- KONFIGURACE SÍTÍ ---
+        // --- KONFIGURACE ---
         const platforms = {
-            instagram: { icon: 'fa-instagram', prefix: 'instagram.com/', url: 'https://instagram.com/', label: 'Instagram' },
-            facebook: { icon: 'fa-facebook-f', prefix: 'facebook.com/', url: 'https://facebook.com/', label: 'Facebook' },
-            tiktok: { icon: 'fa-tiktok', prefix: 'tiktok.com/@', url: 'https://tiktok.com/@', label: 'TikTok' },
-            youtube: { icon: 'fa-youtube', prefix: 'youtube.com/@', url: 'https://youtube.com/@', label: 'YouTube' },
-            twitter: { icon: 'fa-x-twitter', prefix: 'x.com/', url: 'https://x.com/', label: 'X' },
-            linkedin: { icon: 'fa-linkedin-in', prefix: 'linkedin.com/in/', url: 'https://linkedin.com/in/', label: 'LinkedIn' },
-            twitch: { icon: 'fa-twitch', prefix: 'twitch.tv/', url: 'https://twitch.tv/', label: 'Twitch' },
-            discord: { icon: 'fa-discord', prefix: 'discord.gg/', url: 'https://discord.gg/', label: 'Discord Invite' },
-            pinterest: { icon: 'fa-pinterest', prefix: 'pinterest.com/', url: 'https://pinterest.com/', label: 'Pinterest' },
-            reddit: { icon: 'fa-reddit-alien', prefix: 'reddit.com/user/', url: 'https://reddit.com/user/', label: 'Reddit' },
-            snapchat: { icon: 'fa-snapchat', prefix: 'snapchat.com/add/', url: 'https://snapchat.com/add/', label: 'Snapchat' },
-            threads: { icon: 'fa-at', prefix: 'threads.net/@', url: 'https://threads.net/@', label: 'Threads' }
+            instagram: { icon: 'fa-instagram', prefix: 'instagram.com/', url: 'https://instagram.com/', label: 'Instagram', tip: 'Jméno je nahoře na profilu.' },
+            facebook:  { icon: 'fa-facebook-f', prefix: 'facebook.com/', url: 'https://facebook.com/', label: 'Facebook', tip: 'Jdi na svůj profil > ... > Kopírovat odkaz.' },
+            tiktok:    { icon: 'fa-tiktok', prefix: 'tiktok.com/@', url: 'https://tiktok.com/@', label: 'TikTok', tip: 'Je to jméno pod fotkou začínající @.' },
+            youtube:   { icon: 'fa-youtube', prefix: 'youtube.com/@', url: 'https://youtube.com/@', label: 'YouTube', tip: 'Použij "handle" (např. @mujkanal).' },
+            twitter:   { icon: 'fa-x-twitter', prefix: 'x.com/', url: 'https://x.com/', label: 'X', tip: 'Tvé @jméno bez zavináče.' },
+            linkedin:  { icon: 'fa-linkedin-in', prefix: 'linkedin.com/in/', url: 'https://linkedin.com/in/', label: 'LinkedIn', tip: 'Upravit veřejný profil a URL.' },
+            twitch:    { icon: 'fa-twitch', prefix: 'twitch.tv/', url: 'https://twitch.tv/', label: 'Twitch', tip: 'Tvé jméno kanálu.' },
+            discord:   { icon: 'fa-discord', prefix: 'discord.gg/', url: 'https://discord.gg/', label: 'Discord', tip: 'Vlož "Invite Link" na server.' },
+            pinterest: { icon: 'fa-pinterest', prefix: 'pinterest.com/', url: 'https://pinterest.com/', label: 'Pinterest', tip: 'Jméno v URL adrese profilu.' },
+            reddit:    { icon: 'fa-reddit-alien', prefix: 'reddit.com/user/', url: 'https://reddit.com/user/', label: 'Reddit', tip: 'Tvé u/username.' },
+            snapchat:  { icon: 'fa-snapchat', prefix: 'snapchat.com/add/', url: 'https://snapchat.com/add/', label: 'Snapchat', tip: 'Nastavení > Uživatelské jméno.' },
+            threads:   { icon: 'fa-threads', prefix: 'threads.net/@', url: 'https://threads.net/@', label: 'Threads', tip: 'Stejné jako na Instagramu.' }
         };
 
-        // --- Zbytek logiky (Témata, Avataři) ---
+        const activeSocialsDiv = document.getElementById('activeSocialsContainer');
+
+        function addSocial(type, value = "", isFullUrl = false) {
+            if(document.querySelector(`.social-input[data-type="${type}"]`)) return;
+
+            const p = platforms[type];
+            const div = document.createElement('div');
+            div.className = 'active-social-row';
+            if(isFullUrl) div.classList.add('mode-url'); // Pokud načítáme uloženou celou URL
+
+            div.innerHTML = `
+                <i class="fa-brands ${p.icon}" style="font-size:18px; width:25px; text-align:center;"></i>
+                
+                <div class="input-wrapper">
+                    <span class="social-prefix">${p.prefix}</span>
+                    <input class="social-input" type="text" placeholder="username" data-type="${type}" value="${value}">
+                </div>
+
+                <div class="action-group">
+                    <div class="mini-btn" title="Nápověda">
+                        <i class="fa-solid fa-question"></i>
+                        <div class="help-tooltip">
+                            <span class="help-title">${p.label} - Nápověda</span>
+                            <div class="help-section">
+                                <strong style="color:white">1. Mám jen přezdívku:</strong><br>
+                                Zadej ji do políčka. ${p.tip}
+                            </div>
+                            <div class="help-section">
+                                <strong style="color:white">2. Mám celý odkaz:</strong><br>
+                                Klikni na ikonu řetězu (🔗) vpravo a vlož celou adresu (https://...).
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="mini-btn ${isFullUrl ? 'active' : ''} toggle-mode" title="Přepnout: Celý odkaz / Jen jméno" onclick="toggleMode(this)">
+                        <i class="fa-solid fa-link"></i>
+                    </button>
+
+                    <button class="mini-btn" title="Otestovat" onclick="testSocialLink(this, '${type}')">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </button>
+
+                    <button class="mini-btn remove" title="Odstranit" onclick="this.closest('.active-social-row').remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            activeSocialsDiv.appendChild(div);
+            
+            const input = div.querySelector('.social-input');
+            input.addEventListener('input', () => validateRow(div, input.value));
+            if(value) validateRow(div, value);
+        }
+
+        // --- FUNKCIONALITA ---
+
+        function toggleMode(btn) {
+            const row = btn.closest('.active-social-row');
+            const input = row.querySelector('.social-input');
+            const prefix = row.querySelector('.social-prefix');
+            
+            // Přepínáme třídu 'mode-url'
+            row.classList.toggle('mode-url');
+            btn.classList.toggle('active');
+
+            // Měníme placeholder podle módu
+            if (row.classList.contains('mode-url')) {
+                input.placeholder = "https://...";
+            } else {
+                input.placeholder = "username";
+            }
+            input.focus();
+        }
+
+        function validateRow(row, val) {
+            if(val.trim().length > 0) row.classList.add('valid');
+            else row.classList.remove('valid');
+        }
+
+        function testSocialLink(btn, type) {
+            const row = btn.closest('.active-social-row');
+            const input = row.querySelector('.social-input');
+            const val = input.value.trim();
+            
+            if(!val) { alert("Vyplň políčko."); return; }
+
+            let finalUrl;
+            if (row.classList.contains('mode-url')) {
+                finalUrl = val;
+                if(!finalUrl.startsWith('http')) finalUrl = 'https://' + finalUrl;
+            } else {
+                // Odstranit @ pro jistotu
+                finalUrl = platforms[type].url + val.replace('@', '');
+            }
+            window.open(finalUrl, '_blank');
+        }
+
+
+        // --- Zbytek logiky (Load/Save) ---
+        // (Zkráceno, stejné jako minule, jen upraven Save a Load pro nové funkce)
+
+        // ... (Zde je kód pro Themes, Avatars, Links - neměnil se, ale pro jistotu vložím Load/Save logiku upravenou) ...
         const themes = [
             { id: "spring-morning", name: "Jaro Ráno", bg: "#f3ffe3" }, { id: "spring-noon", name: "Jaro Poledne", bg: "#badc58" },
             { id: "spring-evening", name: "Jaro Večer", bg: "#e056fd", dark:true }, { id: "spring-night", name: "Jaro Noc", bg: "#2c3a47", dark:true },
@@ -155,35 +293,62 @@
             avContainer.appendChild(img);
         });
 
-        // --- SOCIAL LOGIC ---
-        const activeSocialsDiv = document.getElementById('activeSocialsContainer');
-
-        function addSocial(type, value = "") {
-            // Zkontrolujeme, jestli už tam není (abychom neměli 2x Instagram)
-            if(document.querySelector(`.social-input[data-type="${type}"]`)) return;
-
-            const p = platforms[type];
-            const div = document.createElement('div');
-            div.className = 'active-social-row';
-            div.innerHTML = `
-                <i class="fab ${p.icon}" style="font-size:18px; width:20px; text-align:center;"></i>
-                <div style="flex-grow:1;">
-                    <span class="social-prefix">${p.prefix}</span>
-                    <input class="social-input" type="text" placeholder="username" data-type="${type}" value="${value}">
-                </div>
-                <i class="fas fa-times remove-social" onclick="this.parentElement.remove()"></i>
-            `;
-            activeSocialsDiv.appendChild(div);
-        }
-
         const linksWrapper = document.getElementById('linksContainer');
         function addLinkField(l="", u="") {
             const d = document.createElement('div'); d.className = 'link-row';
-            d.innerHTML = `<input class="admin-input l-lbl" placeholder="Název (např. Web)" value="${l}" style="width:40%"> <input class="admin-input l-url" placeholder="https://..." value="${u}" style="width:60%"> <i class="fas fa-times remove-social" style="margin-top:10px;" onclick="this.parentElement.remove()"></i>`;
+            d.innerHTML = `<input class="admin-input l-lbl" placeholder="Název" value="${l}" style="width:40%"> <input class="admin-input l-url" placeholder="URL" value="${u}" style="width:60%"> <i class="fas fa-times remove-social" style="margin-top:10px;" onclick="this.parentElement.remove()"></i>`;
             linksWrapper.appendChild(d);
         }
 
-        // --- LOAD ---
+        // --- UPDATED SAVE & LOAD ---
+        
+        async function saveCard() {
+            const stat = document.getElementById('status'); stat.innerText = "Ukládám...";
+            const slug = document.getElementById('slug').value.toLowerCase().replace(/\s+/g, '-');
+            const links = [];
+
+            // Socials
+            document.querySelectorAll('.active-social-row').forEach(row => {
+                const input = row.querySelector('.social-input');
+                const type = input.getAttribute('data-type');
+                let val = input.value.trim();
+                
+                if(val) {
+                    let finalUrl;
+                    if (row.classList.contains('mode-url')) {
+                        // Režim celé URL - bereme jak je
+                        finalUrl = val;
+                        if(!finalUrl.startsWith('http')) finalUrl = 'https://' + finalUrl;
+                    } else {
+                        // Režim username - složíme
+                        finalUrl = platforms[type].url + val.replace('@', ''); 
+                    }
+                    links.push({ label: platforms[type].label, url: finalUrl });
+                }
+            });
+
+            // Custom links
+            document.querySelectorAll('.link-row').forEach(r => {
+                const l = r.querySelector('.l-lbl').value; const u = r.querySelector('.l-url').value;
+                if(l && u) links.push({label: l, url: u});
+            });
+
+            const payload = {
+                data: {
+                    slug: slug, name: document.getElementById('name').value,
+                    bio: document.getElementById('bio').value, motto: document.getElementById('motto').value,
+                    theme: document.getElementById('selectedTheme').value,
+                    avatar: document.getElementById('base64String').value, links: links
+                }
+            };
+
+            try {
+                await fetch('/api/aeon-api', { method: 'POST', body: JSON.stringify(payload) });
+                stat.innerText = "HOTOVO!"; stat.style.color = "#0f0";
+                setTimeout(() => window.location.href = `/?slug=${slug}`, 1500);
+            } catch(e) { stat.innerText = "CHYBA"; }
+        }
+
         window.onload = async function() {
             const params = new URLSearchParams(window.location.search);
             const slug = params.get('slug');
@@ -205,24 +370,27 @@
 
                         if(d.avatar) { document.getElementById('base64String').value = d.avatar; document.getElementById('preview').src = d.avatar; }
                         
-                        // Načtení odkazů a jejich roztřídění
                         activeSocialsDiv.innerHTML = '';
                         linksWrapper.innerHTML = '';
                         
                         if(d.links) {
                             d.links.forEach(x => {
-                                // Zkusíme zjistit, jestli to je známá soc. síť
                                 let found = false;
                                 for (const [key, p] of Object.entries(platforms)) {
+                                    // Zkontrolujeme, zda URL začíná standardním prefixem (např. https://instagram.com/)
                                     if (x.url.startsWith(p.url)) {
-                                        // Je to soc. síť! Ořízneme URL a získáme username
+                                        // Standardní username mód
                                         const username = x.url.replace(p.url, '');
-                                        addSocial(key, username);
+                                        addSocial(key, username, false); // false = username mode
+                                        found = true;
+                                        break;
+                                    } else if (x.url.includes(key)) {
+                                        // Je to ta síť (obsahuje slovo instagram), ale nesedí prefix -> asi custom URL
+                                        addSocial(key, x.url, true); // true = full url mode
                                         found = true;
                                         break;
                                     }
                                 }
-                                // Pokud to není soc. síť, je to custom odkaz
                                 if (!found) addLinkField(x.label, x.url);
                             });
                         }
@@ -230,46 +398,6 @@
                 } catch(e){}
             } else { selectTheme('winter-night', document.createElement('div')); }
             document.getElementById('loading').style.display = 'none';
-        }
-
-        // --- SAVE ---
-        async function saveCard() {
-            const stat = document.getElementById('status'); stat.innerText = "Ukládám...";
-            const slug = document.getElementById('slug').value.toLowerCase().replace(/\s+/g, '-');
-            const links = [];
-
-            // 1. Sesbíráme Socials a vyrobíme z nich URL
-            document.querySelectorAll('.active-social-row').forEach(row => {
-                const input = row.querySelector('.social-input');
-                const type = input.getAttribute('data-type');
-                const val = input.value.trim();
-                if(val) {
-                    // Automaticky přidáme správný prefix (https://instagram.com/...)
-                    let finalUrl = platforms[type].url + val.replace('@', ''); // Odstraníme @ kdyby ji tam uživatel napsal
-                    links.push({ label: platforms[type].label, url: finalUrl });
-                }
-            });
-
-            // 2. Sesbíráme Custom Odkazy
-            document.querySelectorAll('.link-row').forEach(r => {
-                const l = r.querySelector('.l-lbl').value; const u = r.querySelector('.l-url').value;
-                if(l && u) links.push({label: l, url: u});
-            });
-
-            const payload = {
-                data: {
-                    slug: slug, name: document.getElementById('name').value,
-                    bio: document.getElementById('bio').value, motto: document.getElementById('motto').value,
-                    theme: document.getElementById('selectedTheme').value,
-                    avatar: document.getElementById('base64String').value, links: links
-                }
-            };
-
-            try {
-                await fetch('/api/aeon-api', { method: 'POST', body: JSON.stringify(payload) });
-                stat.innerText = "HOTOVO!"; stat.style.color = "#0f0";
-                setTimeout(() => window.location.href = `/?slug=${slug}`, 1500);
-            } catch(e) { stat.innerText = "CHYBA"; }
         }
 
         document.getElementById('photoInput').addEventListener('change', function(e) {
