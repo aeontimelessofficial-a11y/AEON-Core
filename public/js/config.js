@@ -91,10 +91,10 @@ const translations = {
         t_spring: "Jaro", t_summer: "Léto", t_autumn: "Podzim", t_winter: "Zima",
         t_morning: "Ráno", t_noon: "Poledne", t_evening: "Večer", t_night: "Noc"
     }
-    // Další jazyky (DE, ES, FR...) můžeš doplnit podle stejného vzoru
 };
 
 // --- 4. DEFINICE PLATFOREM ---
+// Odstraněny GitHub a Spotify
 const platforms = {
     instagram: { icon: 'fa-brands fa-instagram', prefix: 'instagram.com/', url: 'https://instagram.com/', label: 'Instagram' },
     facebook:  { icon: 'fa-brands fa-facebook-f', prefix: 'facebook.com/', url: 'https://facebook.com/', label: 'Facebook' },
@@ -107,9 +107,7 @@ const platforms = {
     pinterest: { icon: 'fa-brands fa-pinterest', prefix: 'pinterest.com/', url: 'https://pinterest.com/', label: 'Pinterest' },
     reddit:    { icon: 'fa-brands fa-reddit-alien', prefix: 'reddit.com/user/', url: 'https://reddit.com/user/', label: 'Reddit' },
     snapchat:  { icon: 'fa-brands fa-snapchat', prefix: 'snapchat.com/add/', url: 'https://snapchat.com/add/', label: 'Snapchat' },
-    threads:   { icon: 'fa-brands fa-threads', prefix: 'threads.net/@', url: 'https://threads.net/@', label: 'Threads' },
-    spotify:   { icon: 'fa-brands fa-spotify', prefix: 'open.spotify.com/', url: 'https://open.spotify.com/', label: 'Spotify' },
-    github:    { icon: 'fa-brands fa-github', prefix: 'github.com/', url: 'https://github.com/', label: 'GitHub' }
+    threads:   { icon: 'fa-brands fa-threads', prefix: 'threads.net/@', url: 'https://threads.net/@', label: 'Threads' }
 };
 
 // --- 5. LOGIKA JAZYKA (CORE) ---
@@ -148,7 +146,6 @@ function setLanguage(lang, refreshUI = true) {
     // Aktualizace UI vlaječek
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.remove('active');
-        // Předpokládáme ID "lang-cs", "lang-en"
         if(btn.id === `lang-${lang}`) btn.classList.add('active');
     });
 
@@ -162,14 +159,10 @@ function updateInterfaceText() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (t[key]) {
-            // Pokud je uvnitř ikona (např. u upload tlačítka), zachováme ji
             if (el.children.length > 0) {
-                // Najdeme text node a nahradíme ho
-                // Zjednodušení: Pokud má span uvnitř, měníme ten, jinak innerText
                 const span = el.querySelector('span');
                 if(span) span.innerText = t[key];
                 else {
-                    // Specifické pro tlačítko s ikonou: zachovat HTML strukturu
                     const icon = el.querySelector('i');
                     if(icon) {
                          el.innerHTML = ''; 
@@ -198,7 +191,7 @@ function updateInterfaceText() {
         if (el && t[key]) el.placeholder = t[key];
     }
 
-    // 3. Dynamické prvky (Social inputs, Custom links)
+    // 3. Dynamické prvky
     document.querySelectorAll('.social-input').forEach(el => {
         if (!el.closest('.mode-url')) el.placeholder = t.social_ph;
         else el.placeholder = "https://...";
@@ -207,18 +200,17 @@ function updateInterfaceText() {
     document.querySelectorAll('.l-lbl').forEach(el => el.placeholder = t.link_name_ph);
     document.querySelectorAll('.l-url').forEach(el => el.placeholder = t.link_url_ph);
     
-    // 4. Tlačítka s dynamickým obsahem
+    // 4. Tlačítka
     const addLinkBtn = document.getElementById('addLinkBtn');
     if(addLinkBtn) addLinkBtn.innerText = t.add_link;
 
     const saveBtn = document.getElementById('saveBtn');
     if(saveBtn) {
-        // Pokud editujeme (poznáme podle toho, zda je v URL slug nebo inputu), text je 'update'
         const isEditing = document.getElementById('slug') && document.getElementById('slug').value !== "";
         saveBtn.innerText = isEditing ? t.update : t.save;
     }
 
-    // 5. Help tooltipy (pokud existují)
+    // 5. Help tooltipy
     document.querySelectorAll('.help-section').forEach(el => {
         const strong = el.querySelector('strong');
         if(strong) {
@@ -227,7 +219,7 @@ function updateInterfaceText() {
         }
     });
     
-    // 6. Témata (pokud jsme v adminu a generujeme je)
+    // 6. Témata
     if(typeof renderThemes === 'function') renderThemes();
 }
 
