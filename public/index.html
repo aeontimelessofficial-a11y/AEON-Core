@@ -16,10 +16,10 @@
 <body>
 
     <div class="lang-switcher">
-        <div class="lang-btn" onclick="changeLanguage('cs')" title="Česky">
+        <div class="lang-btn" onclick="changeLanguage('cs')" id="lang-cs" title="Česky">
             <img src="https://flagcdn.com/w40/cz.png" alt="CZ">
         </div>
-        <div class="lang-btn" onclick="changeLanguage('en')" title="English">
+        <div class="lang-btn" onclick="changeLanguage('en')" id="lang-en" title="English">
             <img src="https://flagcdn.com/w40/gb.png" alt="EN">
         </div>
     </div>
@@ -41,7 +41,7 @@
                     <div class="avatar-wrapper">
                         <img src="" class="avatar" style="display:none;">
                     </div>
-                    <h1>Loading...</h1>
+                    <h1 data-i18n="loading">Loading...</h1>
                     <div class="bio"></div>
                     <div class="motto"></div>
 
@@ -54,7 +54,7 @@
 
                 <div class="card-face back">
                     <div id="qrcode"></div>
-                    <div style="margin-top: 20px; font-size: 10px; letter-spacing: 2px; opacity: 0.7;">SCAN TO CONNECT</div>
+                    <div style="margin-top: 20px; font-size: 10px; letter-spacing: 2px; opacity: 0.7;" data-i18n="scan_connect">SCAN TO CONNECT</div>
                 </div>
 
             </div>

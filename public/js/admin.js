@@ -1,97 +1,48 @@
-let currentLang = 'en';
-
-// --- JAZYKOVÁ LOGIKA PRO ADMINA ---
-function setLanguage(lang) {
-    currentLang = lang;
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('lang-' + lang).classList.add('active');
-
-    const t = translations[lang];
-
-    // Překlad statických textů (labely)
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if(t[key]) el.innerText = t[key];
-    });
-
-    // Překlad placeholderů
-    document.getElementById('slug').placeholder = t.slug_ph;
-    document.getElementById('name').placeholder = t.name_ph;
-    document.getElementById('bio').placeholder = t.bio_ph;
-    document.getElementById('motto').placeholder = t.motto_ph;
-    document.getElementById('addLinkBtn').innerText = t.add_link;
-    
-    // Tlačítko uložit (jednoduchý reset textu)
-    document.getElementById('saveBtn').innerText = t.save; 
-    
-    // Dynamické inputy
-    document.querySelectorAll('.social-input').forEach(i => {
-        if(!i.closest('.mode-url')) i.placeholder = t.social_ph;
-    });
-    document.querySelectorAll('.l-lbl').forEach(i => i.placeholder = t.link_name_ph);
-    document.querySelectorAll('.l-url').forEach(i => i.placeholder = t.link_url_ph);
-}
-
 // --- HLAVNÍ INITIALIZACE ---
 window.onload = async function() {
-    // 1. Detekce jazyka
-    const userLang = navigator.language || navigator.userLanguage; 
-    if (userLang.startsWith('cs') || userLang.startsWith('sk')) setLanguage('cs');
-    else setLanguage('en');
+    // 1. Inicializace jazyka (z config.js)
+    initLanguage();
 
     // 2. Generování tlačítek v horním panelu Social Hub
     const socialGrid = document.getElementById('socialGrid');
-    for (const [key, p] of Object.entries(platforms)) {
-        const btn = document.createElement('button');
-        btn.className = 'social-icon-btn';
-        btn.title = p.label;
-        btn.onclick = () => addSocial(key);
-        btn.innerHTML = `<i class="fa-brands ${p.icon}"></i>`;
-        socialGrid.appendChild(btn);
+    if (socialGrid) {
+        for (const [key, p] of Object.entries(platforms)) {
+            const btn = document.createElement('button');
+            btn.className = 'social-icon-btn';
+            btn.title = p.label;
+            btn.onclick = () => addSocial(key);
+            btn.innerHTML = `<i class="fa-brands ${p.icon}"></i>`;
+            socialGrid.appendChild(btn);
+        }
     }
 
-    // 3. Generování výběru Avatarů
+    // 3. Generování výběru Avatarů (DiceBear)
     const seeds = ["Leo", "Mila", "Caleb", "Eliza", "Chase", "Jade", "Nora", "Jack", "Felix", "Ruby"];
     const avContainer = document.getElementById('avatarStudio');
-    seeds.forEach(s => {
-        const img = document.createElement('img');
-        const url = `https://api.dicebear.com/7.x/notionists/svg?seed=${s}&backgroundColor=transparent`;
-        img.src = url; img.className = 'avatar-option';
-        img.onclick = () => {
-            document.getElementById('base64String').value = url; 
-            document.getElementById('preview').src = url;
-            document.querySelectorAll('.avatar-option').forEach(x => x.classList.remove('selected')); 
-            img.classList.add('selected');
-        };
-        avContainer.appendChild(img);
-    });
+    if (avContainer) {
+        seeds.forEach(s => {
+            const img = document.createElement('img');
+            const url = `https://api.dicebear.com/7.x/notionists/svg?seed=${s}&backgroundColor=transparent`;
+            img.src = url; img.className = 'avatar-option';
+            img.onclick = () => {
+                document.getElementById('base64String').value = url; 
+                document.getElementById('preview').src = url;
+                document.querySelectorAll('.avatar-option').forEach(x => x.classList.remove('selected')); 
+                img.classList.add('selected');
+            };
+            avContainer.appendChild(img);
+        });
+    }
 
-    // 4. Generování Témat
-    const themes = [
-        { id: "spring-morning", name: "Jaro Ráno", bg: "#f3ffe3" }, { id: "spring-noon", name: "Jaro Poledne", bg: "#badc58" },
-        { id: "spring-evening", name: "Jaro Večer", bg: "#e056fd", dark:true }, { id: "spring-night", name: "Jaro Noc", bg: "#2c3a47", dark:true },
-        { id: "summer-morning", name: "Léto Ráno", bg: "#81ecec" }, { id: "summer-noon", name: "Léto Poledne", bg: "#f9ca24" },
-        { id: "summer-evening", name: "Léto Večer", bg: "#eb4d4b", dark:true }, { id: "summer-night", name: "Léto Noc", bg: "#130f40", dark:true },
-        { id: "autumn-morning", name: "Podzim Ráno", bg: "#d1ccc0" }, { id: "autumn-noon", name: "Podzim Poledne", bg: "#ffdbcc" },
-        { id: "autumn-evening", name: "Podzim Večer", bg: "#e17055", dark:true }, { id: "autumn-night", name: "Podzim Noc", bg: "#2d3436", dark:true },
-        { id: "winter-morning", name: "Zima Ráno", bg: "#dfe4ea" }, { id: "winter-noon", name: "Zima Poledne", bg: "#bbdefb" },
-        { id: "winter-evening", name: "Zima Večer", bg: "#a29bfe", dark:true }, { id: "winter-night", name: "Zima Noc", bg: "#0c2461", dark:true }
-    ];
-    const themeContainer = document.getElementById('themeGrid');
-    themes.forEach(t => {
-        const div = document.createElement('div');
-        div.className = 'theme-btn' + (t.dark ? ' dark-text' : '');
-        div.innerText = t.name; div.style.background = t.bg;
-        div.onclick = () => selectTheme(t.id, div);
-        themeContainer.appendChild(div);
-    });
-
-    // 5. Načtení dat (pokud je v URL slug)
+    // 4. Načtení dat (pokud je v URL slug)
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('slug');
+    
     if(slug) {
         document.getElementById('slug').value = slug;
-        document.getElementById('saveBtn').innerText = translations[currentLang].update;
+        // Text tlačítka se aktualizuje automaticky v updateInterfaceText v config.js, 
+        // ale pro jistotu po načtení dat zavoláme update znovu
+        
         try {
             const res = await fetch(`/api/aeon-api?slug=${slug}`);
             if(res.ok) {
@@ -102,18 +53,22 @@ window.onload = async function() {
                 
                 // Nastavení tématu
                 if(d.theme) {
-                    const btn = Array.from(document.querySelectorAll('.theme-btn')).find(b => b.innerText.includes(d.theme.split('-')[1].charAt(0).toUpperCase())); 
-                    selectTheme(d.theme, btn || document.createElement('div'));
-                } else { selectTheme('winter-night', document.createElement('div')); }
+                    selectTheme(d.theme);
+                } else { 
+                    selectTheme('winter-night'); 
+                }
 
                 // Nastavení avatara
-                if(d.avatar) { document.getElementById('base64String').value = d.avatar; document.getElementById('preview').src = d.avatar; }
+                if(d.avatar) { 
+                    document.getElementById('base64String').value = d.avatar; 
+                    document.getElementById('preview').src = d.avatar; 
+                }
                 
-                // Načtení a roztřídění odkazů
+                // Načtení odkazů
                 const activeSocialsDiv = document.getElementById('activeSocialsContainer');
                 const linksWrapper = document.getElementById('linksContainer');
-                activeSocialsDiv.innerHTML = '';
-                linksWrapper.innerHTML = '';
+                if(activeSocialsDiv) activeSocialsDiv.innerHTML = '';
+                if(linksWrapper) linksWrapper.innerHTML = '';
                 
                 if(d.links) {
                     d.links.forEach(x => {
@@ -124,30 +79,80 @@ window.onload = async function() {
                                 // Standardní mód (jen jméno)
                                 addSocial(key, x.url.replace(p.url, ''), false); found = true; break;
                             } else if (x.url.includes(key) || (key==='twitter' && x.url.includes('x.com'))) {
-                                // Mód celé URL (protože prefix nesedí)
+                                // Mód celé URL
                                 addSocial(key, x.url, true); found = true; break;
                             }
                         }
                         if (!found) addLinkField(x.label, x.url);
                     });
                 }
+                
+                // Aktualizace textů (např. tlačítko "Update" místo "Save")
+                updateInterfaceText();
             }
-        } catch(e){}
+        } catch(e) { console.error(e); }
     } else { 
-        selectTheme('winter-night', document.createElement('div'));
+        selectTheme('winter-night');
     }
+    
     document.getElementById('loading').style.display = 'none';
+};
+
+// --- FUNKCE PRO TÉMATA ---
+// Tato funkce je volána i z config.js při změně jazyka
+function renderThemes() {
+    const themeContainer = document.getElementById('themeGrid');
+    if (!themeContainer) return;
+
+    // Uložíme si aktuálně vybrané téma, abychom ho mohli znovu označit
+    const currentSelected = document.getElementById('selectedTheme').value;
+    
+    themeContainer.innerHTML = ''; // Vyčistit staré
+    const t = translations[currentLang]; // Slovník
+
+    const themes = [
+        { id: "spring-morning", name: `${t.t_spring} ${t.t_morning}`, bg: "#f3ffe3" }, 
+        { id: "spring-noon",    name: `${t.t_spring} ${t.t_noon}`,    bg: "#badc58" },
+        { id: "spring-evening", name: `${t.t_spring} ${t.t_evening}`, bg: "#e056fd", dark:true }, 
+        { id: "spring-night",   name: `${t.t_spring} ${t.t_night}`,   bg: "#2c3a47", dark:true },
+        
+        { id: "summer-morning", name: `${t.t_summer} ${t.t_morning}`, bg: "#81ecec" }, 
+        { id: "summer-noon",    name: `${t.t_summer} ${t.t_noon}`,    bg: "#f9ca24" },
+        { id: "summer-evening", name: `${t.t_summer} ${t.t_evening}`, bg: "#eb4d4b", dark:true }, 
+        { id: "summer-night",   name: `${t.t_summer} ${t.t_night}`,   bg: "#130f40", dark:true },
+        
+        { id: "autumn-morning", name: `${t.t_autumn} ${t.t_morning}`, bg: "#d1ccc0" }, 
+        { id: "autumn-noon",    name: `${t.t_autumn} ${t.t_noon}`,    bg: "#ffdbcc" },
+        { id: "autumn-evening", name: `${t.t_autumn} ${t.t_evening}`, bg: "#e17055", dark:true }, 
+        { id: "autumn-night",   name: `${t.t_autumn} ${t.t_night}`,   bg: "#2d3436", dark:true },
+        
+        { id: "winter-morning", name: `${t.t_winter} ${t.t_morning}`, bg: "#dfe4ea" }, 
+        { id: "winter-noon",    name: `${t.t_winter} ${t.t_noon}`,    bg: "#bbdefb" },
+        { id: "winter-evening", name: `${t.t_winter} ${t.t_evening}`, bg: "#a29bfe", dark:true }, 
+        { id: "winter-night",   name: `${t.t_winter} ${t.t_night}`,   bg: "#0c2461", dark:true }
+    ];
+
+    themes.forEach(th => {
+        const div = document.createElement('div');
+        div.className = 'theme-btn' + (th.dark ? ' dark-text' : '');
+        if (th.id === currentSelected) div.classList.add('selected');
+        
+        div.innerText = th.name; 
+        div.style.background = th.bg;
+        div.onclick = () => selectTheme(th.id);
+        themeContainer.appendChild(div);
+    });
 }
 
-// --- UI FUNKCE ---
-
-function selectTheme(id, el) {
+function selectTheme(id) {
     document.getElementById('selectedTheme').value = id;
-    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('selected'));
-    if(el && el.classList) el.classList.add('selected');
-    // Aplikace tématu na pozadí editoru (používá funkci z config.js)
+    // Překreslení témat zajistí, že se zvýrazní správné tlačítko
+    renderThemes();
+    // Aplikace tématu na pozadí editoru (funkce z config.js)
     applyTheme(id); 
 }
+
+// --- UI LOGIKA ---
 
 function addSocial(type, value = "", isFullUrl = false) {
     if(document.querySelector(`.social-input[data-type="${type}"]`)) return;
@@ -157,19 +162,22 @@ function addSocial(type, value = "", isFullUrl = false) {
     div.className = 'active-social-row';
     if(isFullUrl) div.classList.add('mode-url'); 
 
+    // Používáme translations[currentLang] pro placeholdery
+    const t = translations[currentLang];
+
     div.innerHTML = `
         <i class="fa-brands ${p.icon}" style="font-size:18px; width:25px; text-align:center;"></i>
         <div class="input-wrapper">
             <span class="social-prefix">${p.prefix}</span>
-            <input class="social-input" type="text" placeholder="${translations[currentLang].social_ph}" data-type="${type}" value="${value}">
+            <input class="social-input" type="text" placeholder="${t.social_ph}" data-type="${type}" value="${value}">
         </div>
         <div class="action-group">
             <div class="mini-btn" title="Help">
                 <i class="fa-solid fa-question"></i>
                 <div class="help-tooltip">
                     <span class="help-title">${p.label}</span>
-                    <div class="help-section"><strong style="color:white">1. ${translations[currentLang].help_1}</strong><br>Username only.</div>
-                    <div class="help-section"><strong style="color:white">2. ${translations[currentLang].help_2}</strong><br>Click chain icon & paste URL.</div>
+                    <div class="help-section"><strong style="color:white">1. ${t.help_1}</strong><br>Username only.</div>
+                    <div class="help-section"><strong style="color:white">2. ${t.help_2}</strong><br>Click chain icon & paste URL.</div>
                 </div>
             </div>
             <button class="mini-btn ${isFullUrl ? 'active' : ''} toggle-mode" onclick="toggleMode(this)"><i class="fa-solid fa-link"></i></button>
@@ -205,8 +213,10 @@ function toggleMode(btn) {
     const type = input.getAttribute('data-type');
     row.classList.toggle('mode-url');
     btn.classList.toggle('active');
+    
     if (row.classList.contains('mode-url')) input.placeholder = "https://...";
     else input.placeholder = translations[currentLang].social_ph;
+    
     input.focus();
     validateRow(row, input.value, type);
 }
@@ -221,10 +231,11 @@ function testSocialLink(btn, type) {
 }
 
 function addLinkField(l="", u="") {
+    const t = translations[currentLang];
     const d = document.createElement('div'); d.className = 'link-row';
     d.innerHTML = `
-        <input class="admin-input l-lbl" placeholder="${translations[currentLang].link_name_ph}" value="${l}" style="width:40%"> 
-        <input class="admin-input l-url" placeholder="${translations[currentLang].link_url_ph}" value="${u}" style="width:60%"> 
+        <input class="admin-input l-lbl" placeholder="${t.link_name_ph}" value="${l}" style="width:40%"> 
+        <input class="admin-input l-url" placeholder="${t.link_url_ph}" value="${u}" style="width:60%"> 
         <i class="fas fa-times remove-social" style="margin-top:10px;" onclick="this.parentElement.remove()"></i>`;
     document.getElementById('linksContainer').appendChild(d);
 }
@@ -232,9 +243,10 @@ function addLinkField(l="", u="") {
 // --- UKLÁDÁNÍ ---
 async function saveCard() {
     const stat = document.getElementById('status'); 
-    stat.innerText = translations[currentLang].saving;
+    const t = translations[currentLang];
+    stat.innerText = t.saving;
     
-    // Validace vlastních odkazů (Povinný název)
+    // Validace vlastních odkazů
     let valid = true;
     document.querySelectorAll('.link-row').forEach(r => {
         const lblInput = r.querySelector('.l-lbl');
@@ -247,8 +259,8 @@ async function saveCard() {
     });
 
     if (!valid) {
-        alert(translations[currentLang].alert_fill_name);
-        stat.innerText = translations[currentLang].error;
+        alert(t.alert_fill_name);
+        stat.innerText = t.error;
         return;
     }
 
@@ -284,9 +296,9 @@ async function saveCard() {
 
     try {
         await fetch('/api/aeon-api', { method: 'POST', body: JSON.stringify(payload) });
-        stat.innerText = translations[currentLang].done; stat.style.color = "#0f0";
+        stat.innerText = t.done; stat.style.color = "#0f0";
         setTimeout(() => window.location.href = `/?slug=${slug}`, 1500);
-    } catch(e) { stat.innerText = translations[currentLang].error; }
+    } catch(e) { stat.innerText = t.error; }
 }
 
 // Upload avatara
