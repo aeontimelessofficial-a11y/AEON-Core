@@ -4,32 +4,24 @@ const loader = document.getElementById('loader');
 
 let currentLang = 'en';
 
-// --- GENERACE JAZYKOVÉHO MENU ---
-function initLanguageMenu() {
-    const select = document.getElementById('langSelect');
-    if (!select) return;
-    
-    select.innerHTML = '';
-    supportedLanguages.forEach(lang => {
-        const option = document.createElement('option');
-        option.value = lang.code;
-        option.innerText = lang.name;
-        select.appendChild(option);
-    });
-
-    // Detekce
+// Inicializace jazyka z URL nebo prohlížeče
+function initLanguage() {
     const userLang = navigator.language || navigator.userLanguage; 
-    let detected = userLang.split('-')[0];
+    let detected = userLang.split('-')[0]; // z 'cs-CZ' udělá 'cs'
+    // Ověříme, zda máme překlad
+    if (translations[detected]) {
+        currentLang = detected;
+    }
+    // URL override
     const params = new URLSearchParams(window.location.search);
-    if(params.get('lang')) detected = params.get('lang');
-
-    // Nastavení
-    const exists = supportedLanguages.find(l => l.code === detected);
-    currentLang = exists ? detected : 'en';
-    select.value = currentLang;
+    if(params.get('lang') && translations[params.get('lang')]) {
+        currentLang = params.get('lang');
+    }
+    // Nastavíme select na správnou hodnotu
+    const select = document.getElementById('langSelect');
+    if(select) select.value = currentLang;
 }
-
-initLanguageMenu();
+initLanguage();
 
 // Funkce volaná při změně selectu
 function changeLanguage(lang) {
@@ -53,13 +45,10 @@ function generateQR(url) {
 async function loadProfile() {
     const params = new URLSearchParams(window.location.search);
     const userSlug = params.get('slug') || 'jan-novak';
-    
-    // Získání překladu s fallbackem na EN
-    const t = translations[currentLang] || translations['en'];
 
     try {
         const response = await fetch(`/api/aeon-api?slug=${userSlug}`);
-        if (!response.ok) throw new Error(t.error_load);
+        if (!response.ok) throw new Error(translations[currentLang].error_load);
         
         const data = await response.json();
         applyTheme(data.theme);
@@ -74,13 +63,18 @@ async function loadProfile() {
             document.querySelector('.avatar').style.display = 'block';
         }
 
-        document.querySelector('.mint-number').innerText = `${t.mint_title} ${data.mint_number || "---"}`;
+        document.querySelector('.mint-number').innerText = `${translations[currentLang].mint_title} ${data.mint_number || "---"}`;
 
         // RENDER LINKS
         let linksContainer = document.querySelector('.links');
         let socialGrid = document.querySelector('.social-links-grid');
         
-        // Vyčistit před renderem
+        if (!socialGrid) {
+            socialGrid = document.createElement('div');
+            socialGrid.className = 'social-links-grid';
+            linksContainer.parentNode.insertBefore(socialGrid, linksContainer);
+        }
+
         linksContainer.innerHTML = ''; 
         socialGrid.innerHTML = '';
 
@@ -96,7 +90,7 @@ async function loadProfile() {
                     a.href = fixed;
                     a.className = 'social-item';
                     a.target = "_blank";
-                    a.innerHTML = `<i class="${iconClass}"></i>`; 
+                    a.innerHTML = `<i class="${iconClass}"></i>`; // config.js už vrací celou třídu 'fa-brands fa-...'
                     a.addEventListener('click', (e) => e.stopPropagation());
                     socialGrid.appendChild(a);
                 } else {
@@ -125,21 +119,21 @@ async function loadProfile() {
 
     } catch (error) {
         console.error(error);
-        if(loader) loader.innerHTML = `<div style='color:white'>${t.error_sys}</div>`;
+        if(loader) loader.innerHTML = `<div style='color:white'>${translations[currentLang].error_sys}</div>`;
     }
 }
 
 // FIX: Synchronizace výšky zadní strany při otočení
-// Nyní bere aktuální výšku přední strany a nastavuje ji natvrdo rodiči
 function flipCard(e) {
     if (e.target.closest('a') || e.target.tagName === 'SELECT') return; 
     
-    // Zjistíme aktuální výšku přední strany (včetně paddingu)
+    // Zjistíme výšku přední strany
     const frontFace = document.querySelector('.card-face.front');
-    const height = frontFace.getBoundingClientRect().height;
+    const backFace = document.querySelector('.card-face.back');
+    const currentHeight = frontFace.offsetHeight;
     
-    // Nastavíme tuto výšku celé kartě, aby se zadní strana (position absolute) roztáhla přesně
-    card.style.height = height + 'px';
+    // Nastavíme ji zadní straně, aby nepřečuhovala nebo nebyla krátká
+    backFace.style.height = currentHeight + 'px';
     
     card.classList.toggle('is-flipped');
 }

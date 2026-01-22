@@ -1,26 +1,7 @@
-// --- 1. KONFIGURACE API ---
+// --- 1. KONFIGURACE API (VERCEL VERZE) ---
 const API_URL = '/api/aeon-api'; 
 
-// --- 2. JAZYKY A PŘEKLADY ---
-// Seznam dostupných jazyků pro dropdown
-const supportedLanguages = [
-    { code: 'en', name: 'English' },
-    { code: 'cs', name: 'Čeština' },
-    { code: 'de', name: 'Deutsch' },
-    { code: 'es', name: 'Español' },
-    { code: 'pl', name: 'Polski' },
-    { code: 'fr', name: 'Français' },
-    { code: 'it', name: 'Italiano' },
-    { code: 'pt', name: 'Português' },
-    { code: 'nl', name: 'Nederlands' },
-    { code: 'ru', name: 'Русский' },
-    { code: 'ja', name: '日本語' },
-    { code: 'ko', name: '한국어' },
-    { code: 'zh', name: '中文' },
-    { code: 'sk', name: 'Slovenčina' },
-    { code: 'uk', name: 'Українська' }
-];
-
+// --- 2. SLOVNÍK (TRANSLATIONS) ---
 const translations = {
     en: {
         mint_title: "NO.", error_load: "PROFILE NOT FOUND", error_sys: "SYSTEM ERROR",
@@ -46,14 +27,56 @@ const translations = {
         alert_fill_name: "Vyplň prosím NÁZEV odkazu!", help_title: "Nápověda",
         help_1: "Mám jen jméno:", help_2: "Mám celý odkaz:"
     },
-    de: { mint_title: "NR.", error_load: "NICHT GEFUNDEN", save: "SPEICHERN" },
-    es: { mint_title: "Nº", error_load: "NO ENCONTRADO", save: "GUARDAR" },
-    pl: { mint_title: "NR", error_load: "NIE ZNALEZIONO", save: "ZAPISZ" },
-    fr: { mint_title: "Nº", error_load: "NON TROUVÉ", save: "ENREGISTRER" },
-    it: { mint_title: "N.", error_load: "NON TROVATO", save: "SALVA" },
-    pt: { mint_title: "Nº", save: "SALVAR" },
-    nl: { mint_title: "NR.", save: "OPSLAAN" },
-    sk: { mint_title: "Č.", save: "ULOŽIŤ", error_load: "NENAJDENÉ" }
+    de: {
+        mint_title: "NR.", error_load: "NICHT GEFUNDEN", error_sys: "SYSTEMFEHLER",
+        slug_label: "URL Adresse", slug_ph: "z.B. max", theme_label: "Atmosphäre",
+        identity_label: "Identität", name_ph: "Name", bio_ph: "Bio", motto_ph: "Motto",
+        avatar_label: "Avatar", avatar_upload: "HOCHLADEN", social_label: "Social Hub",
+        other_links_label: "Andere Links", add_link: "+ Link", save: "SPEICHERN",
+        update: "AKTUALISIEREN", saving: "Speichere...", done: "FERTIG!", error: "FEHLER",
+        social_ph: "benutzername", link_name_ph: "Titel", link_url_ph: "https://...",
+        alert_fill_name: "Titel fehlt!", help_title: "Hilfe", help_1: "User:", help_2: "Link:"
+    },
+    es: {
+        mint_title: "Nº", error_load: "NO ENCONTRADO", error_sys: "ERROR SISTEMA",
+        slug_label: "URL", slug_ph: "ej. juan", theme_label: "Atmósfera",
+        identity_label: "Identidad", name_ph: "Nombre", bio_ph: "Bio", motto_ph: "Lema",
+        avatar_label: "Avatar", avatar_upload: "SUBIR", social_label: "Redes",
+        other_links_label: "Enlaces", add_link: "+ Enlace", save: "GUARDAR",
+        update: "ACTUALIZAR", saving: "Guardando...", done: "HECHO!", error: "ERROR",
+        social_ph: "usuario", link_name_ph: "Título", link_url_ph: "https://...",
+        alert_fill_name: "¡Falta título!", help_title: "Ayuda", help_1: "Usuario:", help_2: "Enlace:"
+    },
+    pl: {
+        mint_title: "NR", error_load: "NIE ZNALEZIONO", error_sys: "BŁĄD SYSTEMU",
+        slug_label: "Adres URL", slug_ph: "np. jan", theme_label: "Atmosfera",
+        identity_label: "Tożsamość", name_ph: "Imię", bio_ph: "Bio", motto_ph: "Motto",
+        avatar_label: "Awatar", avatar_upload: "WGRAJ", social_label: "Social Hub",
+        other_links_label: "Inne Linki", add_link: "+ Link", save: "ZAPISZ",
+        update: "AKTUALIZUJ", saving: "Zapisywanie...", done: "GOTOWE!", error: "BŁĄD",
+        social_ph: "użytkownik", link_name_ph: "Tytuł", link_url_ph: "https://...",
+        alert_fill_name: "Brak tytułu!", help_title: "Pomoc", help_1: "Nazwa:", help_2: "Link:"
+    },
+    fr: {
+        mint_title: "Nº", error_load: "NON TROUVÉ", error_sys: "ERREUR SYSTÈME",
+        slug_label: "URL", slug_ph: "ex. jean", theme_label: "Atmosphère",
+        identity_label: "Identité", name_ph: "Nom", bio_ph: "Bio", motto_ph: "Devise",
+        avatar_label: "Avatar", avatar_upload: "TÉLÉCHARGER", social_label: "Réseaux",
+        other_links_label: "Autres Liens", add_link: "+ Lien", save: "ENREGISTRER",
+        update: "METTRE À JOUR", saving: "En cours...", done: "TERMINÉ!", error: "ERREUR",
+        social_ph: "utilisateur", link_name_ph: "Titre", link_url_ph: "https://...",
+        alert_fill_name: "Titre manquant!", help_title: "Aide", help_1: "Nom:", help_2: "Lien:"
+    },
+    it: {
+        mint_title: "N.", error_load: "NON TROVATO", error_sys: "ERRORE SISTEMA",
+        slug_label: "URL", slug_ph: "es. mario", theme_label: "Atmosfera",
+        identity_label: "Identità", name_ph: "Nome", bio_ph: "Bio", motto_ph: "Motto",
+        avatar_label: "Avatar", avatar_upload: "CARICARE", social_label: "Social",
+        other_links_label: "Altri Link", add_link: "+ Link", save: "SALVA",
+        update: "AGGIORNA", saving: "Salvataggio...", done: "FATTO!", error: "ERRORE",
+        social_ph: "utente", link_name_ph: "Titolo", link_url_ph: "https://...",
+        alert_fill_name: "Manca il titolo!", help_title: "Aiuto", help_1: "Nome:", help_2: "Link:"
+    }
 };
 
 // --- 3. DEFINICE PLATFOREM ---
@@ -69,11 +92,7 @@ const platforms = {
     pinterest: { icon: 'fa-brands fa-pinterest', prefix: 'pinterest.com/', url: 'https://pinterest.com/', label: 'Pinterest', tip: 'Profil.' },
     reddit:    { icon: 'fa-brands fa-reddit-alien', prefix: 'reddit.com/user/', url: 'https://reddit.com/user/', label: 'Reddit', tip: 'u/user.' },
     snapchat:  { icon: 'fa-brands fa-snapchat', prefix: 'snapchat.com/add/', url: 'https://snapchat.com/add/', label: 'Snapchat', tip: 'Nastavení.' },
-    threads:   { icon: 'fa-brands fa-threads', prefix: 'threads.net/@', url: 'https://threads.net/@', label: 'Threads', tip: 'Instagram.' },
-    whatsapp:  { icon: 'fa-brands fa-whatsapp', prefix: 'wa.me/', url: 'https://wa.me/', label: 'WhatsApp', tip: 'Number.' },
-    telegram:  { icon: 'fa-brands fa-telegram', prefix: 't.me/', url: 'https://t.me/', label: 'Telegram', tip: 'Username.' },
-    spotify:   { icon: 'fa-brands fa-spotify', prefix: 'open.spotify.com/', url: 'https://open.spotify.com/user/', label: 'Spotify', tip: 'Profile.' },
-    github:    { icon: 'fa-brands fa-github', prefix: 'github.com/', url: 'https://github.com/', label: 'GitHub', tip: 'Username.' }
+    threads:   { icon: 'fa-brands fa-threads', prefix: 'threads.net/@', url: 'https://threads.net/@', label: 'Threads', tip: 'Instagram.' }
 };
 
 // --- 4. POMOCNÉ FUNKCE ---
