@@ -1,24 +1,11 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore, doc, getDocs, collection, runTransaction } from "firebase/firestore";
+// Importujeme připojení z tvého nového souboru o patro výš (../lib)
+import { db } from '../lib/firebase';
 
-// --- KONFIGURACE FIREBASE ---
-const firebaseConfig = {
-  apiKey: "AIzaSyA1tCkwzheR8Bt1ajn7zaYXHHXJj7rBBP8",
-  authDomain: "aeon-platform.firebaseapp.com",
-  projectId: "aeon-platform",
-  storageBucket: "aeon-platform.firebasestorage.app",
-  messagingSenderId: "1050631630348",
-  appId: "1:1050631630348:web:148e7e25136b260d6ac829"
-};
-
-// Inicializace mimo handler (cache)
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const MASTER_KEY = "20071";
 
 // --- VERCEL HANDLER ---
 export default async function handler(req, res) {
-  // 1. CORS HEADERS (Aby to fungovalo odkudkoliv)
+  // 1. CORS HEADERS
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -27,23 +14,23 @@ export default async function handler(req, res) {
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, x-master-key'
   );
 
-  // Rychlá odpověď pro OPTIONS (Pre-flight check prohlížeče)
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
 
   try {
-    // 2. DASHBOARD (GET s parametrem mode=dashboard)
+    // 2. DASHBOARD (GET mode=dashboard)
     if (req.method === 'GET' && req.query.mode === 'dashboard') {
         const clientKey = req.headers['x-master-key'];
         if (clientKey !== MASTER_KEY) {
             return res.status(401).json({ error: "Nesprávné heslo." });
         }
 
-        const querySnapshot = await getDocs(collection(db, "cards"));
+        const snapshot = await db.collection("cards").get();
         const users = [];
-        querySnapshot.forEach((doc) => {
+        
+        snapshot.forEach((doc) => {
             const d = doc.data();
             users.push({
                 slug: d.slug,
@@ -57,61 +44,65 @@ export default async function handler(req, res) {
         return res.status(200).json({ count: users.length, users: users });
     }
 
-    // 3. ČTENÍ KARTY (GET s parametrem slug)
+    // 3. ČTENÍ KARTY (GET slug)
     if (req.method === 'GET') {
         const slug = req.query.slug;
         if (!slug) return res.status(400).send("Chybí slug");
 
-        let data;
-        await runTransaction(db, async (t) => {
-            const docRef = doc(db, "cards", slug);
-            const docSnap = await t.get(docRef);
-            if(docSnap.exists()) data = docSnap.data();
-        });
+        const docRef = db.collection("cards").doc(slug);
+        const docSnap = await docRef.get();
 
-        if (data) return res.status(200).json(data);
-        else return res.status(404).send("Nenalezeno");
+        if (docSnap.exists) {
+            return res.status(200).json(docSnap.data());
+        } else {
+            return res.status(404).send("Nenalezeno");
+        }
     }
 
     // 4. ULOŽENÍ KARTY (POST)
     if (req.method === 'POST') {
-        // Vercel automaticky parsuje body, pokud je to JSON
         const payload = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
         const data = payload.data || payload; 
         const slug = data.slug;
         
-        // Sanitizace (proti HTML injection)
+        // Sanitizace
         if(data.name) data.name = data.name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         if(data.bio) data.bio = data.bio.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-        const userRef = doc(db, "cards", slug);
-        const counterRef = doc(db, "system", "counter");
+        const userRef = db.collection("cards").doc(slug);
+        const counterRef = db.collection("system").doc("counter");
+        
         let finalData;
 
-        await runTransaction(db, async (transaction) => {
-            const userDoc = await transaction.get(userRef);
+        await db.runTransaction(async (t) => {
+            const userDoc = await t.get(userRef);
             
-            if (userDoc.exists()) {
+            if (userDoc.exists) {
                 const existing = userDoc.data();
-                // Zachováme číslo mintu
-                finalData = { ...data, mint_number: existing.mint_number || 1000 };
-                transaction.set(userRef, finalData);
+                finalData = { 
+                    ...data, 
+                    mint_number: existing.mint_number || 1000,
+                    // Zachování premium statusu
+                    premium: existing.premium || data.premium || false,
+                    premium_code: existing.premium_code || data.premium_code || ""
+                };
+                t.set(userRef, finalData, { merge: true });
             } else {
-                // Nový uživatel -> nové číslo
-                const counterDoc = await transaction.get(counterRef);
+                const counterDoc = await t.get(counterRef);
                 let newCount = 1001;
-                if (counterDoc.exists()) newCount = counterDoc.data().value + 1;
+                if (counterDoc.exists) {
+                    newCount = (counterDoc.data().value || 1000) + 1;
+                }
                 
-                transaction.set(counterRef, { value: newCount });
+                t.set(counterRef, { value: newCount });
                 finalData = { ...data, mint_number: newCount };
-                transaction.set(userRef, finalData);
+                t.set(userRef, finalData);
             }
         });
 
         return res.status(200).json({ message: "Uloženo", data: finalData });
     }
 
-    // Pokud metoda neodpovídá
     return res.status(405).send("Method Not Allowed");
 
   } catch (error) {
