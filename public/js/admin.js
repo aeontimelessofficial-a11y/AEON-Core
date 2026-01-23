@@ -62,10 +62,11 @@ window.onload = async function() {
                     document.getElementById('preview').src = d.avatar; 
                 }
 
-                // NOVÉ: Načtení premium kódu
-                if(d.premium_code) {
-                    const premiumInput = document.getElementById('premiumCode');
-                    if(premiumInput) premiumInput.value = d.premium_code;
+                // --- ZMĚNA: Zobrazení čísla karty pro Premium ---
+                const slugDisp = document.getElementById('slugDisplay');
+                if(slugDisp && d.mint_number) {
+                    // Zde zobrazujeme číslo karty místo slugu
+                    slugDisp.innerText = d.mint_number;
                 }
                 
                 // Načtení odkazů
@@ -295,8 +296,8 @@ async function saveCard() {
             theme: document.getElementById('selectedTheme').value,
             avatar: document.getElementById('base64String').value, 
             links: links,
-            // NOVÉ: Premium Code pro odstranění brandingu
-            premium_code: document.getElementById('premiumCode').value.trim()
+            // Bezpečné načtení premium_code (pokud pole neexistuje, pošle prázdný řetězec)
+            premium_code: document.getElementById('premiumCode') ? document.getElementById('premiumCode').value.trim() : ""
         }
     };
 

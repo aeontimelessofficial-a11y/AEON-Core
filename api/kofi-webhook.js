@@ -11,35 +11,48 @@ export default async function handler(req, res) {
         const bodyData = req.body.data || req.body;
         const payload = typeof bodyData === 'string' ? JSON.parse(bodyData) : bodyData;
 
-        // Kontrola tokenu z Vercel Environment Variables
+        // 1. Kontrola tokenu
         if (payload.verification_token !== process.env.KOFI_VERIFICATION_TOKEN) {
             return res.status(403).send('Invalid Token');
         }
 
-        // Získání ID karty ze zprávy
-        let cardSlug = payload.message;
-
-        if (!cardSlug) {
-            return res.status(200).send('Payment received, no slug provided');
+        // 2. Získání čísla ze zprávy
+        // Uživatel může napsat "1005", "No. 1005", "#1005" nebo "Moje číslo je 1005"
+        // My z toho vytáhneme jen číslice.
+        const rawMessage = payload.message || "";
+        const cleanNumberString = rawMessage.replace(/[^0-9]/g, ''); // Odstraní vše kromě čísel
+        
+        if (!cleanNumberString) {
+            console.log("Zpráva neobsahuje žádné číslo.");
+            return res.status(200).send('No number found in message');
         }
 
-        cardSlug = cardSlug.trim().toLowerCase();
-        console.log(`Zpracovávám Premium pro: ${cardSlug}`);
+        const targetMintNumber = parseInt(cleanNumberString, 10);
+        console.log(`Hledám kartu s číslem: ${targetMintNumber}`);
 
-        // POZOR: Zde musí být stejný název kolekce jako v aeon-api.js -> "cards"
-        const userRef = db.collection('cards').doc(cardSlug); 
-        const doc = await userRef.get();
+        // 3. Hledání v databázi podle čísla (mint_number)
+        const snapshot = await db.collection('cards')
+            .where('mint_number', '==', targetMintNumber)
+            .limit(1)
+            .get();
 
-        if (!doc.exists) {
-            return res.status(200).send('Card ID not found');
+        if (snapshot.empty) {
+            console.log(`Karta č. ${targetMintNumber} nenalezena.`);
+            return res.status(200).send('Card Number not found');
         }
 
+        // Našli jsme kartu!
+        const userDoc = snapshot.docs[0];
+        const userRef = userDoc.ref;
+
+        // 4. Aktivace Premium
         await userRef.update({
             premium: true, 
             premium_code: `KOFI-${payload.payment_id}`,
             updatedAt: new Date().toISOString()
         });
 
+        console.log(`Premium aktivováno pro kartu č. ${targetMintNumber} (${userDoc.id})`);
         return res.status(200).send('Premium activated');
 
     } catch (error) {
