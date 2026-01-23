@@ -1,11 +1,10 @@
-// Importujeme připojení ze sdíleného souboru (Admin SDK)
+// Import DB z tvé knihovny
 import { db } from '../lib/firebase';
 
 const MASTER_KEY = "20071";
 
-// --- VERCEL HANDLER ---
 export default async function handler(req, res) {
-  // 1. CORS HEADERS
+  // CORS (Hlavičky pro prohlížeč)
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -14,23 +13,26 @@ export default async function handler(req, res) {
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, x-master-key'
   );
 
+  // Rychlá odpověď na OPTIONS (prohlížeč se ptá, jestli může komunikovat)
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
   }
 
   try {
-    // 2. DASHBOARD (GET mode=dashboard)
+    // ---------------------------------------------------------
+    // 1. DASHBOARD (Výpis všech karet)
+    // ---------------------------------------------------------
     if (req.method === 'GET' && req.query.mode === 'dashboard') {
         const clientKey = req.headers['x-master-key'];
         if (clientKey !== MASTER_KEY) {
             return res.status(401).json({ error: "Nesprávné heslo." });
         }
 
-        // Admin SDK syntaxe pro čtení kolekce
+        // Admin SDK: čteme kolekci "cards"
         const snapshot = await db.collection("cards").get();
-        const users = [];
         
+        const users = [];
         snapshot.forEach((doc) => {
             const d = doc.data();
             users.push({
@@ -41,16 +43,20 @@ export default async function handler(req, res) {
             });
         });
 
-        users.sort((a, b) => b.mint_number - a.mint_number);
+        // Seřadit podle čísla karty (sestupně)
+        users.sort((a, b) => (b.mint_number || 0) - (a.mint_number || 0));
+        
         return res.status(200).json({ count: users.length, users: users });
     }
 
-    // 3. ČTENÍ KARTY (GET slug)
+    // ---------------------------------------------------------
+    // 2. ČTENÍ JEDNÉ KARTY (Podle slugu)
+    // ---------------------------------------------------------
     if (req.method === 'GET') {
         const slug = req.query.slug;
         if (!slug) return res.status(400).send("Chybí slug");
 
-        // Admin SDK syntaxe pro čtení dokumentu
+        // Admin SDK: čteme dokument
         const docRef = db.collection("cards").doc(slug);
         const docSnap = await docRef.get();
 
@@ -61,13 +67,18 @@ export default async function handler(req, res) {
         }
     }
 
-    // 4. ULOŽENÍ KARTY (POST)
+    // ---------------------------------------------------------
+    // 3. ULOŽENÍ / AKTUALIZACE KARTY
+    // ---------------------------------------------------------
     if (req.method === 'POST') {
+        // Zpracování dat z požadavku
         const payload = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
         const data = payload.data || payload; 
         const slug = data.slug;
+
+        if (!slug) return res.status(400).json({ error: "Chybí slug" });
         
-        // Sanitizace
+        // Sanitizace (ochrana proti HTML injekci)
         if(data.name) data.name = data.name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         if(data.bio) data.bio = data.bio.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -76,23 +87,22 @@ export default async function handler(req, res) {
         
         let finalData;
 
-        // Admin SDK syntaxe pro transakci
+        // Transakce (bezpečný zápis)
         await db.runTransaction(async (t) => {
             const userDoc = await t.get(userRef);
             
             if (userDoc.exists) {
+                // Karta už existuje -> Aktualizujeme
                 const existing = userDoc.data();
                 finalData = { 
                     ...data, 
                     mint_number: existing.mint_number || 1000,
-                    // Zachování premium statusu
                     premium: existing.premium || data.premium || false,
                     premium_code: existing.premium_code || data.premium_code || ""
                 };
-                // merge: true zajistí, že nepřepíšeme pole, která neposíláme (pro jistotu)
                 t.set(userRef, finalData, { merge: true });
             } else {
-                // Nový uživatel
+                // Nová karta -> Vytváříme a přidělujeme číslo
                 const counterDoc = await t.get(counterRef);
                 let newCount = 1001;
                 
@@ -101,6 +111,7 @@ export default async function handler(req, res) {
                 }
                 
                 t.set(counterRef, { value: newCount });
+                
                 finalData = { ...data, mint_number: newCount };
                 t.set(userRef, finalData);
             }
@@ -109,10 +120,15 @@ export default async function handler(req, res) {
         return res.status(200).json({ message: "Uloženo", data: finalData });
     }
 
+    // Pokud metoda není GET ani POST
     return res.status(405).send("Method Not Allowed");
 
   } catch (error) {
-    console.error("API Error:", error);
-    return res.status(500).json({ error: error.message });
+    console.error("CRITICAL API ERROR:", error);
+    // Vracíme JSON chybu, aby to dashboard mohl zobrazit
+    return res.status(500).json({ 
+        error: "Server Error", 
+        details: error.message 
+    });
   }
 }
