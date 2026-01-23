@@ -60,6 +60,18 @@
         <div id="linksContainer"></div>
         <button onclick="addLinkField()" id="addLinkBtn" class="link-btn" style="margin-top:10px; cursor: pointer;">+ Add Custom Link</button>
 
+        <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <label class="admin-label" style="color: #ffd700;" data-i18n="premium_label">Remove Branding</label>
+            <div style="font-size: 11px; opacity: 0.6; margin-bottom: 8px; line-height: 1.4;" data-i18n="premium_desc">
+                Donate on Ko-fi to support us and hide the branding.
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" class="admin-input" id="premiumCode" placeholder="Enter Code" style="border-color: rgba(255, 215, 0, 0.3);">
+                <a href="#" onclick="window.open(KOFI_URL, '_blank')" class="social-icon-btn" style="width: 50px; background: rgba(255, 215, 0, 0.1); border-color: rgba(255, 215, 0, 0.3); color: #ffd700;">
+                    <i class="fa-solid fa-heart"></i>
+                </a>
+            </div>
+        </div>
         <button onclick="saveCard()" id="saveBtn" style="background: var(--accent); border: none; padding: 16px; color: #000; font-weight: bold; border-radius: 12px; margin-top: 20px; cursor: pointer; width: 100%;">SAVE CARD</button>
         <div id="status" style="text-align:center; margin-top:10px; color: yellow; text-shadow: 0 1px 2px black; font-weight:bold;"></div>
     </div>

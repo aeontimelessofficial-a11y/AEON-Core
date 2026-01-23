@@ -167,3 +167,41 @@
 .help-section { margin-bottom: 8px; }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* FOOTER BRANDING */
+.aeon-footer {
+    margin-top: auto; /* Tlačí patičku úplně dolů */
+    padding-top: 25px;
+    text-align: center;
+    width: 100%;
+    animation: fadeIn 1s ease;
+}
+
+.aeon-powered {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-main);
+    opacity: 0.5;
+    margin-bottom: 4px;
+    display: block;
+    text-decoration: none;
+}
+
+.aeon-contrib {
+    font-size: 9px;
+    color: var(--accent); /* Zvýrazněná barva */
+    opacity: 0.8;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s;
+    display: inline-block;
+    border-bottom: 1px dotted var(--accent);
+}
+
+.aeon-contrib:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+    border-bottom-style: solid;
+}

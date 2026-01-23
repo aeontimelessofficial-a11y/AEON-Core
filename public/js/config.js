@@ -41,6 +41,9 @@ const translations = {
         add_link: "+ Custom Link", social_ph: "username", link_name_ph: "Label", link_url_ph: "https://...",
         save: "SAVE CARD", update: "UPDATE CARD", saving: "Saving...", done: "DONE!", error: "ERROR",
         alert_fill_name: "Please enter a LABEL!", help_title: "Help", help_1: "I have username:", help_2: "I have full link:",
+        // FOOTER & PREMIUM
+        footer_powered: "Powered by ÆON", footer_contrib: "Kept alive by users like you ⚡",
+        premium_label: "Remove Branding", premium_ph: "Enter Ko-fi Order ID / Code", premium_desc: "Donate on Ko-fi to support us and hide the branding.",
         t_spring: "Spring", t_summer: "Summer", t_autumn: "Autumn", t_winter: "Winter", t_morning: "Morning", t_noon: "Noon", t_evening: "Evening", t_night: "Night"
     },
     cs: {
@@ -53,6 +56,9 @@ const translations = {
         add_link: "+ Vlastní Odkaz", social_ph: "uživatelské jméno", link_name_ph: "Název", link_url_ph: "https://...",
         save: "ULOŽIT KARTU", update: "AKTUALIZOVAT", saving: "Ukládám...", done: "HOTOVO!", error: "CHYBA",
         alert_fill_name: "Vyplň prosím NÁZEV odkazu!", help_title: "Nápověda", help_1: "Mám jen jméno:", help_2: "Mám celý odkaz:",
+        // FOOTER & PREMIUM
+        footer_powered: "Běží na ÆON", footer_contrib: "Při životě udržují uživatelé jako ty ⚡",
+        premium_label: "Odstranit reklamu", premium_ph: "Zadej Ko-fi ID platby / Kód", premium_desc: "Přispěj na Ko-fi, podpoř nás a reklama z tvé karty zmizí.",
         t_spring: "Jaro", t_summer: "Léto", t_autumn: "Podzim", t_winter: "Zima", t_morning: "Ráno", t_noon: "Poledne", t_evening: "Večer", t_night: "Noc"
     },
     zh: {
@@ -65,6 +71,8 @@ const translations = {
         add_link: "+ 自定义链接", social_ph: "用户名", link_name_ph: "标签", link_url_ph: "https://...",
         save: "保存名片", update: "更新名片", saving: "保存中...", done: "完成！", error: "错误",
         alert_fill_name: "请输入标签！", help_title: "帮助", help_1: "我有用户名:", help_2: "我有完整链接:",
+        footer_powered: "由 ÆON 提供支持", footer_contrib: "由像您这样的用户维持生计 ⚡",
+        premium_label: "移除品牌", premium_ph: "输入 Ko-fi 订单 ID / 代码", premium_desc: "在 Ko-fi 上捐赠以支持我们并隐藏品牌。",
         t_spring: "春", t_summer: "夏", t_autumn: "秋", t_winter: "冬", t_morning: "早晨", t_noon: "中午", t_evening: "傍晚", t_night: "夜晚"
     },
     es: {
@@ -77,6 +85,8 @@ const translations = {
         add_link: "+ Enlace Personalizado", social_ph: "usuario", link_name_ph: "Etiqueta", link_url_ph: "https://...",
         save: "GUARDAR TARJETA", update: "ACTUALIZAR", saving: "Guardando...", done: "¡HECHO!", error: "ERROR",
         alert_fill_name: "¡Por favor ingresa una ETIQUETA!", help_title: "Ayuda", help_1: "Tengo usuario:", help_2: "Tengo enlace completo:",
+        footer_powered: "Impulsado por ÆON", footer_contrib: "Mantenido vivo por usuarios como tú ⚡",
+        premium_label: "Eliminar Marca", premium_ph: "Ingresa ID de pedido Ko-fi / Código", premium_desc: "Dona en Ko-fi para apoyarnos y ocultar la marca.",
         t_spring: "Primavera", t_summer: "Verano", t_autumn: "Otoño", t_winter: "Invierno", t_morning: "Mañana", t_noon: "Mediodía", t_evening: "Tarde", t_night: "Noche"
     },
     hi: {
@@ -89,6 +99,8 @@ const translations = {
         add_link: "+ कस्टम लिंक", social_ph: "उपयोगकर्ता नाम", link_name_ph: "लेबल", link_url_ph: "https://...",
         save: "कार्ड सहेजें", update: "अपडेट करें", saving: "सहेजा जा रहा है...", done: "हो गया!", error: "त्रुटि",
         alert_fill_name: "कृपया लेबल दर्ज करें!", help_title: "मदद", help_1: "मेरे पास यूजरनेम है:", help_2: "मेरे पास पूरा लिंक है:",
+        footer_powered: "ÆON द्वारा संचालित", footer_contrib: "आप जैसे उपयोगकर्ताओं द्वारा जीवित रखा गया ⚡",
+        premium_label: "ब्रांडिंग हटाएं", premium_ph: "Ko-fi ऑर्डर आईडी / कोड दर्ज करें", premium_desc: "हमें समर्थन देने और ब्रांडिंग छिपाने के लिए Ko-fi पर दान करें।",
         t_spring: "वसंत", t_summer: "गर्मी", t_autumn: "पतझड़", t_winter: "सर्दी", t_morning: "सुबह", t_noon: "दोपहर", t_evening: "शाम", t_night: "रात"
     },
     ar: {
@@ -101,6 +113,8 @@ const translations = {
         add_link: "+ رابط مخصص", social_ph: "اسم المستخدم", link_name_ph: "تسمية", link_url_ph: "https://...",
         save: "حفظ البطاقة", update: "تحديث البطاقة", saving: "...جار الحفظ", done: "!تم", error: "خطأ",
         alert_fill_name: "!الرجاء إدخال تسمية", help_title: "مساعدة", help_1: ":لدي اسم مستخدم", help_2: ":لدي رابط كامل",
+        footer_powered: "مشغل بواسطة ÆON", footer_contrib: "يتم إبقاؤه حياً بواسطة مستخدمين مثلك ⚡",
+        premium_label: "إزالة العلامة التجارية", premium_ph: "أدخل معرف طلب Ko-fi / الرمز", premium_desc: "تبرع على Ko-fi لدعمنا وإخفاء العلامة التجارية.",
         t_spring: "ربيع", t_summer: "صيف", t_autumn: "خريف", t_winter: "شتاء", t_morning: "صباح", t_noon: "ظهر", t_evening: "مساء", t_night: "ليل"
     },
     pt: {
@@ -113,6 +127,8 @@ const translations = {
         add_link: "+ Link Personalizado", social_ph: "usuário", link_name_ph: "Rótulo", link_url_ph: "https://...",
         save: "SALVAR CARTÃO", update: "ATUALIZAR", saving: "Salvando...", done: "PRONTO!", error: "ERRO",
         alert_fill_name: "Por favor, insira um RÓTULO!", help_title: "Ajuda", help_1: "Tenho usuário:", help_2: "Tenho link completo:",
+        footer_powered: "Desenvolvido por ÆON", footer_contrib: "Mantido vivo por usuários como você ⚡",
+        premium_label: "Remover Marca", premium_ph: "Insira o ID do pedido Ko-fi / Código", premium_desc: "Doe no Ko-fi para nos apoiar e ocultar a marca.",
         t_spring: "Primavera", t_summer: "Verão", t_autumn: "Outono", t_winter: "Inverno", t_morning: "Manhã", t_noon: "Meio-dia", t_evening: "Tarde", t_night: "Noite"
     },
     bn: {
@@ -125,6 +141,8 @@ const translations = {
         add_link: "+ কাস্টম লিঙ্ক", social_ph: "ব্যবহারকারীর নাম", link_name_ph: "লেবেল", link_url_ph: "https://...",
         save: "কার্ড সংরক্ষণ করুন", update: "আপডেট করুন", saving: "সংরক্ষণ করা হচ্ছে...", done: "সম্পন্ন!", error: "ত্রুটি",
         alert_fill_name: "দয়া করে একটি লেবেল লিখুন!", help_title: "সাহায্য", help_1: "আমার ব্যবহারকারীর নাম আছে:", help_2: "আমার সম্পূর্ণ লিঙ্ক আছে:",
+        footer_powered: "ÆON দ্বারা চালিত", footer_contrib: "আপনার মতো ব্যবহারকারীদের দ্বারা জীবিত রাখা হয়েছে ⚡",
+        premium_label: "ব্র্যান্ডিং সরান", premium_ph: "Ko-fi অর্ডার আইডি / কোড লিখুন", premium_desc: "আমাদের সমর্থন করতে এবং ব্র্যান্ডিং লুকাতে Ko-fi তে দান করুন।",
         t_spring: "বসন্ত", t_summer: "গ্রীষ্ম", t_autumn: "শরৎ", t_winter: "শীত", t_morning: "সকাল", t_noon: "দুপুর", t_evening: "সন্ধ্যা", t_night: "রাত"
     },
     ru: {
@@ -137,6 +155,8 @@ const translations = {
         add_link: "+ Своя Ссылка", social_ph: "юзернейм", link_name_ph: "Название", link_url_ph: "https://...",
         save: "СОХРАНИТЬ", update: "ОБНОВИТЬ", saving: "Сохранение...", done: "ГОТОВО!", error: "ОШИБКА",
         alert_fill_name: "Введите НАЗВАНИЕ!", help_title: "Помощь", help_1: "У меня юзернейм:", help_2: "У меня ссылка:",
+        footer_powered: "Работает на ÆON", footer_contrib: "Поддерживается пользователями, как вы ⚡",
+        premium_label: "Убрать Брендинг", premium_ph: "Введите ID заказа Ko-fi / Код", premium_desc: "Пожертвуйте на Ko-fi, чтобы поддержать нас и скрыть брендинг.",
         t_spring: "Весна", t_summer: "Лето", t_autumn: "Осень", t_winter: "Зима", t_morning: "Утро", t_noon: "Полдень", t_evening: "Вечер", t_night: "Ночь"
     },
     ja: {
@@ -149,6 +169,8 @@ const translations = {
         add_link: "+ カスタムリンク", social_ph: "ユーザー名", link_name_ph: "ラベル", link_url_ph: "https://...",
         save: "カードを保存", update: "更新", saving: "保存中...", done: "完了！", error: "エラー",
         alert_fill_name: "ラベルを入力してください！", help_title: "ヘルプ", help_1: "ユーザー名のみ:", help_2: "完全なリンク:",
+        footer_powered: "Powered by ÆON", footer_contrib: "あなたのようなユーザーによって支えられています ⚡",
+        premium_label: "ブランディングを削除", premium_ph: "Ko-fi 注文 ID / コードを入力", premium_desc: "Ko-fi で寄付して私たちをサポートし、ブランディングを非表示にします。",
         t_spring: "春", t_summer: "夏", t_autumn: "秋", t_winter: "冬", t_morning: "朝", t_noon: "昼", t_evening: "夕方", t_night: "夜"
     },
     de: {
@@ -161,6 +183,8 @@ const translations = {
         add_link: "+ Eigener Link", social_ph: "Benutzername", link_name_ph: "Titel", link_url_ph: "https://...",
         save: "KARTE SPEICHERN", update: "AKTUALISIEREN", saving: "Speichere...", done: "FERTIG!", error: "FEHLER",
         alert_fill_name: "Bitte TITEL eingeben!", help_title: "Hilfe", help_1: "Ich habe Nutzernamen:", help_2: "Ich habe vollen Link:",
+        footer_powered: "Bereitgestellt von ÆON", footer_contrib: "Am Leben gehalten durch Nutzer wie dich ⚡",
+        premium_label: "Branding entfernen", premium_ph: "Ko-fi Bestell-ID / Code eingeben", premium_desc: "Spende auf Ko-fi, um uns zu unterstützen und das Branding auszublenden.",
         t_spring: "Frühling", t_summer: "Sommer", t_autumn: "Herbst", t_winter: "Winter", t_morning: "Morgen", t_noon: "Mittag", t_evening: "Abend", t_night: "Nacht"
     },
     jv: {
@@ -173,6 +197,8 @@ const translations = {
         add_link: "+ Link Kustom", social_ph: "jeneng pangguna", link_name_ph: "Label", link_url_ph: "https://...",
         save: "SIMPEN KARTU", update: "NGANYARI", saving: "Nyimpen...", done: "RAMPUNG!", error: "ERROR",
         alert_fill_name: "Mangga isi LABEL!", help_title: "Pitulung", help_1: "Aku duwe jeneng pangguna:", help_2: "Aku duwe link lengkap:",
+        footer_powered: "Didhukung dening ÆON", footer_contrib: "Diumpamakake dening pangguna kaya sampeyan ⚡",
+        premium_label: "Mbusak Merek", premium_ph: "Ketik ID Pesenan Ko-fi / Kode", premium_desc: "Sumbang ing Ko-fi kanggo ndhukung kita lan ndhelikake merek.",
         t_spring: "Semi", t_summer: "Panas", t_autumn: "Gugur", t_winter: "Adhem", t_morning: "Esuk", t_noon: "Awan", t_evening: "Sore", t_night: "Wengi"
     },
     ko: {
@@ -185,6 +211,8 @@ const translations = {
         add_link: "+ 사용자 지정 링크", social_ph: "사용자 이름", link_name_ph: "라벨", link_url_ph: "https://...",
         save: "카드 저장", update: "업데이트", saving: "저장 중...", done: "완료!", error: "오류",
         alert_fill_name: "라벨을 입력해주세요!", help_title: "도움말", help_1: "사용자 이름 있음:", help_2: "전체 링크 있음:",
+        footer_powered: "ÆON 제공", footer_contrib: "당신과 같은 사용자가 유지합니다 ⚡",
+        premium_label: "브랜딩 제거", premium_ph: "Ko-fi 주문 ID / 코드 입력", premium_desc: "Ko-fi에서 기부하여 저희를 지원하고 브랜딩을 숨기세요.",
         t_spring: "봄", t_summer: "여름", t_autumn: "가을", t_winter: "겨울", t_morning: "아침", t_noon: "점심", t_evening: "저녁", t_night: "밤"
     },
     fr: {
@@ -197,6 +225,8 @@ const translations = {
         add_link: "+ Lien Personnalisé", social_ph: "utilisateur", link_name_ph: "Libellé", link_url_ph: "https://...",
         save: "ENREGISTRER", update: "METTRE À JOUR", saving: "En cours...", done: "TERMINÉ!", error: "ERREUR",
         alert_fill_name: "Veuillez entrer un LIBELLÉ!", help_title: "Aide", help_1: "J'ai le nom d'utilisateur:", help_2: "J'ai le lien complet:",
+        footer_powered: "Propulsé par ÆON", footer_contrib: "Maintenu en vie par des utilisateurs comme vous ⚡",
+        premium_label: "Supprimer la Marque", premium_ph: "Entrez l'ID de commande Ko-fi / Code", premium_desc: "Faites un don sur Ko-fi pour nous soutenir et masquer la marque.",
         t_spring: "Printemps", t_summer: "Été", t_autumn: "Automne", t_winter: "Hiver", t_morning: "Matin", t_noon: "Midi", t_evening: "Soir", t_night: "Nuit"
     },
     tr: {
@@ -209,6 +239,8 @@ const translations = {
         add_link: "+ Özel Link", social_ph: "kullanıcı adı", link_name_ph: "Etiket", link_url_ph: "https://...",
         save: "KARTI KAYDET", update: "GÜNCELLE", saving: "Kaydediliyor...", done: "TAMAM!", error: "HATA",
         alert_fill_name: "Lütfen bir ETİKET girin!", help_title: "Yardım", help_1: "Kullanıcı adım var:", help_2: "Tam linkim var:",
+        footer_powered: "ÆON Tarafından Desteklenmektedir", footer_contrib: "Sizin gibi kullanıcılar tarafından yaşatılıyor ⚡",
+        premium_label: "Markayı Kaldır", premium_ph: "Ko-fi Sipariş Kimliği / Kod Girin", premium_desc: "Bizi desteklemek ve markayı gizlemek için Ko-fi'de bağış yapın.",
         t_spring: "İlkbahar", t_summer: "Yaz", t_autumn: "Sonbahar", t_winter: "Kış", t_morning: "Sabah", t_noon: "Öğle", t_evening: "Akşam", t_night: "Gece"
     },
     vi: {
@@ -221,6 +253,8 @@ const translations = {
         add_link: "+ Liên kết tùy chỉnh", social_ph: "tên người dùng", link_name_ph: "Nhãn", link_url_ph: "https://...",
         save: "LƯU THẺ", update: "CẬP NHẬT", saving: "Đang lưu...", done: "XONG!", error: "LỖI",
         alert_fill_name: "Vui lòng nhập NHÃN!", help_title: "Trợ giúp", help_1: "Tôi có tên người dùng:", help_2: "Tôi có liên kết đầy đủ:",
+        footer_powered: "Cung cấp bởi ÆON", footer_contrib: "Được duy trì bởi những người dùng như bạn ⚡",
+        premium_label: "Xóa Thương Hiệu", premium_ph: "Nhập ID Đơn hàng Ko-fi / Mã", premium_desc: "Ủng hộ trên Ko-fi để hỗ trợ chúng tôi và ẩn thương hiệu.",
         t_spring: "Xuân", t_summer: "Hạ", t_autumn: "Thu", t_winter: "Đông", t_morning: "Sáng", t_noon: "Trưa", t_evening: "Chiều", t_night: "Tối"
     },
     it: {
@@ -233,6 +267,8 @@ const translations = {
         add_link: "+ Link Personalizzato", social_ph: "nome utente", link_name_ph: "Etichetta", link_url_ph: "https://...",
         save: "SALVA CARTA", update: "AGGIORNA", saving: "Salvataggio...", done: "FATTO!", error: "ERRORE",
         alert_fill_name: "Inserisci un'ETICHETTA!", help_title: "Aiuto", help_1: "Ho nome utente:", help_2: "Ho link completo:",
+        footer_powered: "Basato su ÆON", footer_contrib: "Mantenuto vivo da utenti come te ⚡",
+        premium_label: "Rimuovi Marchio", premium_ph: "Inserisci ID Ordine Ko-fi / Codice", premium_desc: "Dona su Ko-fi per supportarci e nascondere il marchio.",
         t_spring: "Primavera", t_summer: "Estate", t_autumn: "Autunno", t_winter: "Inverno", t_morning: "Mattina", t_noon: "Mezzogiorno", t_evening: "Sera", t_night: "Notte"
     },
     pl: {
@@ -245,6 +281,8 @@ const translations = {
         add_link: "+ Własny Link", social_ph: "nazwa użytkownika", link_name_ph: "Etykieta", link_url_ph: "https://...",
         save: "ZAPISZ KARTĘ", update: "AKTUALIZUJ", saving: "Zapisywanie...", done: "GOTOWE!", error: "BŁĄD",
         alert_fill_name: "Proszę wpisać ETYKIETĘ!", help_title: "Pomoc", help_1: "Mam nazwę użytkownika:", help_2: "Mam pełny link:",
+        footer_powered: "Wspierane przez ÆON", footer_contrib: "Utrzymywane przy życiu przez użytkowników takich jak Ty ⚡",
+        premium_label: "Usuń Markę", premium_ph: "Wpisz ID Zamówienia Ko-fi / Kod", premium_desc: "Wesprzyj nas na Ko-fi, aby usunąć markę.",
         t_spring: "Wiosna", t_summer: "Lato", t_autumn: "Jesień", t_winter: "Zima", t_morning: "Rano", t_noon: "Południe", t_evening: "Wieczór", t_night: "Noc"
     },
     uk: {
@@ -257,6 +295,8 @@ const translations = {
         add_link: "+ Власне Посилання", social_ph: "юзернейм", link_name_ph: "Назва", link_url_ph: "https://...",
         save: "ЗБЕРЕГТИ", update: "ОНОВИТИ", saving: "Збереження...", done: "ГОТОВО!", error: "ПОМИЛКА",
         alert_fill_name: "Введіть НАЗВУ!", help_title: "Допомога", help_1: "Маю юзернейм:", help_2: "Маю посилання:",
+        footer_powered: "Працює на ÆON", footer_contrib: "Підтримується користувачами, як ви ⚡",
+        premium_label: "Прибрати Брендинг", premium_ph: "Введіть ID замовлення Ko-fi / Код", premium_desc: "Пожертвуйте на Ko-fi, щоб підтримати нас і приховати брендинг.",
         t_spring: "Весна", t_summer: "Літо", t_autumn: "Осінь", t_winter: "Зима", t_morning: "Ранок", t_noon: "Полудень", t_evening: "Вечір", t_night: "Ніч"
     },
     nl: {
@@ -269,6 +309,8 @@ const translations = {
         add_link: "+ Eigen Link", social_ph: "gebruikersnaam", link_name_ph: "Label", link_url_ph: "https://...",
         save: "KAART OPSLAAN", update: "UPDATEN", saving: "Opslaan...", done: "KLAAR!", error: "FOUT",
         alert_fill_name: "Voer een LABEL in!", help_title: "Hulp", help_1: "Ik heb gebruikersnaam:", help_2: "Ik heb volledige link:",
+        footer_powered: "Aangedreven door ÆON", footer_contrib: "In leven gehouden door gebruikers zoals jij ⚡",
+        premium_label: "Branding Verwijderen", premium_ph: "Voer Ko-fi Bestelling ID / Code in", premium_desc: "Doneer op Ko-fi om ons te steunen en de branding te verbergen.",
         t_spring: "Lente", t_summer: "Zomer", t_autumn: "Herfst", t_winter: "Winter", t_morning: "Ochtend", t_noon: "Middag", t_evening: "Avond", t_night: "Nacht"
     },
     th: {
@@ -281,6 +323,8 @@ const translations = {
         add_link: "+ ลิงก์ที่กำหนดเอง", social_ph: "ชื่อผู้ใช้", link_name_ph: "ป้ายกำกับ", link_url_ph: "https://...",
         save: "บันทึกการ์ด", update: "อัปเดต", saving: "กำลังบันทึก...", done: "เสร็จสิ้น!", error: "ข้อผิดพลาด",
         alert_fill_name: "กรุณาใส่ป้ายกำกับ!", help_title: "ช่วยเหลือ", help_1: "ฉันมีชื่อผู้ใช้:", help_2: "ฉันมีลิงก์เต็ม:",
+        footer_powered: "ขับเคลื่อนโดย ÆON", footer_contrib: "อยู่ได้ด้วยผู้ใช้เช่นคุณ ⚡",
+        premium_label: "ลบแบรนด์", premium_ph: "ป้อนรหัสคำสั่งซื้อ Ko-fi / รหัส", premium_desc: "บริจาคที่ Ko-fi เพื่อสนับสนุนเราและซ่อนแบรนด์",
         t_spring: "ฤดูใบไม้ผลิ", t_summer: "ฤดูร้อน", t_autumn: "ฤดูใบไม้ร่วง", t_winter: "ฤดูหนาว", t_morning: "เช้า", t_noon: "เที่ยง", t_evening: "เย็น", t_night: "กลางคืน"
     }
 };
@@ -421,7 +465,11 @@ function updateInterfaceText() {
         }
     });
     
-    // 6. Témata
+    // 6. Premium vstup (NOVÉ)
+    const premiumInput = document.getElementById('premiumCode');
+    if(premiumInput) premiumInput.placeholder = t.premium_ph;
+
+    // 7. Témata
     if(typeof renderThemes === 'function') renderThemes();
 }
 
@@ -449,3 +497,6 @@ function applyTheme(themeString) {
         document.body.classList.add('winter'); document.body.classList.add('night');
     }
 }
+
+// --- LINKY NA PODPORU ---
+const KOFI_URL = "https://ko-fi.com/TVE_JMENO";

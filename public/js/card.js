@@ -100,6 +100,27 @@ async function loadProfile() {
             });
         }
 
+        // --- LOGIKA BRANDINGU (NOVÉ) ---
+        // Pokud nemá 'premium_code', zobrazíme patičku
+        const footer = document.querySelector('.aeon-footer');
+        if (footer) footer.remove(); // Vyčistit starou pokud existuje
+
+        if (!data.premium_code) { 
+            const frontFace = document.querySelector('.card-face.front');
+            const footerDiv = document.createElement('div');
+            footerDiv.className = 'aeon-footer';
+            
+            // Texty z config.js (fallback na EN, pokud chybí)
+            const t = translations[currentLang] || translations['en'];
+            
+            footerDiv.innerHTML = `
+                <a href="${KOFI_URL}" target="_blank" class="aeon-powered">${t.footer_powered}</a>
+                <a href="${KOFI_URL}" target="_blank" class="aeon-contrib">${t.footer_contrib}</a>
+            `;
+            
+            frontFace.appendChild(footerDiv);
+        }
+
         if (data.premium) document.getElementById('artifact').classList.add('premium');
 
         generateQR(window.location.href);

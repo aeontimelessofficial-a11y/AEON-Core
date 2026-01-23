@@ -40,8 +40,6 @@ window.onload = async function() {
     
     if(slug) {
         document.getElementById('slug').value = slug;
-        // Text tlačítka se aktualizuje automaticky v updateInterfaceText v config.js, 
-        // ale pro jistotu po načtení dat zavoláme update znovu
         
         try {
             const res = await fetch(`/api/aeon-api?slug=${slug}`);
@@ -62,6 +60,12 @@ window.onload = async function() {
                 if(d.avatar) { 
                     document.getElementById('base64String').value = d.avatar; 
                     document.getElementById('preview').src = d.avatar; 
+                }
+
+                // NOVÉ: Načtení premium kódu
+                if(d.premium_code) {
+                    const premiumInput = document.getElementById('premiumCode');
+                    if(premiumInput) premiumInput.value = d.premium_code;
                 }
                 
                 // Načtení odkazů
@@ -146,9 +150,7 @@ function renderThemes() {
 
 function selectTheme(id) {
     document.getElementById('selectedTheme').value = id;
-    // Překreslení témat zajistí, že se zvýrazní správné tlačítko
     renderThemes();
-    // Aplikace tématu na pozadí editoru (funkce z config.js)
     applyTheme(id); 
 }
 
@@ -162,7 +164,6 @@ function addSocial(type, value = "", isFullUrl = false) {
     div.className = 'active-social-row';
     if(isFullUrl) div.classList.add('mode-url'); 
 
-    // Používáme translations[currentLang] pro placeholdery
     const t = translations[currentLang];
 
     div.innerHTML = `
@@ -287,10 +288,15 @@ async function saveCard() {
 
     const payload = {
         data: {
-            slug: slug, name: document.getElementById('name').value,
-            bio: document.getElementById('bio').value, motto: document.getElementById('motto').value,
+            slug: slug, 
+            name: document.getElementById('name').value,
+            bio: document.getElementById('bio').value, 
+            motto: document.getElementById('motto').value,
             theme: document.getElementById('selectedTheme').value,
-            avatar: document.getElementById('base64String').value, links: links
+            avatar: document.getElementById('base64String').value, 
+            links: links,
+            // NOVÉ: Premium Code pro odstranění brandingu
+            premium_code: document.getElementById('premiumCode').value.trim()
         }
     };
 
