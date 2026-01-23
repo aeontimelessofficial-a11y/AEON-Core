@@ -62,11 +62,32 @@ window.onload = async function() {
                     document.getElementById('preview').src = d.avatar; 
                 }
 
-                // --- ZMĚNA: Zobrazení čísla karty pro Premium ---
-                const slugDisp = document.getElementById('slugDisplay');
-                if(slugDisp && d.mint_number) {
-                    // Zde zobrazujeme číslo karty místo slugu
-                    slugDisp.innerText = d.mint_number;
+                // --- ZMĚNA: LOGIKA PRO ZOBRAZENÍ PREMIUM STAVU ---
+                
+                // 1. Uložíme kód do skrytého inputu (aby se neztratil při uložení)
+                const hiddenInput = document.getElementById('premiumCode');
+                if(hiddenInput) hiddenInput.value = d.premium_code || "";
+
+                // 2. Vizuální změna podle toho, jestli zaplatil
+                const statusBox = document.getElementById('premium-status-box');
+                const statusText = document.getElementById('premium-text');
+                const statusIcon = document.getElementById('premium-icon');
+                const kofiBtn = document.getElementById('kofi-btn');
+
+                if (d.premium === true) {
+                    // STAV: ZAPLACENO (Zelená)
+                    statusBox.style.background = "rgba(0, 255, 0, 0.1)";
+                    statusBox.style.border = "1px solid #00ff00";
+                    
+                    statusIcon.innerHTML = "⚡";
+                    statusText.innerHTML = "PREMIUM ACTIVE";
+                    statusText.style.color = "#00ff00";
+                    
+                    // Skryjeme tlačítko na placení
+                    if(kofiBtn) kofiBtn.style.display = 'none';
+                } else {
+                    // STAV: NEZAPLACENO (Default)
+                    // Zůstává šedé "FREE VERSION" a tlačítko Support je vidět
                 }
                 
                 // Načtení odkazů
@@ -296,8 +317,8 @@ async function saveCard() {
             theme: document.getElementById('selectedTheme').value,
             avatar: document.getElementById('base64String').value, 
             links: links,
-            // Bezpečné načtení premium_code (pokud pole neexistuje, pošle prázdný řetězec)
-            premium_code: document.getElementById('premiumCode') ? document.getElementById('premiumCode').value.trim() : ""
+            // ZMĚNA: Čteme ze SKRYTÉHO inputu, kam uživatel nemůže psát
+            premium_code: document.getElementById('premiumCode') ? document.getElementById('premiumCode').value : ""
         }
     };
 
