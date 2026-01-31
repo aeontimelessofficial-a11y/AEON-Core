@@ -3,23 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>ÆON | Digital Identity</title>
     
-    <title>ÆON | Tvoje Digitální Identita</title>
-    <meta name="description" content="Jeden odkaz. Celá tvoje identita. Propoj své sociální sítě, projekty a kontakty do jedné elegantní, digitální vizitky.">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/themes.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/layouts.css">
     <link rel="stylesheet" href="css/landing.css">
-
 </head>
-<body class="landing-page layout-center" data-theme="winter-night">
+<body class="landing-page layout-center">
 
     <div class="fixed-background">
         <div class="orb orb-1"></div>
@@ -30,87 +25,75 @@
     </div>
 
     <section class="hero-section">
-        <div style="font-weight: 900; letter-spacing: 2px; margin-bottom: 20px; opacity: 0.7;">ÆON PROJECT</div>
         
+        <div style="font-size: 0.9rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; opacity: 0.6;">
+            Project ÆON
+        </div>
+
         <h1 class="mega-title">
-            Jeden Odkaz.<br>
-            Celá Identita.
+            Jeden odkaz.<br>
+            Celá identita.
         </h1>
         
         <p class="hero-subtitle">
-            Zapomeň na změť odkazů. Propoj své sociální sítě, hudbu, projekty a kontakty do jedné elegantní, futuristické digitální vizitky.
+            Tvoje vizitka, která žije. Mění se s denní dobou, přizpůsobí se tvému stylu a sjednotí celý tvůj digitální svět do jednoho bodu.
         </p>
 
-        <div class="cta-group">
-            <a href="/admin.html" class="cta-btn cta-primary">
-                <i class="fa-solid fa-bolt"></i> VYTVOŘIT MOJE ÆON
-            </a>
-        </div>
-    </section>
+        <a href="admin.html" class="cta-btn">
+            Vytvořit identitu
+        </a>
 
-    <section class="demo-section">
-        <h2 style="font-size: 1.5rem; margin-bottom: 1rem; text-align: center;">Takhle může vypadat ta tvoje.</h2>
-        <p style="opacity: 0.7; margin-bottom: 2rem; text-align: center;">Mění se s tebou. Barvy, obsah, vše pod kontrolou.</p>
-        
         <div class="card-showcase-wrapper">
-            <main class="glass-card demo-card">
+            <div class="demo-card-container glass-card">
                 <div class="profile-header" style="margin-top: 30px;">
                     <div class="avatar-container">
-                        <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix&backgroundColor=transparent" alt="Demo Avatar" class="avatar">
+                        <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix&backgroundColor=transparent" class="avatar">
                     </div>
-                    <h1 class="profile-name" style="font-size: 1.8rem;">Alex Nexus</h1>
-                    <p class="profile-bio">Digital Creator & Futurist ⚡</p>
+                    <h1 class="profile-name">Alex Nexus</h1>
+                    <p class="profile-bio">Digital Artist & Futurist ⚡</p>
                 </div>
 
-                <div class="links-container" style="gap: 10px;">
-                    <a href="#" class="link-btn" style="pointer-events: none;">
-                        <i class="fa-brands fa-instagram"></i> Instagram
+                <div class="links-container">
+                    <a href="#" class="link-btn social-icon-btn" style="width:100%; justify-content: flex-start; padding: 16px; gap: 15px;">
+                        <i class="fa-brands fa-instagram" style="font-size: 1.2rem;"></i> @alex.design
                     </a>
-                    <a href="#" class="link-btn" style="pointer-events: none;">
-                        <i class="fa-brands fa-spotify"></i> Moje Hudba
+                    <a href="#" class="link-btn social-icon-btn" style="width:100%; justify-content: flex-start; padding: 16px; gap: 15px;">
+                        <i class="fa-brands fa-spotify" style="font-size: 1.2rem;"></i> Latest Release
                     </a>
-                    <a href="#" class="link-btn social-icon-btn" style="width:100%; justify-content: flex-start; padding: 16px; gap:12px; pointer-events: none;">
-                        <i class="fa-brands fa-x-twitter" style="font-size: 1.2rem;"></i> @alex_nexus_x
+                    <a href="#" class="link-btn">
+                        <i class="fa-solid fa-briefcase"></i> Moje Portfolio
                     </a>
                 </div>
 
-                <div style="margin-top: auto; padding-top: 20px; text-align: center; opacity: 0.6; font-size: 0.8rem;">
-                    <span style="color: var(--accent);">⚡ PREMIUM ACTIVE</span>
+                <div style="margin-top: auto; padding-top: 20px; opacity: 0.7; font-size: 0.8rem; text-align: center;">
+                    <i class="fa-solid fa-bolt" style="color: var(--accent);"></i> PREMIUM MEMBER
                 </div>
-            </main>
+            </div>
         </div>
+
     </section>
 
     <section class="support-section">
-        <h2 class="support-title">Podpoř Nezávislý Vývoj</h2>
-        <p class="support-text">
-            ÆON je "one-man show". Žádní investoři, žádné sledování dat, žádné skryté poplatky. 
-            Vzniká po večerech s láskou k designu a otevřenému internetu.
-        </p>
-        <p class="support-text" style="margin-bottom: 3rem;">
-            Pokud se ti líbí vize jednoduché, krásné digitální identity, zvaž prosím symbolickou podporu na "kafe". Udrží to servery v chodu a mě u klávesnice. Děkuji! ❤️
+        <h2 style="font-size: 1.8rem; margin-bottom: 15px;">Podpoř nezávislý vývoj</h2>
+        <p style="max-width: 600px; margin: 0 auto 30px auto; line-height: 1.6; opacity: 0.8;">
+            Tento projekt vzniká z čisté vášně pro design a otevřený internet. Žádné reklamy, žádné sledování, žádní investoři. 
+            Pokud se ti líbí vize jednoduché a krásné digitální stopy, pozvi mě na virtuální kafe. Udrží to servery v chodu.
         </p>
         
-        <a href="https://ko-fi.com/aeonid" target="_blank" class="kofi-cta-large">
-            <i class="fa-solid fa-mug-hot"></i> Poslat Kafe na Ko-fi
+        <a href="https://ko-fi.com/TVOJE_KOFI_JMENO" target="_blank" class="kofi-btn-gold">
+            <i class="fa-solid fa-mug-hot"></i> Podpořit na Ko-fi
         </a>
     </section>
 
-    <footer class="landing-footer">
-        © 2024 ÆON Project. Built for the future.
+    <footer style="padding: 20px; text-align: center; opacity: 0.4; font-size: 12px;">
+        © 2024 ÆON Project
     </footer>
 
     <script src="js/landing.js"></script>
 
     <script>
         const params = new URLSearchParams(window.location.search);
-        const slug = params.get('slug');
-        if (slug) {
-            // Pokud je v URL slug, přesměrujeme na zobrazení karty
-            // Toto je dočasné řešení, v budoucnu to bude řešit router
-            window.location.href = `/card.html?slug=${slug}`;
-        }
+        if (params.get('slug')) window.location.href = `/card.html?slug=${params.get('slug')}`;
     </script>
-
 </body>
 </html>

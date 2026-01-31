@@ -1,174 +1,116 @@
 /* --- landing.css --- */
 
-/* Dědíme proměnné z base.css a themes.css */
-
+/* Plynulý přechod, pokud by se změnila denní doba během prohlížení */
 body.landing-page {
+    transition: background 2s ease, color 1s ease;
     overflow-x: hidden;
-    /* Pomalý přechod při změně tématu pozadí */
-    transition: background 5s ease, color 1s ease;
 }
 
-/* --- HERO SEKCE (Ten velký úvod) --- */
+/* --- HERO SEKCE --- */
 .hero-section {
-    min-height: 90vh; /* Skoro přes celou obrazovku na mobilu */
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 2rem;
+    padding: 20px;
     position: relative;
     z-index: 2;
 }
 
-/* Interaktivní obří nadpis */
+/* Obří nadpis - malé písmena, jen první velké */
 .mega-title {
-    font-size: clamp(3rem, 10vw, 6rem); /* Obří na PC, akorát na mobilu */
+    font-size: clamp(3.5rem, 12vw, 7rem);
     font-weight: 900;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    margin-bottom: 1rem;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin-bottom: 20px;
+    color: var(--text-main);
     
-    /* Gradient text, který se pomalu mění */
-    background: linear-gradient(to right, var(--accent), #fff, var(--accent));
-    background-size: 200% auto;
+    /* Jemný gradient textu */
+    background: linear-gradient(to right bottom, var(--text-main) 30%, var(--accent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: shine 10s linear infinite;
-}
-
-@keyframes shine {
-    to { background-position: 200% center; }
 }
 
 .hero-subtitle {
-    font-size: clamp(1.1rem, 3vw, 1.5rem);
-    max-width: 600px;
-    margin: 0 auto 2.5rem auto;
-    opacity: 0.9;
-    font-weight: 300;
+    font-size: clamp(1.1rem, 4vw, 1.4rem);
+    max-width: 500px;
+    margin: 0 auto 40px auto;
+    opacity: 0.8;
+    font-weight: 400;
+    line-height: 1.6;
 }
 
-/* --- CTA Tlačítka --- */
-.cta-group {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.cta-btn {
-    padding: 16px 32px;
-    border-radius: 50px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    font-size: 1.1rem;
-}
-
-.cta-primary {
-    background: var(--accent);
-    color: var(--bg-main);
-    box-shadow: 0 10px 30px -10px var(--accent);
-}
-
-.cta-primary:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 20px 40px -15px var(--accent);
-}
-
-/* --- DEMO SEKCE (Ukázka karty) --- */
-.demo-section {
-    padding: 4rem 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    z-index: 2;
-}
-
-/* Kontejner, který drží ukázkovou kartu a dává jí 3D efekt */
+/* --- DEMO KARTA (Realistická) --- */
 .card-showcase-wrapper {
-    perspective: 1000px;
-    margin-top: 2rem;
+    perspective: 1200px; /* Hloubka pro 3D efekt */
+    margin: 40px 0 80px 0;
 }
 
-/* Samotná ukázková karta - zmenšená verze reálné karty */
-.demo-card {
-    /* Používáme styly z components.css, jen je trochu upravíme */
-    width: 320px; /* Fixní šířka pro demo */
-    transform: rotateX(5deg) rotateY(-5deg); /* Mírný 3D náklon */
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+/* Toto obaluje kartu a dává jí náklon */
+.demo-card-container {
+    width: 340px; /* Fixní šířka jako mobil */
+    transform: rotateY(-10deg) rotateX(5deg);
     transition: transform 0.5s ease;
+    box-shadow: 20px 20px 60px rgba(0,0,0,0.3);
+    border-radius: 24px;
+    
+    /* Animace levitace */
     animation: floatCard 6s ease-in-out infinite;
-
-    /* Aby demo vypadalo dobře i bez obsahu */
-    min-height: 450px; 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
 }
 
-.demo-card:hover {
-    transform: rotateX(0deg) rotateY(0deg) scale(1.02); /* Narovná se při najetí */
+/* Při najetí se karta narovná */
+.demo-card-container:hover {
+    transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+    z-index: 10;
 }
 
 @keyframes floatCard {
-    0%, 100% { transform: translateY(0) rotateX(5deg) rotateY(-5deg); }
-    50% { transform: translateY(-15px) rotateX(7deg) rotateY(-3deg); }
+    0%, 100% { transform: translateY(0) rotateY(-10deg) rotateX(5deg); }
+    50% { transform: translateY(-20px) rotateY(-5deg) rotateX(2deg); }
+}
+
+/* Uvnitř dema vypneme pointer-events na odkazy, aby se na ně neklikalo omylem */
+.demo-card-container a {
+    pointer-events: none;
 }
 
 /* --- SUPPORT SEKCE --- */
 .support-section {
-    padding: 5rem 2rem;
+    padding: 80px 20px;
+    background: rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+    width: 100%;
     text-align: center;
-    position: relative;
-    z-index: 2;
-    /* Glassmorphism panel pro tuto sekci */
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: 4rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
 }
 
-.support-title {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: var(--accent);
+.cta-btn {
+    display: inline-block;
+    padding: 18px 40px;
+    background: var(--text-main);
+    color: var(--bg-start); /* Kontrastní barva k textu */
+    border-radius: 50px;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: transform 0.2s;
+}
+.cta-btn:hover {
+    transform: scale(1.05);
 }
 
-.support-text {
-    max-width: 500px;
-    margin: 0 auto 2rem auto;
-    line-height: 1.6;
-    opacity: 0.8;
-}
-
-.kofi-cta-large {
+.kofi-btn-gold {
+    background: #FFD700;
+    color: #000;
+    font-weight: 800;
+    padding: 15px 30px;
+    border-radius: 12px;
+    text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    background: #FFD700; /* Ko-fi Gold */
-    color: #000;
-    padding: 15px 30px;
-    border-radius: 12px;
-    font-weight: 800;
-    text-decoration: none;
-    font-size: 1.2rem;
-    transition: transform 0.2s ease;
-}
-
-.kofi-cta-large:hover {
-    transform: scale(1.05) rotate(-2deg);
-}
-
-/* --- FOOTER --- */
-.landing-footer {
-    padding: 2rem;
-    text-align: center;
-    opacity: 0.6;
-    font-size: 0.9rem;
-    position: relative;
-    z-index: 2;
+    margin-top: 20px;
 }
