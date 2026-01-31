@@ -6,6 +6,7 @@ window.onload = function() {
     setRealTimeTheme();
     setInterval(setRealTimeTheme, 60000);
     
+    // Parallax (jemný pohyb pozadí)
     document.addEventListener('mousemove', (e) => {
         const x = (window.innerWidth - e.pageX * 2) / 100;
         const y = (window.innerHeight - e.pageY * 2) / 100;
@@ -51,17 +52,24 @@ function initDemoCard() {
         });
     }
 
-    // Flip
+    // Flip logic
     if (card) {
         card.onclick = function(e) {
+            // Ignorovat, pokud se kliklo na odkaz
             if (e.target.closest('a') || e.target.closest('button')) return;
-            // Srovnání výšky
+
+            // Srovnání výšky (pojistka)
             const front = this.querySelector('.front');
             const back = this.querySelector('.back');
-            if(front && back) back.style.height = front.offsetHeight + 'px';
+            if(front && back) {
+                back.style.height = front.offsetHeight + 'px';
+            }
             
+            // Samotné otočení
             this.classList.toggle('is-flipped');
         };
+
+        // Srovnat výšku po načtení
         setTimeout(() => {
             const f = card.querySelector('.front');
             const b = card.querySelector('.back');

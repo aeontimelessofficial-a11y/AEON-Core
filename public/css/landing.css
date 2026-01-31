@@ -1,17 +1,23 @@
-/* --- landing.css (HARD LAYOUT FIX) --- */
+/* --- landing.css (CLEAN & STATIC) --- */
 
-body.landing-page {
-    transition: background 1s ease, color 1s ease;
-    overflow-x: hidden;
+html, body {
     margin: 0;
     padding: 0;
-    /* Zajistí, že stránka půjde scrollovat, pokud je obsah dlouhý */
+    width: 100%;
+    /* Povolíme scrollování, pokud se obsah nevejde */
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    overflow-x: hidden; 
+    font-family: 'Inter', sans-serif;
 }
 
-/* --- POZADÍ --- */
+body.landing-page {
+    /* Rozložení stránky: Obsah nahoře, patička dole */
+    display: flex;
+    flex-direction: column;
+    color: white; /* Default text color */
+}
+
+/* --- POZADÍ (Statické, jen jemný pohyb koulí) --- */
 .fixed-background {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
 }
@@ -19,10 +25,10 @@ body.landing-page {
     position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5;
     animation: floatOrb 20s infinite ease-in-out alternate;
 }
-.orb-1 { top: 0; left: 0; width: 50vw; height: 50vw; background: var(--o1); }
-.orb-2 { top: 0; right: 0; width: 40vw; height: 40vw; background: var(--o2); }
-.orb-3 { bottom: 0; right: 0; width: 40vw; height: 40vw; background: var(--o3); }
-.orb-4 { bottom: 0; left: 0; width: 50vw; height: 50vw; background: var(--o4); }
+.orb-1 { top: 0; left: 0; width: 50vw; height: 50vw; background: var(--o1, #0984e3); }
+.orb-2 { top: 0; right: 0; width: 40vw; height: 40vw; background: var(--o2, #00cec9); }
+.orb-3 { bottom: 0; right: 0; width: 40vw; height: 40vw; background: var(--o3, #fab1a0); }
+.orb-4 { bottom: 0; left: 0; width: 50vw; height: 50vw; background: var(--o4, #ffffff); }
 .noise-overlay {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: url('https://grainy-gradients.vercel.app/noise.svg'); opacity: 0.05;
@@ -33,15 +39,29 @@ body.landing-page {
     100% { transform: translate(30px, -30px) scale(1.1); }
 }
 
+/* --- HLAVNÍ KONTEJNER (Obsah stránky) --- */
+/* Flex: 1 zajistí, že toto zabere veškeré volné místo a odtlačí patičku dolů */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding-top: 60px; /* Odstup od horního okraje */
+    padding-bottom: 60px; /* Odstup od patičky */
+}
+
 /* --- BLOK 1: TEXTY --- */
 .hero-text-block {
     text-align: center;
-    padding: 100px 20px 40px 20px;
+    padding: 0 20px;
+    margin-bottom: 50px; /* Mezera mezi textem a kartou */
     z-index: 2;
+    max-width: 800px;
 }
 
 .mega-title {
-    font-size: clamp(3.5rem, 12vw, 7.5rem);
+    font-size: clamp(3rem, 10vw, 6rem);
     font-weight: 900;
     line-height: 1.1;
     margin-bottom: 20px;
@@ -60,61 +80,59 @@ body.landing-page {
 .hero-subtitle {
     font-size: clamp(1.1rem, 4vw, 1.4rem);
     max-width: 550px;
-    margin: 0 auto 40px auto;
+    margin: 0 auto 30px auto;
     font-weight: 500;
     opacity: 0.8;
     color: var(--text-main);
 }
 
 .cta-btn {
-    display: inline-block; padding: 18px 40px; background: var(--text-main); color: var(--bg-start);
+    display: inline-block; padding: 16px 32px; background: var(--text-main); color: var(--bg-start);
     border-radius: 50px; font-weight: 800; text-decoration: none; font-size: 1.1rem;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.2s;
 }
 .cta-btn:hover { transform: scale(1.05); }
 
 
-/* --- BLOK 2: KARTA (IZOLOVANÝ PROSTOR) --- */
+/* --- BLOK 2: KARTA --- */
 .card-display-block {
     width: 100%;
-    /* Tady je ten fix: Vyhradíme pevný prostor na výšku. 
-       Karta má cca 450-500px, dáváme 600px rezervu. */
-    height: 600px; 
-    
     display: flex;
     justify-content: center;
-    align-items: center; /* Karta bude uprostřed tohoto bloku */
-    
     position: relative;
     z-index: 10;
+    /* Žádná fixní výška. Karta si vezme místa kolik potřebuje. */
 }
 
 .demo-scene {
     width: clamp(280px, 90vw, 360px);
     position: relative;
-    transform-style: preserve-3d;
-    /* Výchozí stav: rovně */
-    transform: rotateY(0deg); 
-    transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+    perspective: 1000px; /* Nutné pro 3D efekt otočení */
+    margin: 0 auto;
 }
 
 .demo-scene .card { 
-    width: 100%; height: auto; position: relative; cursor: pointer; 
+    width: 100%; 
+    height: auto; 
+    position: relative; 
+    cursor: pointer; 
     transform-style: preserve-3d;
-    /* Jemné vznášení, aby to nebylo mrtvé */
-    animation: simpleFloat 6s ease-in-out infinite;
+    transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+    /* ŽÁDNÁ ANIMACE POHYBU - KARTA STOJÍ */
 }
-@keyframes simpleFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-.demo-scene:hover .card { animation-play-state: paused; }
+.demo-scene .card.is-flipped { 
+    transform: rotateY(180deg); 
+}
 
-.demo-scene .card.is-flipped { transform: rotateY(180deg); }
-
+/* Zadní strana */
 .demo-scene .card-face.back {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     -webkit-backface-visibility: hidden; backface-visibility: hidden;
     background: var(--card-glass);
     display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+    /* Oprava otáčení: Zadní strana je otočená o 180deg, aby při otočení karty byla správně */
+    transform: rotateY(180deg); 
 }
 
 .demo-scene a { pointer-events: auto; cursor: pointer; }
@@ -122,16 +140,13 @@ body.landing-page {
 
 /* --- BLOK 3: PATIČKA --- */
 .simple-footer {
-    padding: 40px 20px;
+    padding: 30px 20px;
     text-align: center;
     color: var(--text-main);
     opacity: 0.6;
     font-size: 13px;
-    
-    /* Ujistíme se, že je až dole */
-    margin-top: auto; 
-    position: relative;
-    z-index: 5;
+    background: rgba(0,0,0,0.1); /* Jemné podbarvení pro oddělení */
+    margin-top: auto; /* Pojistka */
 }
 
 /* ADMIN PANEL */
