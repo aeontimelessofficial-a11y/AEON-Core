@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>ÆON Card</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layouts.css">
+
+    <script src="js/qrcode.min.js"></script>
+</head>
+<body class="layout-center">
+
+    <div class="fixed-background">
+        <div class="orb orb-1"></div><div class="orb orb-2"></div>
+        <div class="orb orb-3"></div><div class="orb orb-4"></div>
+        <div class="noise-overlay"></div>
+    </div>
+
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="scene">
+        <div class="card glass-card" id="artifact">
+            
+            <div class="card-face front">
+                
+                <div class="profile-header">
+                    <div class="avatar-container">
+                        <img src="" class="avatar" style="display:none;">
+                    </div>
+                    <h1 class="profile-name"></h1>
+                    <p class="profile-bio bio"></p>
+                    <p class="motto" style="font-size: 0.8em; opacity: 0.7; margin-top: 5px;"></p>
+                </div>
+
+                <div class="links">
+                    </div>
+                
+                <div class="mint-number"></div>
+
+            </div>
+
+            <div class="card-face back">
+                <h2>Scan & Save</h2>
+                <div id="qrcode" style="background: white; padding: 10px; border-radius: 12px; margin: 20px auto;"></div>
+                <p style="opacity: 0.7; font-size: 0.9rem; margin-top: 20px;">aeon-id.vercel.app</p>
+                <div class="brand-back">ÆON</div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        // --- LOGIKA PROHLÍŽEČE KARTY ---
+        
+        const card = document.getElementById('artifact');
+        const scene = document.querySelector('.scene');
+        const loader = document.getElementById('loader');
+
+        window.onload = async function() {
+            // Zkusíme načíst data podle URL
+            await loadProfile();
+        };
+
+        async function loadProfile() {
+            const params = new URLSearchParams(window.location.search);
+            const userSlug = params.get('slug');
+
+            // Pokud není slug, vrátíme na Landing Page
+            if (!userSlug) {
+                window.location.href = '/';
+                return;
+            }
+
+            try {
+                // Volání API
+                const response = await fetch(`/api/aeon-api?slug=${userSlug}`);
+                if (!response.ok) throw new Error("Card not found");
+                
+                const data = await response.json();
+                
+                // 1. Aplikace tématu
+                // Funkce applyTheme je definovaná v tvém config.js, 
+                // pokud ne, nastavíme atributy ručně:
+                if (typeof applyTheme === 'function') {
+                    applyTheme(data.theme);
+                } else {
+                    document.body.className = `layout-center ${data.theme || 'winter-night'}`;
+                }
+
+                // 2. Naplnění textů
+                document.querySelector('.profile-name').innerText = data.name;
+                document.querySelector('.bio').innerText = data.bio;
+                if(data.motto) document.querySelector('.motto').innerText = data.motto;
+                document.title = `${data.name} | ÆON`;
+
+                // 3. Avatar
+                if (data.avatar) {
+                    const av = document.querySelector('.avatar');
+                    av.src = data.avatar;
+                    av.style.display = 'block';
+                }
+
+                // 4. Mint Number
+                document.querySelector('.mint-number').innerText = `MINT #${data.mint_number || "---"}`;
+
+                // 5. Generování odkazů
+                const linksContainer = document.querySelector('.links');
+                linksContainer.innerHTML = '';
+                
+                // Vytvoříme mřížku pro sociální sítě
+                const socialGrid = document.createElement('div');
+                socialGrid.className = 'social-links-grid';
+                linksContainer.appendChild(socialGrid);
+
+                if (data.links && Array.isArray(data.links)) {
+                    data.links.forEach(link => {
+                        if(!link.url) return;
+                        
+                        // Detekce typu odkazu (Instagram, X, atd.)
+                        // Používáme jednoduchou detekci podle URL
+                        let iconClass = null;
+                        const u = link.url.toLowerCase();
+                        
+                        if(u.includes('instagram')) iconClass = 'fa-brands fa-instagram';
+                        else if(u.includes('twitter') || u.includes('x.com')) iconClass = 'fa-brands fa-x-twitter';
+                        else if(u.includes('linkedin')) iconClass = 'fa-brands fa-linkedin-in';
+                        else if(u.includes('facebook')) iconClass = 'fa-brands fa-facebook';
+                        else if(u.includes('spotify')) iconClass = 'fa-brands fa-spotify';
+                        else if(u.includes('github')) iconClass = 'fa-brands fa-github';
+                        else if(u.includes('youtube')) iconClass = 'fa-brands fa-youtube';
+
+                        if (iconClass) {
+                            // Malá ikona do mřížky
+                            const a = document.createElement('a');
+                            a.href = link.url;
+                            a.className = 'social-item';
+                            a.target = "_blank";
+                            a.innerHTML = `<i class="${iconClass}"></i>`;
+                            // Zabrání otočení karty při kliku
+                            a.addEventListener('click', (e) => e.stopPropagation());
+                            socialGrid.appendChild(a);
+                        } else {
+                            // Velké tlačítko pod mřížkou
+                            const btn = document.createElement('a');
+                            btn.href = link.url;
+                            btn.className = 'link-btn';
+                            btn.innerHTML = `<i class="fa-solid fa-link"></i> ${link.label || 'Link'}`;
+                            btn.target = "_blank";
+                            btn.addEventListener('click', (e) => e.stopPropagation());
+                            linksContainer.appendChild(btn);
+                        }
+                    });
+                }
+
+                // 6. Logika Patičky (Premium)
+                // Pokud uživatel NEMÁ zaplaceno, přidáme patičku s reklamou
+                if (!data.premium) { 
+                    const frontFace = document.querySelector('.card-face.front');
+                    const footerDiv = document.createElement('div');
+                    footerDiv.className = 'aeon-footer';
+                    footerDiv.innerHTML = `<span class="aeon-powered">Powered by ÆON</span>`;
+                    // Kliknutí na footer jde na hlavní stránku
+                    footerDiv.onclick = (e) => { e.stopPropagation(); window.open('/', '_blank'); };
+                    frontFace.appendChild(footerDiv);
+                } else {
+                    // Pokud MÁ zaplaceno, přidáme speciální třídu pro efekty (volitelné)
+                    card.classList.add('premium-glow');
+                }
+
+                // 7. QR Kód
+                const qrContainer = document.getElementById('qrcode');
+                if(qrContainer && typeof QRCode !== 'undefined') {
+                    qrContainer.innerHTML = "";
+                    new QRCode(qrContainer, {
+                        text: window.location.href,
+                        width: 120, height: 120,
+                        colorDark : "#000000", colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.M
+                    });
+                }
+
+                // Odkrytí karty
+                loader.style.opacity = '0';
+                setTimeout(() => { 
+                    loader.style.display = 'none'; 
+                    scene.style.opacity = '1'; 
+                }, 300);
+
+            } catch (error) {
+                console.error(error);
+                loader.innerHTML = `<div style='color:white; text-align:center'>Card Not Found<br><a href="/" style="color:var(--accent)">Go Home</a></div>`;
+            }
+        }
+
+        // Otáčení karty
+        card.addEventListener('click', function(e) {
+            // Ignorovat, pokud se kliklo na odkaz
+            if (e.target.closest('a')) return;
+            
+            this.classList.toggle('is-flipped');
+            
+            // Fix výšky
+            const front = this.querySelector('.front');
+            const back = this.querySelector('.back');
+            if(front && back) back.style.height = front.offsetHeight + 'px';
+        });
+
+    </script>
+</body>
+</html>
