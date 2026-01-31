@@ -6,10 +6,9 @@ body.landing-page {
 }
 
 /* --- POZADÍ (ORBS ANIMACE) --- */
-/* Toto zajistí, že se pozadí hýbe i když nic neděláš */
 .fixed-background .orb {
     animation: floatOrb 20s infinite ease-in-out alternate;
-    opacity: 0.6; /* Trochu je zprůhledníme, aby nerušily text */
+    opacity: 0.5; /* Jemné, aby vynikl text */
 }
 
 .orb-1 { animation-delay: 0s; transform-origin: top left; }
@@ -19,9 +18,7 @@ body.landing-page {
 
 @keyframes floatOrb {
     0% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(30px, -50px) scale(1.1); }
-    66% { transform: translate(-20px, 20px) scale(0.9); }
-    100% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(30px, -30px) scale(1.1); }
 }
 
 /* --- HERO SEKCE --- */
@@ -37,112 +34,138 @@ body.landing-page {
     z-index: 2;
 }
 
-/* --- MEGA NADPIS (Kontrastní verze) --- */
+/* --- MEGA NADPIS (Liquid Gradient + Stín) --- */
 .mega-title {
-    font-size: clamp(3.5rem, 12vw, 7rem);
+    font-size: clamp(3.5rem, 12vw, 7.5rem);
     font-weight: 900;
-    line-height: 1;
+    line-height: 1.1;
     letter-spacing: -0.04em;
     margin-bottom: 20px;
-    color: #ffffff; /* Vždy bílá pro maximální kontrast */
     
-    /* Silný stín, aby to bylo čitelné na jakémkoliv pozadí */
-    text-shadow: 
-        0 10px 30px rgba(0,0,0,0.5),
-        0 0 80px rgba(0,0,0,0.8); /* Záře za textem */
+    /* Barvy bereme z tématu, aby to ladilo */
+    background-image: linear-gradient(
+        120deg,
+        var(--text-main) 0%,
+        var(--accent) 25%,
+        var(--o1) 50%,
+        var(--o2) 75%,
+        var(--text-main) 100%
+    );
+    background-size: 200% auto;
     
-    position: relative;
+    /* Oříznutí pozadí do textu */
+    -webkit-background-clip: text;
+    background-clip: text;
+    
+    /* Zprůhlednění textu */
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    
+    /* Animace barev */
+    animation: shineText 8s linear infinite;
+
+    /* Stín pro čitelnost na světlém pozadí */
+    filter: drop-shadow(0 4px 15px rgba(0,0,0,0.3));
+}
+
+@keyframes shineText {
+    to { background-position: 200% center; }
 }
 
 .hero-subtitle {
     font-size: clamp(1.1rem, 4vw, 1.4rem);
-    max-width: 500px;
+    max-width: 550px;
     margin: 0 auto 40px auto;
     font-weight: 500;
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.9);
-    text-shadow: 0 2px 10px rgba(0,0,0,0.8); /* Stín i pro podnadpis */
+    color: var(--text-main); 
+    opacity: 0.8;
 }
 
-/* --- DEMO KARTA (Oprava rozbité struktury) --- */
+/* --- DEMO KARTA (Upravená: Méně 3D, Více místa) --- */
 .card-showcase-wrapper {
     perspective: 1000px;
-    margin: 60px 0 100px 0;
+    /* Důležité: Velký spodní okraj, aby karta nelezla do patičky */
+    margin: 60px 0 150px 0; 
     z-index: 10;
+    position: relative;
 }
 
-/* Zde simulujeme .scene třídu z reálné karty */
 .demo-scene {
-    width: 320px; /* Standardní šířka karty */
-    height: auto;
+    width: 320px;
     position: relative;
-    transform: rotateY(-10deg) rotateX(5deg); /* Mírný 3D náklon pro efekt */
+    /* Decentní náklon */
+    transform: rotateY(-5deg) rotateX(2deg); 
     transition: transform 0.5s ease;
     animation: hoverCard 6s ease-in-out infinite;
     transform-style: preserve-3d;
 }
 
+/* Při najetí se téměř narovná */
 .demo-scene:hover {
-    transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+    transform: rotateY(0deg) rotateX(0deg) scale(1.01);
 }
 
 @keyframes hoverCard {
-    0%, 100% { transform: translateY(0) rotateY(-10deg) rotateX(5deg); }
-    50% { transform: translateY(-15px) rotateY(-5deg) rotateX(2deg); }
+    /* Jemná levitace */
+    0%, 100% { transform: translateY(0) rotateY(-5deg) rotateX(2deg); }
+    50% { transform: translateY(-10px) rotateY(-2deg) rotateX(0deg); }
 }
 
-/* Ujistíme se, že demo karta vypadá jako reálná */
-.demo-scene .card {
-    position: relative;
-    width: 100%;
-    transform-style: preserve-3d;
-    /* Vypneme flipování v demu, chceme vidět předek */
+.demo-scene .card { 
+    width: 100%; 
     transform: rotateY(0deg); 
+    cursor: default; 
 }
 
-/* Vypneme klikání na odkazy v demu */
-.demo-scene a {
-    pointer-events: none;
+/* Povolení klikání na odkazy */
+.demo-scene a { 
+    pointer-events: auto; 
+    cursor: pointer;
 }
 
 /* --- TLAČÍTKA --- */
 .cta-btn {
     display: inline-block;
     padding: 18px 40px;
-    background: #ffffff;
-    color: #000000;
+    background: var(--text-main); 
+    color: var(--bg-start);
     border-radius: 50px;
     font-weight: 800;
     text-decoration: none;
     font-size: 1.1rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    transition: transform 0.2s;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 .cta-btn:hover {
     transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
 }
 
 .kofi-btn-gold {
     background: #FFD700;
     color: #000;
     font-weight: 800;
-    padding: 15px 30px;
+    padding: 16px 32px;
     border-radius: 12px;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    margin-top: 20px;
-    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+    margin-top: 25px;
+    transition: transform 0.2s;
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2);
 }
+.kofi-btn-gold:hover { transform: scale(1.05); }
 
-/* Support sekce */
+/* --- SUPPORT SEKCE --- */
 .support-section {
-    padding: 80px 20px;
-    background: rgba(0,0,0,0.4); /* Tmavší pozadí pro čitelnost */
-    backdrop-filter: blur(10px);
+    padding: 100px 20px;
+    background: var(--card-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     width: 100%;
     text-align: center;
     border-top: 1px solid rgba(255,255,255,0.1);
-    color: white;
+    color: var(--text-main);
 }
