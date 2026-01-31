@@ -1,88 +1,63 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>ÆON | Digital Identity</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ÆON | Identity</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/themes.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/layouts.css">
-    <link rel="stylesheet" href="css/landing.css">
-
-    <script src="js/qrcode.min.js"></script>
 </head>
-<body class="landing-page layout-center">
+<body>
+
+    <div class="lang-switcher">
+        <div id="lang-scroll-wrapper">
+            </div>
+    </div>
 
     <div class="fixed-background">
         <div class="orb orb-1"></div><div class="orb orb-2"></div>
         <div class="orb orb-3"></div><div class="orb orb-4"></div>
-        <div class="noise-overlay"></div>
     </div>
 
-    <section class="hero-section">
-        <div style="font-size: 0.9rem; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 15px; opacity: 0.6; font-weight: 700;">Project ÆON</div>
-        <h1 class="mega-title">Jeden odkaz.<br>Celá identita.</h1>
-        <p class="hero-subtitle">Tvoje vizitka, která žije. Mění se s denní dobou a sjednocuje tvůj digitální svět.</p>
-        <a href="admin.html" class="cta-btn">Vytvořit identitu</a>
+    <div id="loader" class="loader-container">
+        <div class="spinner"></div>
+    </div>
 
-        <div class="card-showcase-wrapper">
-            <div class="demo-scene">
-                <div class="card glass-card" id="demo-card"> 
-                    
-                    <div class="card-face front">
-                        <div class="profile-header">
-                            <div class="avatar-container">
-                                <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix&backgroundColor=transparent" class="avatar" style="display:block;">
-                            </div>
-                            <h1 class="profile-name">Alex Nexus</h1>
-                            <p class="profile-bio bio">Digital Artist & Futurist ⚡</p>
-                        </div>
-                        <div class="links">
-                            <div class="social-links-grid">
-                                <a href="https://instagram.com" target="_blank" class="social-item"><i class="fa-brands fa-instagram"></i></a>
-                                <a href="https://x.com" target="_blank" class="social-item"><i class="fa-brands fa-x-twitter"></i></a>
-                                <a href="https://linkedin.com" target="_blank" class="social-item"><i class="fa-brands fa-linkedin-in"></i></a>
-                            </div>
-                            <a href="https://behance.net" target="_blank" class="link-btn"><i class="fa-solid fa-briefcase"></i> Moje Portfolio</a>
-                            <a href="mailto:hello@example.com" class="link-btn"><i class="fa-solid fa-envelope"></i> Napsat Email</a>
-                        </div>
-                        <div class="aeon-footer"><span class="aeon-powered">Powered by ÆON</span></div>
+    <div class="card-wrapper">
+        <div class="scene">
+            <div class="card" id="artifact">
+                
+                <div class="card-face front">
+                    <div class="avatar-wrapper">
+                        <img src="" class="avatar" style="display:none;">
                     </div>
+                    <h1 data-i18n="loading">Loading...</h1>
+                    <div class="bio"></div>
+                    <div class="motto"></div>
 
-                    <div class="card-face back">
-                        <h2 style="margin-bottom: 20px;">Scan to Visit</h2>
-                        <div id="qrcode" style="background: white; padding: 10px; border-radius: 12px;"></div>
-                        <p style="margin-top: 20px; opacity: 0.7; font-size: 0.9rem;">aeon.project/alex</p>
-                    </div>
+                    <div class="social-links-grid"></div>
 
+                    <div class="links"></div>
+
+                    <div class="mint-number">NO. ---</div>
                 </div>
+
+                <div class="card-face back">
+                    <div id="qrcode"></div>
+                    <div style="margin-top: 20px; font-size: 10px; letter-spacing: 2px; opacity: 0.7;" data-i18n="scan_connect">SCAN TO CONNECT</div>
+                </div>
+
             </div>
         </div>
-    </section>
-
-    <section class="support-section">
-        <h2 style="font-size: 2rem; margin-bottom: 20px; font-weight: 900;">Čistý design. Absolutní svoboda.</h2>
-        <p style="max-width: 650px; margin: 0 auto 10px auto; line-height: 1.6; font-size: 1.1rem; opacity: 0.9;">Věříme, že digitální identita by neměla být přeplněná reklamou.</p>
-        <p style="max-width: 650px; margin: 0 auto 30px auto; line-height: 1.6; opacity: 0.7;">ÆON je projekt bez paywallů. Všechny funkce, všechna témata a plná funkcionalita jsou dostupné pro každého. Pokud vám nástroj přináší hodnotu, můžete podpořit jeho provoz a další vývoj.</p>
-        <a href="https://ko-fi.com/aeonid" target="_blank" class="kofi-btn-gold"><i class="fa-solid fa-heart"></i> Podpořit projekt</a>
-    </section>
-
-    <footer style="padding: 30px; text-align: center; opacity: 0.6; font-size: 13px; color: var(--text-main);">
-        © 2024 ÆON Project. All Systems Operational. 
-        <span id="admin-trigger" style="margin-left: 10px;">⚙️</span>
-    </footer>
-
-    <div id="admin-panel">
-        <h3 style="color: white; text-align: center;">Theme Tester Mode</h3>
-        <div class="admin-themes-grid" id="admin-themes-list"></div>
-        <button onclick="document.getElementById('admin-panel').style.display='none'" style="width: 100%; padding: 10px; margin-top: 20px; background: #333; color: white; border: none; border-radius: 8px; cursor: pointer;">Close</button>
     </div>
 
-    <script src="js/landing.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/card.js"></script>
 </body>
 </html>
