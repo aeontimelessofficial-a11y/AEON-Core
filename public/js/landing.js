@@ -1,21 +1,25 @@
-// --- landing.js (FINAL) ---
+// --- landing.js ---
 
 let manualOverride = false;
 
 window.onload = function() {
     setRealTimeTheme();
-    setInterval(setRealTimeTheme, 60000); // Kontrola času
+    setInterval(setRealTimeTheme, 60000);
     
-    document.addEventListener('mousemove', parallaxEffect);
+    // Parallax
+    document.addEventListener('mousemove', (e) => {
+        const x = (window.innerWidth - e.pageX * 2) / 100;
+        const y = (window.innerHeight - e.pageY * 2) / 100;
+        const bg = document.querySelector('.fixed-background');
+        if(bg) bg.style.transform = `translate(${x}px, ${y}px) scale(1.05)`;
+    });
 
     initDemoCard();
     initAdmin();
 };
 
-// --- ČAS A TÉMATA ---
 function setRealTimeTheme() {
     if (manualOverride) return;
-
     const now = new Date();
     const month = now.getMonth();
     const hour = now.getHours();
@@ -33,72 +37,53 @@ function setRealTimeTheme() {
     document.body.className = `landing-page layout-center ${season} ${time}`;
 }
 
-// --- PARALLAX ---
-function parallaxEffect(e) {
-    const x = (window.innerWidth - e.pageX * 2) / 100;
-    const y = (window.innerHeight - e.pageY * 2) / 100;
-    const bg = document.querySelector('.fixed-background');
-    if(bg) bg.style.transform = `translate(${x}px, ${y}px) scale(1.05)`;
-}
-
-// --- DEMO KARTA (Synchronizace výšky + QR) ---
 function initDemoCard() {
     const card = document.getElementById('demo-card');
     
-    // 1. QR Generátor
+    // 1. QR Kód
     const qrDiv = document.getElementById('qrcode');
     if (qrDiv && typeof QRCode !== 'undefined') {
         qrDiv.innerHTML = "";
         new QRCode(qrDiv, {
             text: window.location.href,
-            width: 120,
-            height: 120,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
+            width: 120, height: 120,
+            colorDark : "#000000", colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.M
         });
     }
 
     // 2. Kliknutí a flip
     if (card) {
-        card.addEventListener('click', function(e) {
-            // Ignorovat klik na odkaz
+        card.onclick = function(e) {
+            // Ignorovat, pokud se klikne na odkaz
             if (e.target.closest('a') || e.target.closest('button')) return;
 
-            // --- KLÍČOVÝ FIX VÝŠKY ---
-            // Změříme přední stranu a vynutíme stejnou výšku té zadní
-            const frontFace = this.querySelector('.front');
-            const backFace = this.querySelector('.back');
-
-            if(frontFace && backFace) {
-                backFace.style.height = frontFace.offsetHeight + 'px';
+            // Srovnat výšku
+            const front = this.querySelector('.front');
+            const back = this.querySelector('.back');
+            if(front && back) {
+                back.style.height = front.offsetHeight + 'px';
             }
-            // --------------------------
 
+            // Otočit
             this.classList.toggle('is-flipped');
-        });
-
-        // Srovnat výšku i při startu
+        };
+        
+        // Srovnat výšku hned po načtení
         setTimeout(() => {
             const f = card.querySelector('.front');
             const b = card.querySelector('.back');
             if(f && b) b.style.height = f.offsetHeight + 'px';
         }, 500);
     }
-
-    // Zamezení probublání kliku z odkazů
-    const links = document.querySelectorAll('.demo-scene a');
-    links.forEach(link => {
-        link.addEventListener('click', (e) => e.stopPropagation());
-    });
 }
 
-// --- ADMIN PANEL ---
 function initAdmin() {
     const trigger = document.getElementById('admin-trigger');
     const panel = document.getElementById('admin-panel');
     const container = document.getElementById('theme-buttons');
 
+    // Názvy témat
     const themes = [
         'spring-morning', 'spring-noon', 'spring-evening', 'spring-night',
         'summer-morning', 'summer-noon', 'summer-evening', 'summer-night',
@@ -107,32 +92,23 @@ function initAdmin() {
     ];
 
     if(trigger) {
-        trigger.addEventListener('click', () => {
-            const code = prompt("Enter Admin Code:");
+        trigger.onclick = () => {
+            const code = prompt("Admin Code:");
             if (code === "20071") {
                 container.innerHTML = '';
                 themes.forEach(t => {
                     const btn = document.createElement('button');
                     btn.className = 'theme-test-btn';
                     btn.innerText = t.replace('-', ' ');
-                    
-                    // Získání barvy pro tlačítko
-                    const temp = document.createElement('div');
-                    temp.className = t;
-                    document.body.appendChild(temp);
-                    const bg = getComputedStyle(temp).getPropertyValue('--bg-start');
-                    btn.style.background = bg || '#ccc';
-                    document.body.removeChild(temp);
-
                     btn.onclick = () => {
-                        const [season, time] = t.split('-');
-                        document.body.className = `landing-page layout-center ${season} ${time}`;
-                        manualOverride = true; 
+                        const [s, ti] = t.split('-');
+                        document.body.className = `landing-page layout-center ${s} ${ti}`;
+                        manualOverride = true;
                     };
                     container.appendChild(btn);
                 });
                 panel.style.display = 'block';
             }
-        });
+        };
     }
 }
