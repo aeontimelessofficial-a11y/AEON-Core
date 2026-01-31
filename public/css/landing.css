@@ -1,4 +1,4 @@
-/* --- landing.css --- */
+/* --- landing.css (FINAL VERSION) --- */
 
 body.landing-page {
     transition: background 1s ease, color 1s ease;
@@ -33,21 +33,23 @@ body.landing-page {
     z-index: 2;
 }
 
-/* --- MEGA NADPIS (OPRAVENÝ GRADIENT) --- */
+/* --- MEGA NADPIS (PLYNULÁ SMYČKA) --- */
 .mega-title {
     font-size: clamp(3.5rem, 12vw, 7.5rem);
     font-weight: 900;
     line-height: 1.1;
     letter-spacing: -0.04em;
     margin-bottom: 20px;
+    padding: 0 10px;
     
-    /* FIX: Začínáme a končíme stejnou barvou (--text-main) */
+    /* ZRCADLOVÝ GRADIENT (A -> B -> C -> B -> A) */
+    /* Zaručuje, že konec a začátek jsou identické */
     background-image: linear-gradient(
-        120deg,
+        to right,
         var(--text-main) 0%,
         var(--accent) 25%,
         var(--o1) 50%,
-        var(--o2) 75%,
+        var(--accent) 75%,
         var(--text-main) 100%
     );
     background-size: 200% auto;
@@ -57,14 +59,13 @@ body.landing-page {
     -webkit-text-fill-color: transparent;
     color: transparent;
     
-    /* Plynulá nekonečná smyčka */
     animation: shineText 10s linear infinite;
-
     filter: drop-shadow(0 4px 15px rgba(0,0,0,0.3));
 }
 
 @keyframes shineText {
-    to { background-position: 200% center; }
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
 }
 
 .hero-subtitle {
@@ -77,18 +78,31 @@ body.landing-page {
     opacity: 0.8;
 }
 
-/* --- DEMO KARTA --- */
+/* --- DEMO KARTA (RESPONZIVNÍ & BEZPEČNÁ) --- */
 .card-showcase-wrapper {
     perspective: 1000px;
-    margin: 60px 0 150px 0; 
-    z-index: 10;
     position: relative;
+    z-index: 10;
+    
+    /* Vynutíme bezpečný prostor pro kartu, aby nelezla do patičky */
+    /* Flexibilní výška, ale minimálně 500px */
+    min-height: clamp(500px, 60vh, 700px); 
+    width: 100%;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
 }
 
 .demo-scene {
-    width: 320px;
+    /* FLEXIBILNÍ ŠÍŘKA: */
+    /* Minimálně 280px, Maximálně 360px, jinak 90% displeje */
+    width: clamp(280px, 90vw, 360px);
+    
+    /* Výšku necháme auto, aby ji určil obsah karty (JS pak srovná záda) */
     position: relative;
-    /* Výchozí náklon scény */
+    
     transform: rotateY(-5deg) rotateX(2deg); 
     transition: transform 0.5s ease;
     animation: hoverCard 6s ease-in-out infinite;
@@ -104,17 +118,30 @@ body.landing-page {
     50% { transform: translateY(-10px) rotateY(-2deg) rotateX(0deg); }
 }
 
-/* Karta uvnitř scény */
+/* Karta */
 .demo-scene .card { 
     width: 100%; 
+    height: auto; /* Výška podle obsahu */
+    position: relative;
     cursor: pointer; 
     transform-style: preserve-3d;
     transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Třída pro otočení (stejná logika jako v components.css) */
 .demo-scene .card.is-flipped {
     transform: rotateY(180deg);
+}
+
+/* ZADNÍ STRANA - Musí být absolutní, aby se nepřidávala pod přední */
+.demo-scene .card-face.back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* Výšku nastaví JS dynamicky, fallback je 100% */
+    height: 100%; 
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 /* Povolení klikání na odkazy */
@@ -133,6 +160,9 @@ body.landing-page {
     text-align: center;
     border-top: 1px solid rgba(255,255,255,0.1);
     color: var(--text-main);
+    /* Pojistka odstupu */
+    position: relative; 
+    z-index: 5;
 }
 
 /* --- TLAČÍTKA --- */
@@ -169,7 +199,7 @@ body.landing-page {
 }
 .kofi-btn-gold:hover { transform: scale(1.05); }
 
-/* --- ADMIN PANEL (Skrytý) --- */
+/* --- ADMIN PANEL --- */
 #admin-trigger {
     cursor: pointer;
     opacity: 0.3;
@@ -179,7 +209,7 @@ body.landing-page {
 #admin-trigger:hover { opacity: 1; transform: rotate(90deg); }
 
 #admin-panel {
-    display: none; /* Skryté */
+    display: none;
     position: fixed;
     bottom: 20px;
     left: 50%;
@@ -207,14 +237,14 @@ body.landing-page {
 
 .admin-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
     gap: 8px;
     max-height: 300px;
     overflow-y: auto;
 }
 
 .theme-test-btn {
-    padding: 8px;
+    padding: 10px;
     border-radius: 6px;
     border: none;
     font-size: 11px;
@@ -225,4 +255,3 @@ body.landing-page {
     transition: transform 0.1s;
 }
 .theme-test-btn:hover { transform: scale(1.05); }
-.theme-test-btn:active { transform: scale(0.95); }
