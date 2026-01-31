@@ -1,116 +1,55 @@
-/* --- landing.css --- */
+// --- landing.js ---
 
-/* Plynulý přechod, pokud by se změnila denní doba během prohlížení */
-body.landing-page {
-    transition: background 2s ease, color 1s ease;
-    overflow-x: hidden;
-}
-
-/* --- HERO SEKCE --- */
-.hero-section {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 20px;
-    position: relative;
-    z-index: 2;
-}
-
-/* Obří nadpis - malé písmena, jen první velké */
-.mega-title {
-    font-size: clamp(3.5rem, 12vw, 7rem);
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -0.04em;
-    margin-bottom: 20px;
-    color: var(--text-main);
+window.onload = function() {
+    setRealTimeTheme();
+    setInterval(setRealTimeTheme, 60000);
     
-    /* Jemný gradient textu */
-    background: linear-gradient(to right bottom, var(--text-main) 30%, var(--accent));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    // Spustíme Parallax efekt pro myš
+    document.addEventListener('mousemove', parallaxEffect);
+};
+
+function setRealTimeTheme() {
+    const now = new Date();
+    const month = now.getMonth();
+    const hour = now.getHours();
+
+    let season = 'winter';
+    if (month >= 2 && month <= 4) season = 'spring';
+    else if (month >= 5 && month <= 7) season = 'summer';
+    else if (month >= 8 && month <= 10) season = 'autumn';
+
+    let time = 'night';
+    if (hour >= 6 && hour < 11) time = 'morning';
+    else if (hour >= 11 && hour < 17) time = 'noon';
+    else if (hour >= 17 && hour < 22) time = 'evening';
+
+    document.body.className = `landing-page layout-center ${season} ${time}`;
+    console.log(`Live Theme: ${season} ${time}`);
 }
 
-.hero-subtitle {
-    font-size: clamp(1.1rem, 4vw, 1.4rem);
-    max-width: 500px;
-    margin: 0 auto 40px auto;
-    opacity: 0.8;
-    font-weight: 400;
-    line-height: 1.6;
-}
-
-/* --- DEMO KARTA (Realistická) --- */
-.card-showcase-wrapper {
-    perspective: 1200px; /* Hloubka pro 3D efekt */
-    margin: 40px 0 80px 0;
-}
-
-/* Toto obaluje kartu a dává jí náklon */
-.demo-card-container {
-    width: 340px; /* Fixní šířka jako mobil */
-    transform: rotateY(-10deg) rotateX(5deg);
-    transition: transform 0.5s ease;
-    box-shadow: 20px 20px 60px rgba(0,0,0,0.3);
-    border-radius: 24px;
+// --- PARALLAX EFEKT (Pohyb pozadí myší) ---
+function parallaxEffect(e) {
+    const orbs = document.querySelectorAll('.orb');
     
-    /* Animace levitace */
-    animation: floatCard 6s ease-in-out infinite;
-}
+    // Získáme pozici myši vzhledem ke středu okna
+    const x = (window.innerWidth - e.pageX * 2) / 100;
+    const y = (window.innerHeight - e.pageY * 2) / 100;
 
-/* Při najetí se karta narovná */
-.demo-card-container:hover {
-    transform: rotateY(0deg) rotateX(0deg) scale(1.02);
-    z-index: 10;
-}
+    orbs.forEach((orb, index) => {
+        // Každá koule se hýbe trochu jinou rychlostí (index)
+        const speed = (index + 1) * 2;
+        const xOffset = x * speed;
+        const yOffset = y * speed;
 
-@keyframes floatCard {
-    0%, 100% { transform: translateY(0) rotateY(-10deg) rotateX(5deg); }
-    50% { transform: translateY(-20px) rotateY(-5deg) rotateX(2deg); }
-}
-
-/* Uvnitř dema vypneme pointer-events na odkazy, aby se na ně neklikalo omylem */
-.demo-card-container a {
-    pointer-events: none;
-}
-
-/* --- SUPPORT SEKCE --- */
-.support-section {
-    padding: 80px 20px;
-    background: rgba(0,0,0,0.2);
-    backdrop-filter: blur(10px);
-    width: 100%;
-    text-align: center;
-    border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-.cta-btn {
-    display: inline-block;
-    padding: 18px 40px;
-    background: var(--text-main);
-    color: var(--bg-start); /* Kontrastní barva k textu */
-    border-radius: 50px;
-    font-weight: 700;
-    text-decoration: none;
-    font-size: 1.1rem;
-    transition: transform 0.2s;
-}
-.cta-btn:hover {
-    transform: scale(1.05);
-}
-
-.kofi-btn-gold {
-    background: #FFD700;
-    color: #000;
-    font-weight: 800;
-    padding: 15px 30px;
-    border-radius: 12px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
+        // Aplikujeme posun. Důležité: zachovat původní animaci!
+        // Protože nemůžeme snadno mixovat transform z CSS animace a JS,
+        // posuneme jen margin nebo background-position, nebo použijeme 'will-change'.
+        // Zde použijeme jednoduchý trik: posuneme celý kontejner pozadí jemně.
+    });
+    
+    // Posuneme celý background kontejner pro 3D efekt
+    const bg = document.querySelector('.fixed-background');
+    if(bg) {
+        bg.style.transform = `translate(${x}px, ${y}px) scale(1.05)`;
+    }
 }
