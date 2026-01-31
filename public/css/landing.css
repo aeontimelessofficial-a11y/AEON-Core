@@ -1,211 +1,104 @@
-/* --- landing.css (CLEAN & FLAT VERSION) --- */
+// --- landing.js ---
 
-body.landing-page {
-    transition: background 1s ease, color 1s ease;
-    overflow-x: hidden;
-}
+let manualOverride = false;
 
-/* --- POZADÍ --- */
-.fixed-background .orb {
-    animation: floatOrb 20s infinite ease-in-out alternate;
-    opacity: 0.5;
-}
-.orb-1 { animation-delay: 0s; transform-origin: top left; }
-.orb-2 { animation-delay: -5s; transform-origin: top right; }
-.orb-3 { animation-delay: -10s; transform-origin: bottom right; }
-.orb-4 { animation-delay: -15s; transform-origin: bottom left; }
-
-@keyframes floatOrb {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(30px, -30px) scale(1.1); }
-}
-
-/* --- HERO SEKCE --- */
-.hero-section {
-    min-height: 100vh;
-    height: auto; 
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* Zarovnat odshora */
-    align-items: center;
-    text-align: center;
-    /* Rozumné mezery: Nahoře 120px, Dole 50px */
-    padding: 120px 20px 50px 20px; 
-    position: relative;
-    z-index: 2;
-    /* Důležité: Mezera mezi textem a kartou */
-    gap: 40px; 
-}
-
-/* --- MEGA NADPIS --- */
-.mega-title {
-    font-size: clamp(3.5rem, 12vw, 7.5rem);
-    font-weight: 900;
-    line-height: 1.1;
-    letter-spacing: -0.04em;
-    margin-bottom: 10px; /* Menší margin, řešíme gapem */
-    padding: 0 10px;
+window.onload = function() {
+    setRealTimeTheme();
+    setInterval(setRealTimeTheme, 60000);
     
-    background-image: linear-gradient(
-        to right,
-        var(--text-main) 0%,
-        var(--accent) 25%,
-        var(--o1) 50%,
-        var(--accent) 75%,
-        var(--text-main) 100%
-    );
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    animation: shineText 10s linear infinite;
-    filter: drop-shadow(0 4px 15px rgba(0,0,0,0.3));
+    document.addEventListener('mousemove', (e) => {
+        const x = (window.innerWidth - e.pageX * 2) / 100;
+        const y = (window.innerHeight - e.pageY * 2) / 100;
+        const bg = document.querySelector('.fixed-background');
+        if(bg) bg.style.transform = `translate(${x}px, ${y}px) scale(1.05)`;
+    });
+
+    initDemoCard();
+    initAdmin();
+};
+
+function setRealTimeTheme() {
+    if (manualOverride) return;
+    const now = new Date();
+    const month = now.getMonth();
+    const hour = now.getHours();
+
+    let season = 'winter';
+    if (month >= 2 && month <= 4) season = 'spring';
+    else if (month >= 5 && month <= 7) season = 'summer';
+    else if (month >= 8 && month <= 10) season = 'autumn';
+
+    let time = 'night';
+    if (hour >= 6 && hour < 11) time = 'morning';
+    else if (hour >= 11 && hour < 17) time = 'noon';
+    else if (hour >= 17 && hour < 22) time = 'evening';
+
+    document.body.className = `landing-page ${season} ${time}`;
 }
 
-@keyframes shineText {
-    0% { background-position: 0% center; }
-    100% { background-position: 200% center; }
-}
-
-.hero-subtitle {
-    font-size: clamp(1.1rem, 4vw, 1.4rem);
-    max-width: 550px;
-    margin: 0 auto;
-    font-weight: 500;
-    line-height: 1.6;
-    color: var(--text-main); 
-    opacity: 0.8;
-}
-
-/* --- DEMO KARTA (ŽÁDNÉ 3D ŠÍLENSTVÍ) --- */
-.card-showcase-wrapper {
-    /* Žádné absolutní pozicování, žádný z-index hack. 
-       Prostě blok v toku dokumentu. */
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* Odstup od patičky/podpory */
-    margin-bottom: 80px; 
-}
-
-.demo-scene {
-    /* Responzivní šířka */
-    width: clamp(280px, 90vw, 360px);
-    position: relative;
-    perspective: 1000px; /* Jen pro efekt otáčení */
-}
-
-/* Karta samotná - používá styly z components.css, zde jen doladění */
-.demo-scene .card { 
-    width: 100%; 
-    height: auto; 
-    position: relative;
-    cursor: pointer; 
-    transform-style: preserve-3d;
-    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    /* Jemná levitace (rovně nahoru a dolu) */
-    animation: simpleFloat 6s ease-in-out infinite;
-}
-
-@keyframes simpleFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
-}
-
-.demo-scene .card:hover {
-    animation-play-state: paused;
-}
-
-.demo-scene .card.is-flipped {
-    transform: rotateY(180deg);
-}
-
-/* --- OPRAVA ZADNÍ STRANY --- */
-.demo-scene .card-face.back {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%; 
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
+function initDemoCard() {
+    const card = document.getElementById('demo-card');
     
-    /* Flexbox pro zarovnání obsahu na střed */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    gap: 15px; /* Mezery mezi prvky */
+    // QR Kód
+    const qrDiv = document.getElementById('qrcode');
+    if (qrDiv && typeof QRCode !== 'undefined') {
+        qrDiv.innerHTML = "";
+        new QRCode(qrDiv, {
+            text: window.location.href,
+            width: 120, height: 120,
+            colorDark : "#000000", colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.M
+        });
+    }
+
+    // Flip
+    if (card) {
+        card.onclick = function(e) {
+            if (e.target.closest('a') || e.target.closest('button')) return;
+            // Srovnání výšky
+            const front = this.querySelector('.front');
+            const back = this.querySelector('.back');
+            if(front && back) back.style.height = front.offsetHeight + 'px';
+            
+            this.classList.toggle('is-flipped');
+        };
+        setTimeout(() => {
+            const f = card.querySelector('.front');
+            const b = card.querySelector('.back');
+            if(f && b) b.style.height = f.offsetHeight + 'px';
+        }, 500);
+    }
 }
 
-/* Povolení klikání na odkazy */
-.demo-scene a { 
-    pointer-events: auto; 
-    cursor: pointer;
-}
+function initAdmin() {
+    const trigger = document.getElementById('admin-trigger');
+    const panel = document.getElementById('admin-panel');
+    const container = document.getElementById('theme-buttons');
+    const themes = [
+        'spring-morning', 'spring-noon', 'spring-evening', 'spring-night',
+        'summer-morning', 'summer-noon', 'summer-evening', 'summer-night',
+        'autumn-morning', 'autumn-noon', 'autumn-evening', 'autumn-night',
+        'winter-morning', 'winter-noon', 'winter-evening', 'winter-night'
+    ];
 
-/* --- SUPPORT SEKCE --- */
-.support-section {
-    padding: 80px 20px;
-    background: var(--card-glass);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    width: 100%;
-    text-align: center;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    color: var(--text-main);
-    position: relative;
-    z-index: 5;
+    if(trigger) {
+        trigger.onclick = () => {
+            const code = prompt("Admin Code:");
+            if (code === "20071") {
+                container.innerHTML = '';
+                themes.forEach(t => {
+                    const btn = document.createElement('button');
+                    btn.className = 'theme-test-btn';
+                    btn.innerText = t.replace('-', ' ');
+                    btn.onclick = () => {
+                        const [s, ti] = t.split('-');
+                        document.body.className = `landing-page ${s} ${ti}`;
+                        manualOverride = true;
+                    };
+                    container.appendChild(btn);
+                });
+                panel.style.display = 'block';
+            }
+        };
+    }
 }
-
-/* --- TLAČÍTKA --- */
-.cta-btn {
-    display: inline-block;
-    padding: 18px 40px;
-    background: var(--text-main); 
-    color: var(--bg-start);
-    border-radius: 50px;
-    font-weight: 800;
-    text-decoration: none;
-    font-size: 1.1rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    transition: transform 0.2s, box-shadow 0.2s;
-    margin-top: 20px;
-}
-.cta-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-}
-
-.kofi-btn-gold {
-    background: #FFD700;
-    color: #000;
-    font-weight: 800;
-    padding: 16px 32px;
-    border-radius: 12px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 25px;
-    transition: transform 0.2s;
-    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2);
-}
-.kofi-btn-gold:hover { transform: scale(1.05); }
-
-/* --- ADMIN --- */
-#admin-trigger { cursor: pointer; opacity: 0.3; font-size: 1.2rem; transition: 0.3s; }
-#admin-trigger:hover { opacity: 1; transform: rotate(90deg); }
-
-#admin-panel {
-    display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    width: 90%; max-width: 600px; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
-    border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 20px; z-index: 9999;
-    color: white;
-}
-.admin-header { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-.admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; max-height: 300px; overflow-y: auto; }
-.theme-test-btn { padding: 10px; border-radius: 6px; border: none; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: capitalize; color: #000; }
