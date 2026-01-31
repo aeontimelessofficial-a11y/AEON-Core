@@ -1,11 +1,11 @@
-/* --- landing.css (FIXED LAYOUT) --- */
+/* --- landing.css (FIXED Z-INDEX & SPACING) --- */
 
 body.landing-page {
     transition: background 1s ease, color 1s ease;
     overflow-x: hidden;
 }
 
-/* --- POZADÍ (ORBS) --- */
+/* --- POZADÍ --- */
 .fixed-background .orb {
     animation: floatOrb 20s infinite ease-in-out alternate;
     opacity: 0.5;
@@ -20,10 +20,9 @@ body.landing-page {
     100% { transform: translate(30px, -30px) scale(1.1); }
 }
 
-/* --- HERO SEKCE (Opravená výška) --- */
+/* --- HERO SEKCE --- */
 .hero-section {
-    /* Dříve tu bylo min-height: 100vh, což způsobovalo překrývání. 
-       Teď dáváme padding nahoře i dole a necháme výšku auto. */
+    /* Důležité: Žádné fixní výšky. Ať se to natáhne kolik potřebuje. */
     min-height: 100vh;
     height: auto; 
     display: flex;
@@ -31,12 +30,13 @@ body.landing-page {
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 120px 20px 50px 20px; /* Větší padding nahoře kvůli menu/logu */
+    /* Padding nahoře pro odsazení, dole 0 (řešíme ve wrapperu karty) */
+    padding: 120px 20px 0 20px; 
     position: relative;
     z-index: 2;
 }
 
-/* --- MEGA NADPIS (PLYNULÁ SMYČKA) --- */
+/* --- MEGA NADPIS --- */
 .mega-title {
     font-size: clamp(3.5rem, 12vw, 7.5rem);
     font-weight: 900;
@@ -45,6 +45,7 @@ body.landing-page {
     margin-bottom: 20px;
     padding: 0 10px;
     
+    /* Zrcadlový gradient pro plynulost */
     background-image: linear-gradient(
         to right,
         var(--text-main) 0%,
@@ -79,48 +80,48 @@ body.landing-page {
     opacity: 0.8;
 }
 
-/* --- DEMO KARTA (ROVNÁ A S MÍSTEM) --- */
+/* --- DEMO KARTA (ZDE BYL PROBLÉM) --- */
 .card-showcase-wrapper {
     perspective: 1000px;
     position: relative;
-    z-index: 10;
     
-    /* Zde definujeme prostor. Karta má kolem sebe vzduch. */
+    /* OPRAVA 1: Z-INDEX 100. Karta musí být nad vším ostatním. */
+    z-index: 100;
+    
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     
-    /* Obrovský spodní okraj, aby se sekce podpory posunula dolů */
-    margin: 60px 0 150px 0; 
+    /* OPRAVA 2: Brutální odsazení. 
+       Margin-bottom 180px zajistí, že sekce pod tím začne až daleko níže. */
+    margin: 40px 0 180px 0; 
+    
+    /* Pojistka minimální výšky kontejneru */
+    min-height: 500px;
 }
 
 .demo-scene {
     width: clamp(280px, 90vw, 360px);
     position: relative;
     
-    /* VÝCHOZÍ POZICE: ROVNĚ (žádný křivý náklon) */
+    /* Rovná výchozí pozice */
     transform: rotateY(0deg) rotateX(0deg); 
     transition: transform 0.5s ease;
-    
-    /* Animace levitace */
-    animation: floatIdle 6s ease-in-out infinite;
+    animation: hoverCard 6s ease-in-out infinite;
     transform-style: preserve-3d;
 }
 
-/* Při najetí myší se karta trochu zvětší a narovná do pozoru */
+/* Při najetí */
 .demo-scene:hover {
-    animation-play-state: paused; /* Zastavíme houpání */
-    transform: scale(1.02) rotateY(0deg) rotateX(0deg);
+    transform: rotateY(0deg) rotateX(0deg) scale(1.02);
 }
 
-/* Jemné houpání nahoru a dolů (žádné divoké točení) */
-@keyframes floatIdle {
+@keyframes hoverCard {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-20px); }
 }
 
-/* Karta */
 .demo-scene .card { 
     width: 100%; 
     height: auto; 
@@ -149,19 +150,24 @@ body.landing-page {
     cursor: pointer;
 }
 
-/* --- SUPPORT SEKCE --- */
+/* --- SUPPORT SEKCE (ZDE BYL DRUHÝ PROBLÉM) --- */
 .support-section {
-    /* Velký padding, aby text nezačínal hned na hraně */
-    padding: 120px 20px 100px 20px;
+    /* Velký padding nahoře */
+    padding: 100px 20px 100px 20px;
+    
     background: var(--card-glass);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    
     width: 100%;
     text-align: center;
     border-top: 1px solid rgba(255,255,255,0.1);
     color: var(--text-main);
+    
     position: relative; 
-    z-index: 20; /* Vyšší Z-index než karta, pro jistotu */
+    /* OPRAVA 3: Z-INDEX 10. Musí být nižší než karta (100). 
+       Takže i kdyby se dotkly, karta bude nahoře. */
+    z-index: 10; 
 }
 
 /* --- TLAČÍTKA --- */
