@@ -15,7 +15,12 @@
 <body>
 
     <div class="lang-switcher">
-        <div id="lang-scroll-wrapper"></div>
+        <div class="lang-btn" onclick="setLanguage('cs')" id="lang-cs">
+            <img src="https://flagcdn.com/w40/cz.png" alt="CZ">
+        </div>
+        <div class="lang-btn" onclick="setLanguage('en')" id="lang-en">
+            <img src="https://flagcdn.com/w40/gb.png" alt="EN">
+        </div>
     </div>
 
     <div class="fixed-background">
@@ -45,39 +50,22 @@
         <div style="margin-top: 15px;">
             <input type="file" id="photoInput" accept="image/*" style="display: none;">
             <input type="hidden" id="base64String">
+
             <label for="photoInput" class="link-btn" style="cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
                 <span data-i18n="avatar_upload">UPLOAD OWN PHOTO</span>
             </label>
+
             <img id="preview" style="width:80px; height:80px; border-radius:50%; margin: 15px auto; display:block; object-fit:cover; border: 3px solid var(--accent); box-shadow: 0 0 20px rgba(0,0,0,0.3);">
         </div>
-
         <label class="admin-label" data-i18n="social_label">Social Hub</label>
-        <div class="social-grid" id="socialGrid"></div>
+        <div class="social-grid" id="socialGrid">
+            </div>
         <div id="activeSocialsContainer"></div>
 
         <label class="admin-label" data-i18n="other_links_label">Other Links</label>
         <div id="linksContainer"></div>
         <button onclick="addLinkField()" id="addLinkBtn" class="link-btn" style="margin-top:10px; cursor: pointer;">+ Add Custom Link</button>
-
-        <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
-            <label class="admin-label" style="color: #ffd700;" data-i18n="premium_label">Remove Branding</label>
-            
-            <div style="font-size: 11px; opacity: 0.6; margin-bottom: 8px; line-height: 1.4;" data-i18n="premium_desc">
-                Donate on Ko-fi to support us and hide the branding.
-            </div>
-
-            <div id="premium-status-box" style="padding: 12px; border-radius: 8px; background: #222; border: 1px dashed #555; text-align: center; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                <span id="premium-icon" style="font-size: 1.2em;">🔒</span>
-                <span id="premium-text" style="font-weight: bold; color: #888; font-size: 0.9em;">FREE VERSION</span>
-            </div>
-
-            <input type="hidden" id="premiumCode">
-
-            <a href="#" id="kofi-btn" onclick="window.open(KOFI_URL, '_blank')" class="link-btn" style="background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3); color: #ffd700; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <i class="fa-solid fa-heart"></i> SUPPORT PROJECT
-            </a>
-        </div>
 
         <button onclick="saveCard()" id="saveBtn" style="background: var(--accent); border: none; padding: 16px; color: #000; font-weight: bold; border-radius: 12px; margin-top: 20px; cursor: pointer; width: 100%;">SAVE CARD</button>
         <div id="status" style="text-align:center; margin-top:10px; color: yellow; text-shadow: 0 1px 2px black; font-weight:bold;"></div>
