@@ -6,7 +6,6 @@ window.onload = function() {
     setRealTimeTheme();
     setInterval(setRealTimeTheme, 60000);
     
-    // Parallax
     document.addEventListener('mousemove', (e) => {
         const x = (window.innerWidth - e.pageX * 2) / 100;
         const y = (window.innerHeight - e.pageY * 2) / 100;
@@ -34,13 +33,13 @@ function setRealTimeTheme() {
     else if (hour >= 11 && hour < 17) time = 'noon';
     else if (hour >= 17 && hour < 22) time = 'evening';
 
-    document.body.className = `landing-page layout-center ${season} ${time}`;
+    document.body.className = `landing-page ${season} ${time}`;
 }
 
 function initDemoCard() {
     const card = document.getElementById('demo-card');
     
-    // 1. QR Kód
+    // QR Kód
     const qrDiv = document.getElementById('qrcode');
     if (qrDiv && typeof QRCode !== 'undefined') {
         qrDiv.innerHTML = "";
@@ -52,24 +51,17 @@ function initDemoCard() {
         });
     }
 
-    // 2. Kliknutí a flip
+    // Flip
     if (card) {
         card.onclick = function(e) {
-            // Ignorovat, pokud se klikne na odkaz
             if (e.target.closest('a') || e.target.closest('button')) return;
-
-            // Srovnat výšku
+            // Srovnání výšky
             const front = this.querySelector('.front');
             const back = this.querySelector('.back');
-            if(front && back) {
-                back.style.height = front.offsetHeight + 'px';
-            }
-
-            // Otočit
+            if(front && back) back.style.height = front.offsetHeight + 'px';
+            
             this.classList.toggle('is-flipped');
         };
-        
-        // Srovnat výšku hned po načtení
         setTimeout(() => {
             const f = card.querySelector('.front');
             const b = card.querySelector('.back');
@@ -82,8 +74,6 @@ function initAdmin() {
     const trigger = document.getElementById('admin-trigger');
     const panel = document.getElementById('admin-panel');
     const container = document.getElementById('theme-buttons');
-
-    // Názvy témat
     const themes = [
         'spring-morning', 'spring-noon', 'spring-evening', 'spring-night',
         'summer-morning', 'summer-noon', 'summer-evening', 'summer-night',
@@ -102,7 +92,7 @@ function initAdmin() {
                     btn.innerText = t.replace('-', ' ');
                     btn.onclick = () => {
                         const [s, ti] = t.split('-');
-                        document.body.className = `landing-page layout-center ${s} ${ti}`;
+                        document.body.className = `landing-page ${s} ${ti}`;
                         manualOverride = true;
                     };
                     container.appendChild(btn);

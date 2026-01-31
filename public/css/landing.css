@@ -1,104 +1,142 @@
-// --- landing.js ---
+/* --- landing.css (HARD LAYOUT FIX) --- */
 
-let manualOverride = false;
+body.landing-page {
+    transition: background 1s ease, color 1s ease;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    /* Zajistí, že stránka půjde scrollovat, pokud je obsah dlouhý */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
 
-window.onload = function() {
-    setRealTimeTheme();
-    setInterval(setRealTimeTheme, 60000);
+/* --- POZADÍ --- */
+.fixed-background {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+}
+.orb {
+    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5;
+    animation: floatOrb 20s infinite ease-in-out alternate;
+}
+.orb-1 { top: 0; left: 0; width: 50vw; height: 50vw; background: var(--o1); }
+.orb-2 { top: 0; right: 0; width: 40vw; height: 40vw; background: var(--o2); }
+.orb-3 { bottom: 0; right: 0; width: 40vw; height: 40vw; background: var(--o3); }
+.orb-4 { bottom: 0; left: 0; width: 50vw; height: 50vw; background: var(--o4); }
+.noise-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: url('https://grainy-gradients.vercel.app/noise.svg'); opacity: 0.05;
+}
+
+@keyframes floatOrb {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(30px, -30px) scale(1.1); }
+}
+
+/* --- BLOK 1: TEXTY --- */
+.hero-text-block {
+    text-align: center;
+    padding: 100px 20px 40px 20px;
+    z-index: 2;
+}
+
+.mega-title {
+    font-size: clamp(3.5rem, 12vw, 7.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 20px;
     
-    document.addEventListener('mousemove', (e) => {
-        const x = (window.innerWidth - e.pageX * 2) / 100;
-        const y = (window.innerHeight - e.pageY * 2) / 100;
-        const bg = document.querySelector('.fixed-background');
-        if(bg) bg.style.transform = `translate(${x}px, ${y}px) scale(1.05)`;
-    });
+    background-image: linear-gradient(to right, var(--text-main) 0%, var(--accent) 50%, var(--text-main) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: shineText 10s linear infinite;
+    filter: drop-shadow(0 4px 15px rgba(0,0,0,0.3));
+}
+@keyframes shineText { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 
-    initDemoCard();
-    initAdmin();
-};
-
-function setRealTimeTheme() {
-    if (manualOverride) return;
-    const now = new Date();
-    const month = now.getMonth();
-    const hour = now.getHours();
-
-    let season = 'winter';
-    if (month >= 2 && month <= 4) season = 'spring';
-    else if (month >= 5 && month <= 7) season = 'summer';
-    else if (month >= 8 && month <= 10) season = 'autumn';
-
-    let time = 'night';
-    if (hour >= 6 && hour < 11) time = 'morning';
-    else if (hour >= 11 && hour < 17) time = 'noon';
-    else if (hour >= 17 && hour < 22) time = 'evening';
-
-    document.body.className = `landing-page ${season} ${time}`;
+.hero-subtitle {
+    font-size: clamp(1.1rem, 4vw, 1.4rem);
+    max-width: 550px;
+    margin: 0 auto 40px auto;
+    font-weight: 500;
+    opacity: 0.8;
+    color: var(--text-main);
 }
 
-function initDemoCard() {
-    const card = document.getElementById('demo-card');
+.cta-btn {
+    display: inline-block; padding: 18px 40px; background: var(--text-main); color: var(--bg-start);
+    border-radius: 50px; font-weight: 800; text-decoration: none; font-size: 1.1rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.2s;
+}
+.cta-btn:hover { transform: scale(1.05); }
+
+
+/* --- BLOK 2: KARTA (IZOLOVANÝ PROSTOR) --- */
+.card-display-block {
+    width: 100%;
+    /* Tady je ten fix: Vyhradíme pevný prostor na výšku. 
+       Karta má cca 450-500px, dáváme 600px rezervu. */
+    height: 600px; 
     
-    // QR Kód
-    const qrDiv = document.getElementById('qrcode');
-    if (qrDiv && typeof QRCode !== 'undefined') {
-        qrDiv.innerHTML = "";
-        new QRCode(qrDiv, {
-            text: window.location.href,
-            width: 120, height: 120,
-            colorDark : "#000000", colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.M
-        });
-    }
-
-    // Flip
-    if (card) {
-        card.onclick = function(e) {
-            if (e.target.closest('a') || e.target.closest('button')) return;
-            // Srovnání výšky
-            const front = this.querySelector('.front');
-            const back = this.querySelector('.back');
-            if(front && back) back.style.height = front.offsetHeight + 'px';
-            
-            this.classList.toggle('is-flipped');
-        };
-        setTimeout(() => {
-            const f = card.querySelector('.front');
-            const b = card.querySelector('.back');
-            if(f && b) b.style.height = f.offsetHeight + 'px';
-        }, 500);
-    }
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Karta bude uprostřed tohoto bloku */
+    
+    position: relative;
+    z-index: 10;
 }
 
-function initAdmin() {
-    const trigger = document.getElementById('admin-trigger');
-    const panel = document.getElementById('admin-panel');
-    const container = document.getElementById('theme-buttons');
-    const themes = [
-        'spring-morning', 'spring-noon', 'spring-evening', 'spring-night',
-        'summer-morning', 'summer-noon', 'summer-evening', 'summer-night',
-        'autumn-morning', 'autumn-noon', 'autumn-evening', 'autumn-night',
-        'winter-morning', 'winter-noon', 'winter-evening', 'winter-night'
-    ];
-
-    if(trigger) {
-        trigger.onclick = () => {
-            const code = prompt("Admin Code:");
-            if (code === "20071") {
-                container.innerHTML = '';
-                themes.forEach(t => {
-                    const btn = document.createElement('button');
-                    btn.className = 'theme-test-btn';
-                    btn.innerText = t.replace('-', ' ');
-                    btn.onclick = () => {
-                        const [s, ti] = t.split('-');
-                        document.body.className = `landing-page ${s} ${ti}`;
-                        manualOverride = true;
-                    };
-                    container.appendChild(btn);
-                });
-                panel.style.display = 'block';
-            }
-        };
-    }
+.demo-scene {
+    width: clamp(280px, 90vw, 360px);
+    position: relative;
+    transform-style: preserve-3d;
+    /* Výchozí stav: rovně */
+    transform: rotateY(0deg); 
+    transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
+
+.demo-scene .card { 
+    width: 100%; height: auto; position: relative; cursor: pointer; 
+    transform-style: preserve-3d;
+    /* Jemné vznášení, aby to nebylo mrtvé */
+    animation: simpleFloat 6s ease-in-out infinite;
+}
+@keyframes simpleFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+.demo-scene:hover .card { animation-play-state: paused; }
+
+.demo-scene .card.is-flipped { transform: rotateY(180deg); }
+
+.demo-scene .card-face.back {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    -webkit-backface-visibility: hidden; backface-visibility: hidden;
+    background: var(--card-glass);
+    display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+}
+
+.demo-scene a { pointer-events: auto; cursor: pointer; }
+
+
+/* --- BLOK 3: PATIČKA --- */
+.simple-footer {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-main);
+    opacity: 0.6;
+    font-size: 13px;
+    
+    /* Ujistíme se, že je až dole */
+    margin-top: auto; 
+    position: relative;
+    z-index: 5;
+}
+
+/* ADMIN PANEL */
+#admin-trigger { cursor: pointer; margin-left: 10px; transition: 0.3s; }
+#admin-trigger:hover { opacity: 1; transform: rotate(90deg); }
+#admin-panel { display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 600px; background: rgba(0,0,0,0.9); border: 1px solid #444; border-radius: 16px; padding: 20px; z-index: 9999; color: white; }
+.admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; max-height: 300px; overflow-y: auto; margin-top: 10px; }
+.theme-test-btn { padding: 10px; border-radius: 6px; border: none; font-size: 11px; font-weight: bold; cursor: pointer; }
