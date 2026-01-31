@@ -2,219 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>ÆON Card</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ÆON | Studio</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/themes.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/layouts.css">
-
-    <script src="js/qrcode.min.js"></script>
 </head>
-<body class="layout-center">
+<body>
+
+    <div class="lang-switcher">
+        <div id="lang-scroll-wrapper"></div>
+    </div>
 
     <div class="fixed-background">
         <div class="orb orb-1"></div><div class="orb orb-2"></div>
         <div class="orb orb-3"></div><div class="orb orb-4"></div>
-        <div class="noise-overlay"></div>
     </div>
 
-    <div id="loader">
-        <div class="spinner"></div>
-    </div>
+    <div class="admin-container">
+        <h1 style="color: var(--text-main); text-align: center;">ÆON Studio</h1>
+        <div id="loading" style="text-align:center; color:var(--accent); font-size: 12px;">LOADING...</div>
 
-    <div class="scene">
-        <div class="card glass-card" id="artifact">
-            
-            <div class="card-face front">
-                
-                <div class="profile-header">
-                    <div class="avatar-container">
-                        <img src="" class="avatar" style="display:none;">
-                    </div>
-                    <h1 class="profile-name"></h1>
-                    <p class="profile-bio bio"></p>
-                    <p class="motto" style="font-size: 0.8em; opacity: 0.7; margin-top: 5px;"></p>
-                </div>
+        <label class="admin-label" data-i18n="slug_label">URL (Slug)</label>
+        <input type="text" class="admin-input" id="slug" placeholder="e.g. john-doe" required>
 
-                <div class="links">
-                    </div>
-                
-                <div class="mint-number"></div>
+        <label class="admin-label" data-i18n="theme_label">Choose Atmosphere</label>
+        <div class="theme-grid" id="themeGrid"></div>
+        <input type="hidden" id="selectedTheme" value="winter-night">
 
-            </div>
+        <label class="admin-label" data-i18n="identity_label">Identity</label>
+        <input type="text" class="admin-input" id="name" placeholder="Name">
+        <input type="text" class="admin-input" id="bio" placeholder="Bio / Job Title" style="margin-top:5px;">
+        <input type="text" class="admin-input" id="motto" placeholder="Motto" style="margin-top:5px;">
 
-            <div class="card-face back">
-                <h2>Scan & Save</h2>
-                <div id="qrcode" style="background: white; padding: 10px; border-radius: 12px; margin: 20px auto;"></div>
-                <p style="opacity: 0.7; font-size: 0.9rem; margin-top: 20px;">aeon-id.vercel.app</p>
-                <div class="brand-back">ÆON</div>
-            </div>
+        <label class="admin-label" data-i18n="avatar_label">Avatar</label>
+        <div class="avatar-grid" id="avatarStudio"></div>
 
+        <div style="margin-top: 15px;">
+            <input type="file" id="photoInput" accept="image/*" style="display: none;">
+            <input type="hidden" id="base64String">
+            <label for="photoInput" class="link-btn" style="cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span data-i18n="avatar_upload">UPLOAD OWN PHOTO</span>
+            </label>
+            <img id="preview" style="width:80px; height:80px; border-radius:50%; margin: 15px auto; display:block; object-fit:cover; border: 3px solid var(--accent); box-shadow: 0 0 20px rgba(0,0,0,0.3);">
         </div>
+
+        <label class="admin-label" data-i18n="social_label">Social Hub</label>
+        <div class="social-grid" id="socialGrid"></div>
+        <div id="activeSocialsContainer"></div>
+
+        <label class="admin-label" data-i18n="other_links_label">Other Links</label>
+        <div id="linksContainer"></div>
+        <button onclick="addLinkField()" id="addLinkBtn" class="link-btn" style="margin-top:10px; cursor: pointer;">+ Add Custom Link</button>
+
+        <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <label class="admin-label" style="color: #ffd700;" data-i18n="premium_label">Remove Branding</label>
+            
+            <div style="font-size: 11px; opacity: 0.6; margin-bottom: 8px; line-height: 1.4;" data-i18n="premium_desc">
+                Donate on Ko-fi to support us and hide the branding.
+            </div>
+
+            <div id="premium-status-box" style="padding: 12px; border-radius: 8px; background: #222; border: 1px dashed #555; text-align: center; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <span id="premium-icon" style="font-size: 1.2em;">🔒</span>
+                <span id="premium-text" style="font-weight: bold; color: #888; font-size: 0.9em;">FREE VERSION</span>
+            </div>
+
+            <input type="hidden" id="premiumCode">
+
+            <a href="#" id="kofi-btn" onclick="window.open(KOFI_URL, '_blank')" class="link-btn" style="background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3); color: #ffd700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i class="fa-solid fa-heart"></i> SUPPORT PROJECT
+            </a>
+        </div>
+
+        <button onclick="saveCard()" id="saveBtn" style="background: var(--accent); border: none; padding: 16px; color: #000; font-weight: bold; border-radius: 12px; margin-top: 20px; cursor: pointer; width: 100%;">SAVE CARD</button>
+        <div id="status" style="text-align:center; margin-top:10px; color: yellow; text-shadow: 0 1px 2px black; font-weight:bold;"></div>
     </div>
 
     <script src="js/config.js"></script>
-    <script>
-        // --- LOGIKA PROHLÍŽEČE KARTY ---
-        
-        const card = document.getElementById('artifact');
-        const scene = document.querySelector('.scene');
-        const loader = document.getElementById('loader');
-
-        window.onload = async function() {
-            // Zkusíme načíst data podle URL
-            await loadProfile();
-        };
-
-        async function loadProfile() {
-            const params = new URLSearchParams(window.location.search);
-            const userSlug = params.get('slug');
-
-            // Pokud není slug, vrátíme na Landing Page
-            if (!userSlug) {
-                window.location.href = '/';
-                return;
-            }
-
-            try {
-                // Volání API
-                const response = await fetch(`/api/aeon-api?slug=${userSlug}`);
-                if (!response.ok) throw new Error("Card not found");
-                
-                const data = await response.json();
-                
-                // 1. Aplikace tématu
-                // Funkce applyTheme je definovaná v tvém config.js, 
-                // pokud ne, nastavíme atributy ručně:
-                if (typeof applyTheme === 'function') {
-                    applyTheme(data.theme);
-                } else {
-                    document.body.className = `layout-center ${data.theme || 'winter-night'}`;
-                }
-
-                // 2. Naplnění textů
-                document.querySelector('.profile-name').innerText = data.name;
-                document.querySelector('.bio').innerText = data.bio;
-                if(data.motto) document.querySelector('.motto').innerText = data.motto;
-                document.title = `${data.name} | ÆON`;
-
-                // 3. Avatar
-                if (data.avatar) {
-                    const av = document.querySelector('.avatar');
-                    av.src = data.avatar;
-                    av.style.display = 'block';
-                }
-
-                // 4. Mint Number
-                document.querySelector('.mint-number').innerText = `MINT #${data.mint_number || "---"}`;
-
-                // 5. Generování odkazů
-                const linksContainer = document.querySelector('.links');
-                linksContainer.innerHTML = '';
-                
-                // Vytvoříme mřížku pro sociální sítě
-                const socialGrid = document.createElement('div');
-                socialGrid.className = 'social-links-grid';
-                linksContainer.appendChild(socialGrid);
-
-                if (data.links && Array.isArray(data.links)) {
-                    data.links.forEach(link => {
-                        if(!link.url) return;
-                        
-                        // Detekce typu odkazu (Instagram, X, atd.)
-                        // Používáme jednoduchou detekci podle URL
-                        let iconClass = null;
-                        const u = link.url.toLowerCase();
-                        
-                        if(u.includes('instagram')) iconClass = 'fa-brands fa-instagram';
-                        else if(u.includes('twitter') || u.includes('x.com')) iconClass = 'fa-brands fa-x-twitter';
-                        else if(u.includes('linkedin')) iconClass = 'fa-brands fa-linkedin-in';
-                        else if(u.includes('facebook')) iconClass = 'fa-brands fa-facebook';
-                        else if(u.includes('spotify')) iconClass = 'fa-brands fa-spotify';
-                        else if(u.includes('github')) iconClass = 'fa-brands fa-github';
-                        else if(u.includes('youtube')) iconClass = 'fa-brands fa-youtube';
-
-                        if (iconClass) {
-                            // Malá ikona do mřížky
-                            const a = document.createElement('a');
-                            a.href = link.url;
-                            a.className = 'social-item';
-                            a.target = "_blank";
-                            a.innerHTML = `<i class="${iconClass}"></i>`;
-                            // Zabrání otočení karty při kliku
-                            a.addEventListener('click', (e) => e.stopPropagation());
-                            socialGrid.appendChild(a);
-                        } else {
-                            // Velké tlačítko pod mřížkou
-                            const btn = document.createElement('a');
-                            btn.href = link.url;
-                            btn.className = 'link-btn';
-                            btn.innerHTML = `<i class="fa-solid fa-link"></i> ${link.label || 'Link'}`;
-                            btn.target = "_blank";
-                            btn.addEventListener('click', (e) => e.stopPropagation());
-                            linksContainer.appendChild(btn);
-                        }
-                    });
-                }
-
-                // 6. Logika Patičky (Premium)
-                // Pokud uživatel NEMÁ zaplaceno, přidáme patičku s reklamou
-                if (!data.premium) { 
-                    const frontFace = document.querySelector('.card-face.front');
-                    const footerDiv = document.createElement('div');
-                    footerDiv.className = 'aeon-footer';
-                    footerDiv.innerHTML = `<span class="aeon-powered">Powered by ÆON</span>`;
-                    // Kliknutí na footer jde na hlavní stránku
-                    footerDiv.onclick = (e) => { e.stopPropagation(); window.open('/', '_blank'); };
-                    frontFace.appendChild(footerDiv);
-                } else {
-                    // Pokud MÁ zaplaceno, přidáme speciální třídu pro efekty (volitelné)
-                    card.classList.add('premium-glow');
-                }
-
-                // 7. QR Kód
-                const qrContainer = document.getElementById('qrcode');
-                if(qrContainer && typeof QRCode !== 'undefined') {
-                    qrContainer.innerHTML = "";
-                    new QRCode(qrContainer, {
-                        text: window.location.href,
-                        width: 120, height: 120,
-                        colorDark : "#000000", colorLight : "#ffffff",
-                        correctLevel : QRCode.CorrectLevel.M
-                    });
-                }
-
-                // Odkrytí karty
-                loader.style.opacity = '0';
-                setTimeout(() => { 
-                    loader.style.display = 'none'; 
-                    scene.style.opacity = '1'; 
-                }, 300);
-
-            } catch (error) {
-                console.error(error);
-                loader.innerHTML = `<div style='color:white; text-align:center'>Card Not Found<br><a href="/" style="color:var(--accent)">Go Home</a></div>`;
-            }
-        }
-
-        // Otáčení karty
-        card.addEventListener('click', function(e) {
-            // Ignorovat, pokud se kliklo na odkaz
-            if (e.target.closest('a')) return;
-            
-            this.classList.toggle('is-flipped');
-            
-            // Fix výšky
-            const front = this.querySelector('.front');
-            const back = this.querySelector('.back');
-            if(front && back) back.style.height = front.offsetHeight + 'px';
-        });
-
-    </script>
+    <script src="js/admin.js"></script>
 </body>
 </html>
