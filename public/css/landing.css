@@ -1,16 +1,15 @@
 /* --- landing.css --- */
 
 body.landing-page {
-    transition: background 2s ease, color 1s ease;
+    transition: background 1s ease, color 1s ease;
     overflow-x: hidden;
 }
 
-/* --- POZADÍ (ORBS ANIMACE) --- */
+/* --- POZADÍ (ORBS) --- */
 .fixed-background .orb {
     animation: floatOrb 20s infinite ease-in-out alternate;
-    opacity: 0.5; /* Jemné, aby vynikl text */
+    opacity: 0.5;
 }
-
 .orb-1 { animation-delay: 0s; transform-origin: top left; }
 .orb-2 { animation-delay: -5s; transform-origin: top right; }
 .orb-3 { animation-delay: -10s; transform-origin: bottom right; }
@@ -34,7 +33,7 @@ body.landing-page {
     z-index: 2;
 }
 
-/* --- MEGA NADPIS (Liquid Gradient + Stín) --- */
+/* --- MEGA NADPIS (OPRAVENÝ GRADIENT) --- */
 .mega-title {
     font-size: clamp(3.5rem, 12vw, 7.5rem);
     font-weight: 900;
@@ -42,7 +41,7 @@ body.landing-page {
     letter-spacing: -0.04em;
     margin-bottom: 20px;
     
-    /* Barvy bereme z tématu, aby to ladilo */
+    /* FIX: Začínáme a končíme stejnou barvou (--text-main) */
     background-image: linear-gradient(
         120deg,
         var(--text-main) 0%,
@@ -53,18 +52,14 @@ body.landing-page {
     );
     background-size: 200% auto;
     
-    /* Oříznutí pozadí do textu */
     -webkit-background-clip: text;
     background-clip: text;
-    
-    /* Zprůhlednění textu */
     -webkit-text-fill-color: transparent;
     color: transparent;
     
-    /* Animace barev */
-    animation: shineText 8s linear infinite;
+    /* Plynulá nekonečná smyčka */
+    animation: shineText 10s linear infinite;
 
-    /* Stín pro čitelnost na světlém pozadí */
     filter: drop-shadow(0 4px 15px rgba(0,0,0,0.3));
 }
 
@@ -82,10 +77,9 @@ body.landing-page {
     opacity: 0.8;
 }
 
-/* --- DEMO KARTA (Upravená: Méně 3D, Více místa) --- */
+/* --- DEMO KARTA --- */
 .card-showcase-wrapper {
     perspective: 1000px;
-    /* Důležité: Velký spodní okraj, aby karta nelezla do patičky */
     margin: 60px 0 150px 0; 
     z-index: 10;
     position: relative;
@@ -94,34 +88,51 @@ body.landing-page {
 .demo-scene {
     width: 320px;
     position: relative;
-    /* Decentní náklon */
+    /* Výchozí náklon scény */
     transform: rotateY(-5deg) rotateX(2deg); 
     transition: transform 0.5s ease;
     animation: hoverCard 6s ease-in-out infinite;
     transform-style: preserve-3d;
 }
 
-/* Při najetí se téměř narovná */
 .demo-scene:hover {
     transform: rotateY(0deg) rotateX(0deg) scale(1.01);
 }
 
 @keyframes hoverCard {
-    /* Jemná levitace */
     0%, 100% { transform: translateY(0) rotateY(-5deg) rotateX(2deg); }
     50% { transform: translateY(-10px) rotateY(-2deg) rotateX(0deg); }
 }
 
+/* Karta uvnitř scény */
 .demo-scene .card { 
     width: 100%; 
-    transform: rotateY(0deg); 
-    cursor: default; 
+    cursor: pointer; 
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Třída pro otočení (stejná logika jako v components.css) */
+.demo-scene .card.is-flipped {
+    transform: rotateY(180deg);
 }
 
 /* Povolení klikání na odkazy */
 .demo-scene a { 
     pointer-events: auto; 
     cursor: pointer;
+}
+
+/* --- SUPPORT SEKCE --- */
+.support-section {
+    padding: 100px 20px;
+    background: var(--card-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-main);
 }
 
 /* --- TLAČÍTKA --- */
@@ -158,14 +169,60 @@ body.landing-page {
 }
 .kofi-btn-gold:hover { transform: scale(1.05); }
 
-/* --- SUPPORT SEKCE --- */
-.support-section {
-    padding: 100px 20px;
-    background: var(--card-glass);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    width: 100%;
-    text-align: center;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    color: var(--text-main);
+/* --- ADMIN PANEL (Skrytý) --- */
+#admin-trigger {
+    cursor: pointer;
+    opacity: 0.3;
+    font-size: 1.2rem;
+    transition: opacity 0.3s, transform 0.3s;
 }
+#admin-trigger:hover { opacity: 1; transform: rotate(90deg); }
+
+#admin-panel {
+    display: none; /* Skryté */
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 600px;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    padding: 20px;
+    z-index: 9999;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    color: white;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.theme-test-btn {
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: capitalize;
+    color: #000;
+    transition: transform 0.1s;
+}
+.theme-test-btn:hover { transform: scale(1.05); }
+.theme-test-btn:active { transform: scale(0.95); }
